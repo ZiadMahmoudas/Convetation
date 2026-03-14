@@ -7,7 +7,6 @@
 body {
     font-family: "Tajawal", sans-serif;
     background: #f0f0f2;
-    overflow: hidden;
     height: 100vh;
 }
 .logo {
@@ -159,6 +158,8 @@ body {
     gap: 14px;
     /* overflow: auto; */
     padding: 16px;
+    position: relative;
+    top: 99px;
 }
 #canvas {
     position: relative;
@@ -780,4 +781,85 @@ select.sinp {
 }
 #notif.vis {
     opacity: 1;
+}
+/* ══════════════════════════════════
+   RESPONSIVE - الموبايل (مع سكرول بالعرض)
+══════════════════════════════════ */
+@media (max-width: 768px) {
+    /* 1. السكرول الأساسي للصفحة من فوق لتحت */
+    #view-design {
+        display: block !important; 
+        overflow-y: auto !important;
+        padding-bottom: 40px;
+    }
+
+    /* 2. منطقة الكانفاس: تفعيل السكرول بالعرض */
+    #canvas-area {
+        display: block;
+        padding: 20px 16px;
+        gap: 16px;
+        width: 100%; /* ياخد عرض الشاشة */
+        overflow-x: auto !important; /* السكرول الأفقي هنا */
+        align-items: flex-start; /* عشان يبدأ من اليمين بشكل طبيعي */
+    }
+
+    /* 3. تثبيت حجم الكانفاس عشان العناصر متهربش والـ Drag يشتغل صح */
+    #canvas {
+        width: 420px !important;
+        height: 420px !important;
+        min-width: 420px !important; /* دي الأهم عشان ميصغرش غصب عنه */
+        min-height: 420px !important;
+        margin: 0 auto; /* توسيط لو الشاشة أكبر شوية من الكانفاس */
+    }
+
+    /* 4. شريط التحميل (نخليه يفضل تحت الكانفاس بنفس العرض) */
+    #export-bar {
+        width: 420px !important;
+        min-width: 420px !important;
+        margin: 0 auto;
+    }
+
+    /* 5. السايدبار ينزل تحت خالص وياخد العرض كله */
+    #sidebar {
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important; 
+        border-left: none;
+        border-top: 2px dashed #eaeaea;
+        padding: 20px 16px;
+        box-shadow: none;
+    }
+}
+/* تصميم زر الحذف الإضافي */
+.el .del-btn {
+    position: absolute;
+    top: -12px;
+    right: -12px; /* لو حابب تخليه عالشمال خليها left: -12px */
+    width: 24px;
+    height: 24px;
+    background-color: #ef4444; /* لون أحمر */
+    color: white;
+    border-radius: 50%;
+    display: none; /* مخفي في العادي */
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-family: sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 20;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    line-height: 1;
+}
+
+/* إظهار زر الحذف فقط عندما يكون العنصر محدد */
+.el.selected .del-btn {
+    display: flex;
+}
+
+/* تأثير عند المرور بالماوس على زر الحذف */
+.el .del-btn:hover {
+    background-color: #dc2626;
+    transform: scale(1.1);
+    transition: all 0.2s ease;
 }
