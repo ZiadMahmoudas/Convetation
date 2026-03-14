@@ -1,1660 +1,1004 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>سَلِّم - صمم بطاقتك بأناقة واحترافية</title>
-    <link rel="shortcut icon" href="images/logo.webp" type="image/x-icon">
-    <link
-      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>مكتبات المعلمين</title>
+  <link rel="shortcut icon" href="images/logo.webp" type="image/x-icon"/>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: {
+        navy:  '#2A3A4D', gold: '#F7AF3C',
+        ember: '#FA6267', azure: '#5BC0EA', jade: '#14A48D'
+      }}}
+    }
+  </script>
+<style>
+:root{
+  --navy:#2A3A4D; --gold:#F7AF3C; --ember:#FA6267;
+  --azure:#5BC0EA; --jade:#14A48D;
+  --bg:#F0F3F8; --white:#fff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:"Tajawal",sans-serif;background:var(--bg);color:var(--navy);overflow-x:hidden}
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   NAVBAR — split dark/light
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#navbar{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  height:64px;
+  background:var(--navy);
+  display:flex;align-items:center;
+  padding:0 32px;
+  justify-content:space-between;
+  border-bottom:3px solid var(--gold);
+  box-shadow:0 4px 32px rgba(42,58,77,.35);
+}
+.nav-logo img{width:120px;height:auto;filter:brightness(0) invert(1)}
+.nav-links{display:flex;gap:4px;align-items:center}
+.nav-links a{
+  padding:7px 16px;border-radius:4px;
+  color:rgba(255,255,255,.65);font-weight:700;font-size:14px;
+  text-decoration:none;transition:all .18s;
+}
+.nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(247,175,60,.15)}
+.nav-links a.active{color:var(--gold)}
+.nav-actions{display:flex;gap:10px;align-items:center}
+.nav-login{color:rgba(255,255,255,.65);font-weight:700;font-size:14px;text-decoration:none;transition:color .18s}
+.nav-login:hover{color:#fff}
+.nav-cta{
+  background:var(--gold);color:var(--navy);
+  padding:9px 22px;border-radius:6px;
+  font-weight:900;font-size:14px;text-decoration:none;
+  transition:all .18s;display:flex;align-items:center;gap:6px;
+  box-shadow:0 3px 12px rgba(247,175,60,.4);
+  border-bottom:2px solid #C88820;
+}
+.nav-cta:hover{background:#FFCC6E;transform:translateY(-1px)}
+.nav-hamburger{display:none;cursor:pointer;color:#fff;font-size:22px}
 
-    <link rel="stylesheet" href="css/index.css" />
-  </head>
-  <body class="bg-white text-[#0f172a] overflow-x-hidden">
-    <nav
-      class="fixed w-full z-50 glass-nav transition-all duration-300"
-      id="navbar"
-    >
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-20">
-          <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
-            <!-- <div
-              class="w-10 h-10 bg-black rounded-xl flex items-center justify-center text-white font-bold text-xl"
-            >
-              
-            </div> -->
-            <a href="/index.html" class="font-black logo text-2xl text-gray-900 tracking-tight"
-              ><img src="images/logo.webp" alt=""></a
-            >
-          </div>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   MOBILE MENU
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#mobile-menu{
+  position:fixed;top:64px;left:0;right:0;z-index:899;
+  background:var(--navy);
+  border-bottom:3px solid var(--gold);
+  padding:20px 24px 28px;
+  display:none;flex-direction:column;gap:4px;
+  box-shadow:0 8px 32px rgba(0,0,0,.3);
+}
+#mobile-menu.open{display:flex}
+#mobile-menu a{
+  padding:12px 16px;border-radius:6px;
+  color:rgba(255,255,255,.75);font-weight:700;font-size:15px;
+  text-decoration:none;transition:all .15s;text-align:center;
+}
+#mobile-menu a:hover{background:rgba(247,175,60,.15);color:#fff}
+#mobile-menu .mob-cta{
+  background:var(--gold);color:var(--navy);
+  margin-top:8px;border-radius:6px;font-weight:900;
+}
 
-          <div class="hidden md:flex space-x-8 space-x-reverse items-center">
-            <a
-              href="#"
-              class="text-gray-900 font-bold hover:text-blue-600 transition"
-              >الرئيسية</a
-            >
-            <a
-              href="#features"
-              class="text-gray-600 font-semibold hover:text-gray-900 transition"
-              >المميزات</a
-            >
-            <a
-              href="#templates"
-              class="text-gray-600 font-semibold hover:text-gray-900 transition"
-              >القوالب</a
-            >
-            <a
-              href="#pricing"
-              class="text-gray-600 font-semibold hover:text-gray-900 transition"
-              >الأسعار</a
-            >
-          </div>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   HERO — asymmetric split layout
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#hero{
+  min-height:100vh;padding-top:64px;
+  display:grid;grid-template-columns:1fr 1fr;
+  overflow:hidden;position:relative;
+}
+/* يسار — نص */
+.hero-left{
+  background:var(--navy);
+  padding:80px 56px 80px 48px;
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;
+}
+/* نقاط خلفية */
+.hero-left::before{
+  content:"";position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(247,175,60,.14) 1px,transparent 1px);
+  background-size:26px 26px;pointer-events:none;
+}
+/* شكل مائل يمين */
+.hero-left::after{
+  content:"";position:absolute;
+  top:0;left:100%;
+  width:80px;height:100%;
+  background:var(--navy);
+  clip-path:polygon(0 0,0 100%,100% 100%);
+  z-index:2;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(247,175,60,.12);border:1px solid rgba(247,175,60,.35);
+  border-radius:4px;padding:6px 14px;
+  font-size:12px;font-weight:700;color:var(--gold);
+  margin-bottom:28px;width:fit-content;
+}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--jade);
+  animation:pulse-anim 2s infinite;display:inline-block}
+@keyframes pulse-anim{0%,100%{transform:scale(.9);opacity:.7}50%{transform:scale(1.3);opacity:1}}
 
-          <div class="hidden md:flex items-center gap-4">
-            <a
-              href="/login"
-              class="text-gray-600 font-bold hover:text-black transition"
-              >تسجيل الدخول</a
-            >
-            <a
-              href="/editor.html"
-              class="inline-flex items-center justify-center px-6 py-2.5 border border-transparent text-sm font-bold rounded-xl text-white bg-black hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
-            >
-              <i class="fa-solid fa-pen-nib ml-2"></i> المحرر
-            </a>
-          </div>
+.hero-h1{
+  font-size:clamp(38px,4.5vw,58px);font-weight:900;
+  color:#fff;line-height:1.08;margin-bottom:22px;
+  letter-spacing:-.025em;position:relative;z-index:1;
+}
+.hero-h1 .line2{color:var(--gold)}
+.hero-p{
+  font-size:16px;color:rgba(255,255,255,.6);
+  line-height:1.8;margin-bottom:40px;max-width:380px;
+  position:relative;z-index:1;
+}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
+.hbtn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 26px;border-radius:6px;
+  font-size:14px;font-weight:800;text-decoration:none;
+  transition:all .2s;
+}
+.hbtn-gold{background:var(--gold);color:var(--navy);border-bottom:3px solid #C88820;box-shadow:0 4px 18px rgba(247,175,60,.4)}
+.hbtn-gold:hover{background:#FFCC6E;transform:translateY(-2px)}
+.hbtn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.25)}
+.hbtn-outline:hover{border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.06)}
 
-          <div class="md:hidden flex items-center">
-            <button
-              id="mobile-menu-btn"
-              class="text-gray-600 hover:text-black focus:outline-none p-2"
-            >
-              <svg
-                class="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
-          </div>
+.hero-stats{
+  display:flex;gap:36px;margin-top:56px;
+  padding-top:36px;border-top:1px solid rgba(255,255,255,.1);
+  position:relative;z-index:1;flex-wrap:wrap;
+}
+.hstat-num{font-size:28px;font-weight:900;color:var(--gold)}
+.hstat-lbl{font-size:12px;color:rgba(255,255,255,.4);font-weight:600;margin-top:2px}
+
+/* يمين — صورة */
+.hero-right{
+  position:relative;overflow:hidden;
+}
+.hero-img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  display:block;
+}
+/* overlay على الصورة */
+.hero-right::before{
+  content:"";position:absolute;inset:0;z-index:1;
+  background:linear-gradient(
+    200deg,
+    rgba(42,58,77,.2) 0%,
+    rgba(20,164,141,.15) 60%,
+    rgba(247,175,60,.1) 100%
+  );
+}
+/* بطاقة floating فوق الصورة */
+.hero-float-card{
+  position:absolute;bottom:40px;right:32px;z-index:3;
+  background:rgba(255,255,255,.95);
+  backdrop-filter:blur(12px);
+  border-radius:12px;padding:16px 20px;
+  border-right:4px solid var(--gold);
+  box-shadow:0 12px 40px rgba(42,58,77,.25);
+  min-width:200px;
+}
+.hfc-label{font-size:10px;font-weight:800;color:var(--jade);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.hfc-title{font-size:15px;font-weight:900;color:var(--navy);margin-bottom:4px}
+.hfc-sub{font-size:12px;color:#7A9AB5;font-weight:600}
+.hfc-avatars{display:flex;margin-top:10px}
+.hfc-avatar{
+  width:28px;height:28px;border-radius:50%;
+  border:2px solid #fff;margin-left:-8px;
+  background:var(--gold);display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:900;color:var(--navy);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TICKER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.ticker-wrap{
+  background:rgba(42,58,77,.06);
+  border-top:1px solid rgba(42,58,77,.1);
+  border-bottom:1px solid rgba(42,58,77,.1);
+  padding:12px 0;overflow:hidden;
+}
+@keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(50%)}}
+.ticker-inner{display:flex;width:max-content;animation:ticker-scroll 38s linear infinite}
+.ticker-inner:hover{animation-play-state:paused}
+.t-item{display:flex;align-items:center;padding-left:28px;color:#5A7A94;font-size:13px;font-weight:600;white-space:nowrap}
+.t-sep{margin-right:28px;color:var(--gold);font-size:14px}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SECTION HELPERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.sec-label{
+  font-size:11px;font-weight:900;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--gold);
+  background:rgba(247,175,60,.1);border:1px solid rgba(247,175,60,.3);
+  border-radius:4px;padding:4px 12px;
+  display:inline-block;margin-bottom:14px;
+}
+.sec-h{font-size:clamp(28px,4vw,40px);font-weight:900;color:var(--navy);letter-spacing:-.02em;line-height:1.15}
+.sec-p{color:#7A9AB5;font-size:16px;line-height:1.75;margin-top:10px}
+
+/* fade-up animation */
+.fu{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.fu.in{opacity:1;transform:none}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   OCCASIONS — horizontal cards
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#occasions{background:var(--white);padding:88px 0}
+.occ-track{
+  display:flex;gap:16px;
+  overflow-x:auto;padding:8px 32px 24px;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+}
+.occ-track::-webkit-scrollbar{display:none}
+.occ-card{
+  flex:0 0 220px;scroll-snap-align:start;
+  background:#F7F9FC;border-radius:14px;
+  border:1.5px solid #E0E8F0;
+  padding:28px 20px;text-decoration:none;
+  transition:all .25s;text-align:center;
+  position:relative;overflow:hidden;
+}
+.occ-card::before{
+  content:"";position:absolute;
+  bottom:0;left:0;right:0;height:3px;
+  background:var(--gold);transform:scaleX(0);
+  transition:transform .22s;
+}
+.occ-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(42,58,77,.10);border-color:rgba(247,175,60,.4);background:#fff}
+.occ-card:hover::before{transform:scaleX(1)}
+.occ-icon-wrap{
+  width:64px;height:64px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 18px;font-size:26px;transition:transform .25s;
+}
+.occ-card:hover .occ-icon-wrap{transform:translateY(-4px) scale(1.08)}
+.occ-name{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:10px}
+.occ-go{
+  font-size:12px;font-weight:800;color:#9AB5CB;
+  transition:color .2s;display:flex;align-items:center;justify-content:center;gap:4px;
+}
+.occ-card:hover .occ-go{color:var(--gold)}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TEMPLATES — masonry-feel grid
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#templates{background:var(--bg);padding:88px 0}
+.tpl-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:20px;
+}
+.tpl-card{
+  background:#fff;border-radius:14px;
+  border:1.5px solid #E0E8F0;
+  overflow:hidden;transition:all .25s;
+}
+.tpl-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(42,58,77,.10);border-color:rgba(247,175,60,.45)}
+.tpl-img-wrap{position:relative;aspect-ratio:1;overflow:hidden;background:#EEF2F7}
+.tpl-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .45s}
+.tpl-card:hover .tpl-img-wrap img{transform:scale(1.05)}
+.tpl-badge-wrap{position:absolute;top:10px;right:10px}
+.tpl-badge{background:var(--ember);color:#fff;font-size:10px;font-weight:900;padding:3px 10px;border-radius:4px}
+.tpl-body{padding:16px}
+.tpl-title{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:12px}
+.tpl-cta{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:10px;border-radius:8px;
+  background:var(--bg);border:1.5px solid #DDE5EF;
+  color:var(--navy);font-size:13px;font-weight:800;
+  text-decoration:none;transition:all .2s;
+}
+.tpl-cta:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   FEATURES — icon-left layout
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#features{background:var(--white);padding:88px 0}
+.feat-list{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.feat-card{
+  padding:32px 28px;border-radius:14px;
+  background:#F7F9FC;border:1.5px solid #E0E8F0;
+  transition:all .22s;position:relative;overflow:hidden;
+}
+.feat-card::after{
+  content:"";position:absolute;
+  top:0;right:0;left:0;height:3px;
+  background:transparent;transition:background .22s;
+}
+.feat-card:hover{box-shadow:0 12px 36px rgba(42,58,77,.08);transform:translateY(-3px)}
+.feat-card.c1:hover::after{background:var(--gold)}
+.feat-card.c2:hover::after{background:var(--jade)}
+.feat-card.c3:hover::after{background:var(--ember)}
+.feat-icon{
+  width:52px;height:52px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;color:#fff;margin-bottom:20px;
+  box-shadow:0 4px 14px rgba(0,0,0,.2);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   GAME BANNER — full bleed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#game-banner{
+  background:var(--navy);
+  padding:0;overflow:hidden;
+  display:grid;grid-template-columns:1fr 1fr;min-height:320px;
+}
+.game-left{
+  padding:64px 56px;
+  display:flex;flex-direction:column;justify-content:center;
+  background:linear-gradient(135deg,var(--navy) 60%,#1E2C3A 100%);
+  position:relative;
+}
+.game-label{font-size:11px;font-weight:900;letter-spacing:.8px;text-transform:uppercase;color:var(--jade);margin-bottom:14px}
+.game-h{font-size:32px;font-weight:900;color:#fff;margin-bottom:12px;line-height:1.15}
+.game-p{color:rgba(255,255,255,.6);font-size:15px;line-height:1.7;margin-bottom:28px}
+.game-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--gold);color:var(--navy);
+  padding:13px 28px;border-radius:6px;
+  font-weight:900;font-size:15px;text-decoration:none;
+  border-bottom:3px solid #C88820;width:fit-content;
+  box-shadow:0 4px 18px rgba(247,175,60,.35);
+  transition:all .2s;
+}
+.game-btn:hover{background:#FFCC6E;transform:translateY(-2px)}
+.game-right{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,var(--gold) 0%,var(--ember) 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+.game-right::before{
+  content:"";position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.15) 1px,transparent 1px);
+  background-size:18px 18px;
+}
+.dice-big{font-size:120px;filter:drop-shadow(0 8px 32px rgba(0,0,0,.25));position:relative;z-index:1;animation:dice-float 3s ease-in-out infinite}
+@keyframes dice-float{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-12px) rotate(5deg)}}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   STEPS — numbered horizontal
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#steps{background:var(--bg);padding:88px 0}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative}
+.steps-grid::before{
+  content: "";
+    position: absolute;
+    top: 28px;
+    right: calc(12% + 28px);
+    left: calc(16% + 28px);
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--jade));
+    pointer-events: none;
+}
+.step{padding:0 32px;text-align:center;position:relative}
+.step-num-wrap{
+  width:56px;height:56px;border-radius:14px;
+  background:var(--navy);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:900;
+  margin:0 auto 20px;
+  box-shadow:0 4px 16px rgba(42,58,77,.2);
+  position:relative;z-index:1;
+  border:3px solid var(--gold);
+}
+.step-title{font-size:17px;font-weight:900;color:var(--navy);margin-bottom:8px}
+.step-desc{font-size:13px;color:#7A9AB5;line-height:1.65}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PRICING — side by side
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#pricing{background:var(--white);padding:88px 0}
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:860px;margin:0 auto}
+.pc-free{
+  border-radius:16px;background:#F7F9FC;
+  border:1.5px solid #E0E8F0;border-top:4px solid var(--navy);
+  padding:36px 32px;display:flex;flex-direction:column;
+}
+.pc-pro{
+  border-radius:16px;background:var(--navy);
+  border:1.5px solid rgba(247,175,60,.3);border-top:4px solid var(--gold);
+  padding:36px 32px;display:flex;flex-direction:column;
+  position:relative;box-shadow:0 16px 48px rgba(42,58,77,.3);
+  transform:translateY(-8px);
+}
+.pc-badge{
+  position:absolute;top:-14px;right:50%;transform:translateX(50%);
+  background:var(--jade);color:#fff;
+  font-size:11px;font-weight:900;padding:5px 18px;border-radius:6px;
+  white-space:nowrap;
+}
+.pc-price{font-size:44px;font-weight:900;margin:16px 0 24px;line-height:1}
+.pc-free .pc-price{color:var(--navy)}
+.pc-pro .pc-price{color:var(--gold)}
+.pc-list{flex:1;display:flex;flex-direction:column;gap:14px;margin-bottom:28px}
+.pc-item{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600}
+.pc-free .pc-item{color:#3A5268}
+.pc-pro .pc-item{color:rgba(255,255,255,.8)}
+.pc-check-free{color:var(--jade);font-size:15px}
+.pc-check-pro{color:var(--gold);font-size:15px}
+.pc-btn-free{
+  display:block;text-align:center;padding:14px;border-radius:8px;
+  border:2px solid var(--navy);color:var(--navy);font-weight:900;font-size:15px;
+  text-decoration:none;transition:all .2s;
+}
+.pc-btn-free:hover{background:var(--navy);color:#fff}
+.pc-btn-pro{
+  display:block;text-align:center;padding:14px;border-radius:8px;
+  background:var(--gold);color:var(--navy);font-weight:900;font-size:15px;
+  text-decoration:none;transition:all .2s;
+  border-bottom:3px solid #C88820;
+  box-shadow:0 4px 18px rgba(247,175,60,.35);
+}
+.pc-btn-pro:hover{background:#FFCC6E;transform:translateY(-1px)}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   FAQ — accordion
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#faq{background:var(--bg);padding:88px 0}
+.faq-list{display:flex;flex-direction:column;gap:10px;max-width:700px;margin:0 auto}
+.faq-item{
+  background:#fff;border-radius:12px;
+  border:1.5px solid #E0E8F0;overflow:hidden;
+  transition:border-color .2s;
+}
+.faq-item.open{border-color:var(--gold)}
+.faq-head{
+  padding:18px 22px;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+}
+.faq-head h3{font-size:15px;font-weight:800;color:var(--navy);text-align:right}
+.faq-chevron{
+  width:30px;height:30px;border-radius:6px;
+  background:#F0F3F8;display:flex;align-items:center;justify-content:center;
+  color:var(--gold);font-size:12px;flex-shrink:0;
+  transition:transform .25s,background .2s;
+}
+.faq-item.open .faq-chevron{transform:rotate(180deg);background:var(--gold);color:#fff}
+.faq-body{
+  max-height:0;overflow:hidden;
+  transition:max-height .35s ease;
+  padding:0 22px;color:#5A7A94;font-size:14px;line-height:1.75;
+}
+.faq-item.open .faq-body{max-height:160px;padding-bottom:18px}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   CTA BOTTOM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#cta-bottom{
+  background:var(--navy);padding:100px 0;
+  position:relative;overflow:hidden;
+}
+#cta-bottom::before{
+  content:"";position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(247,175,60,.08) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+#cta-bottom::after{
+  content:"";position:absolute;bottom:0;left:0;right:0;
+  height:4px;background:linear-gradient(90deg,var(--jade),var(--gold),var(--ember));
+}
+.cta-inner{position:relative;z-index:1;text-align:center;max-width:580px;margin:0 auto;padding:0 24px}
+.cta-inner h2{font-size:clamp(32px,5vw,48px);font-weight:900;color:#fff;letter-spacing:-.02em;margin-bottom:14px}
+.cta-inner p{color:rgba(255,255,255,.5);font-size:17px;margin-bottom:36px;line-height:1.7}
+.cta-main-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--gold);color:var(--navy);
+  padding:16px 40px;border-radius:8px;
+  font-size:17px;font-weight:900;text-decoration:none;
+  border-bottom:4px solid #C88820;
+  box-shadow:0 6px 28px rgba(247,175,60,.45);
+  transition:all .22s;
+}
+.cta-main-btn:hover{background:#FFCC6E;transform:translateY(-3px);box-shadow:0 12px 40px rgba(247,175,60,.55)}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PARTNERS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#partners{background:#1A2A3A;padding:72px 0}
+.partner-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.pcard{
+  border-radius:16px;background:#243548;
+  border:1.5px solid rgba(255,255,255,.07);
+  padding:32px 28px;text-decoration:none;
+  display:flex;align-items:center;gap:20px;
+  transition:all .25s;
+}
+.pcard.a:hover{border-color:var(--azure);box-shadow:0 12px 36px rgba(91,192,234,.15)}
+.pcard.e:hover{border-color:var(--ember);box-shadow:0 12px 36px rgba(250,98,103,.15)}
+.pcard:hover{transform:translateY(-4px)}
+.pcard-icon{
+  width:56px;height:56px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;flex-shrink:0;transition:transform .25s;
+}
+.pcard:hover .pcard-icon{transform:scale(1.1)}
+.pcard-text h3{font-size:18px;font-weight:900;color:#fff;margin-bottom:6px;transition:color .2s}
+.pcard.a:hover .pcard-text h3{color:var(--azure)}
+.pcard.e:hover .pcard-text h3{color:var(--ember)}
+.pcard-text p{font-size:13px;color:#7A9AB5;line-height:1.6;margin-bottom:10px}
+.pcard-go{font-size:12px;font-weight:800;display:flex;align-items:center;gap:4px}
+.pcard.a .pcard-go{color:var(--azure)}
+.pcard.e .pcard-go{color:var(--ember)}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   FOOTER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#footer{
+  background:var(--navy);
+  border-top:3px solid var(--gold);
+  padding:64px 0 32px;
+}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-brand p{color:rgba(255,255,255,.45);font-size:14px;line-height:1.75;margin-top:16px;max-width:300px}
+.footer-logo img{width:120px;filter:brightness(0) invert(1)}
+.footer-socials{display:flex;gap:10px;margin-top:20px}
+.footer-socials a{
+  width:38px;height:38px;border-radius:8px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.5);font-size:15px;text-decoration:none;
+  transition:all .18s;
+}
+.footer-socials a:hover{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+.footer-col h4{font-size:13px;font-weight:900;color:var(--gold);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col ul a{color:rgba(255,255,255,.45);font-size:14px;text-decoration:none;font-weight:600;transition:color .15s}
+.footer-col ul a:hover{color:#fff}
+.footer-bottom{
+  border-top:1px solid rgba(255,255,255,.08);
+  padding-top:24px;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:12px;
+}
+.footer-bottom p{color:rgba(255,255,255,.3);font-size:13px}
+.footer-heart{color:var(--ember)}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RESPONSIVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.container{max-width:1240px;margin:0 auto;padding:0 32px}
+
+@media(max-width:1024px){
+  #hero{grid-template-columns:1fr}
+  .hero-right{display:none}
+  .hero-left::after{display:none}
+  .hero-left{padding:100px 32px 80px}
+  #game-banner{grid-template-columns:1fr}
+  .game-right{display:none}
+  .feat-list{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr;max-width:440px}
+  .pc-pro{transform:none}
+  .steps-grid{grid-template-columns:1fr;gap:36px}
+  .steps-grid::before{display:none}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .partner-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav-login{display:none}
+  .nav-hamburger{display:block}
+  .hero-left{padding:90px 24px 64px}
+  .hero-stats{gap:24px}
+  .container{padding:0 20px}
+  .footer-grid{grid-template-columns:1fr}
+  #game-banner{display:block}
+  .game-left{padding:48px 24px}
+  .occ-track{padding:8px 20px 20px}
+  #steps,#features,#templates,#occasions,#pricing,#faq,#cta-bottom,#partners{padding:64px 0}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ NAVBAR ══════════ -->
+<nav id="navbar">
+  <a href="/index.html" class="nav-logo"><img src="images/logo.webp" alt="سَلِّم"/></a>
+  <div class="nav-links">
+    <a href="#" class="active">الرئيسية</a>
+    <a href="#features">المميزات</a>
+    <a href="#templates">القوالب</a>
+    <a href="#pricing">الأسعار</a>
+  </div>
+  <div class="nav-actions">
+    <a href="/login" class="nav-login">تسجيل الدخول</a>
+    <a href="/editor.html" class="nav-cta"><i class="fa-solid fa-pen-nib"></i> المحرر</a>
+    <div class="nav-hamburger" id="ham-btn"><i class="fa-solid fa-bars"></i></div>
+  </div>
+</nav>
+
+<div id="mobile-menu">
+  <a href="#">الرئيسية</a>
+  <a href="#features">المميزات</a>
+  <a href="#templates">القوالب</a>
+  <a href="#pricing">الأسعار</a>
+  <a href="/login">تسجيل الدخول</a>
+  <a href="/editor.html" class="mob-cta">افتح المحرر</a>
+</div>
+
+<!-- ══════════ HERO ══════════ -->
+<section id="hero">
+  <!-- يسار: نص -->
+  <div class="hero-left">
+    <div class="hero-badge fu"><span class="pulse"></span> نسخة تجريبية — قوالب جديدة باستمرار</div>
+    <h1 class="hero-h1 fu" style="animation-delay:.08s">
+      صمّم لحظتك<br/>
+      <span class="line2">بأناقة لا تُنسى</span>
+    </h1>
+    <p class="hero-p fu" style="animation-delay:.16s">قوالب فاخرة، تخصيص كامل، ومشاركة فورية — كل ما تحتاجه في مكان واحد</p>
+    <div class="hero-btns fu" style="animation-delay:.24s">
+      <a href="/editor.html" class="hbtn hbtn-gold">ابدأ التصميم <i class="fa-solid fa-arrow-left"></i></a>
+      <a href="#" class="hbtn hbtn-outline">أطلق ديوانيتك ✨</a>
+    </div>
+    <div class="hero-stats fu" style="animation-delay:.32s">
+      <div><div class="hstat-num">+٥٠,٠٠٠</div><div class="hstat-lbl">بطاقة مصممة</div></div>
+      <div><div class="hstat-num">+٢٠</div><div class="hstat-lbl">قالب جاهز</div></div>
+      <div><div class="hstat-num">٨</div><div class="hstat-lbl">خطوط عربية</div></div>
+    </div>
+  </div>
+  <!-- يمين: صورة -->
+  <div class="hero-right">
+    <img class="hero-img"
+      src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=85&w=1200&auto=format&fit=crop"
+      alt="تصميم بطاقات"/>
+    <div class="hero-float-card">
+      <div class="hfc-label">✦ أحدث تصميم</div>
+      <div class="hfc-title">بطاقة عيد الأضحى ١٤٤٧</div>
+      <div class="hfc-sub">تم التصميم قبل دقيقتين</div>
+      <div class="hfc-avatars">
+        <div class="hfc-avatar">أ</div>
+        <div class="hfc-avatar" style="background:var(--jade);color:#fff">م</div>
+        <div class="hfc-avatar" style="background:var(--ember);color:#fff">س</div>
+        <div class="hfc-avatar" style="background:#243548;color:var(--gold)">+٩</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TICKER ══════════ -->
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <div style="display:flex">
+      <span class="t-item">تم إضافة لعبة العيدية التفاعلية<span class="t-sep">✦</span></span>
+      <span class="t-item">قوالب جديدة تُضاف أسبوعياً<span class="t-sep">✦</span></span>
+      <span class="t-item">أطلق ديوانيتك الخاصة الآن<span class="t-sep">✦</span></span>
+      <span class="t-item">حلول مخصصة للشركات والمؤسسات<span class="t-sep">✦</span></span>
+      <span class="t-item">نسخة العيد 2026 متاحة الآن<span class="t-sep">✦</span></span>
+    </div>
+    <div style="display:flex">
+      <span class="t-item">تم إضافة لعبة العيدية التفاعلية<span class="t-sep">✦</span></span>
+      <span class="t-item">قوالب جديدة تُضاف أسبوعياً<span class="t-sep">✦</span></span>
+      <span class="t-item">أطلق ديوانيتك الخاصة الآن<span class="t-sep">✦</span></span>
+      <span class="t-item">حلول مخصصة للشركات والمؤسسات<span class="t-sep">✦</span></span>
+      <span class="t-item">نسخة العيد 2026 متاحة الآن<span class="t-sep">✦</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ OCCASIONS ══════════ -->
+<section id="occasions">
+  <div class="container">
+    <div class="fu" style="margin-bottom:40px">
+      <span class="sec-label">المناسبات</span>
+      <h2 class="sec-h">اختر مناسبتك</h2>
+      <p class="sec-p">بطاقات لكل لحظة تستحق التذكر</p>
+    </div>
+  </div>
+  <div class="occ-track">
+
+    <a class="occ-card fu" href="/editor.html" style="animation-delay:.28s">
+      <div class="occ-icon-wrap" style="background:rgba(42,58,77,.08)"><i class="fa-solid fa-briefcase" style="color:var(--navy)"></i></div>
+      <div class="occ-name">بطاقة الدعوات</div>
+      <div class="occ-go">استعرض <i class="fa-solid fa-arrow-left text-xs"></i></div>
+    </a>
+    <a class="occ-card fu" href="/editor.html" style="animation-delay:.35s">
+      <div class="occ-icon-wrap" style="background:rgba(20,164,141,.1)"><i class="fa-solid fa-star-and-crescent" style="color:var(--jade)"></i></div>
+      <div class="occ-name">المناسبات الدينية</div>
+      <div class="occ-go">استعرض <i class="fa-solid fa-arrow-left text-xs"></i></div>
+    </a>
+  </div>
+</section>
+
+<!-- ══════════ TEMPLATES ══════════ -->
+<section id="templates">
+  <div class="container">
+    <div class="fu" style="margin-bottom:40px">
+      <span class="sec-label">القوالب</span>
+      <h2 class="sec-h">صمّم تهنئتك</h2>
+      <p class="sec-p">مجانية ١٠٠٪ — ابدأ التخصيص الآن</p>
+    </div>
+    <div class="tpl-grid">
+      <div class="tpl-card fu">
+        <div class="tpl-img-wrap">
+          <img src="images/1.png" alt="الخط الديواني"
+            onerror="this.src='images/1.png'"/>
+          <div class="tpl-badge-wrap"><span class="tpl-badge">مجاني</span></div>
+        </div>
+        <div class="tpl-body">
+          <div class="tpl-title">تصميم الخط الديواني الملكي</div>
+          <a href="/editor.html" class="tpl-cta">ابدأ التصميم <i class="fa-solid fa-paintbrush text-xs"></i></a>
         </div>
       </div>
-
-      <div
-        id="mobile-menu"
-        class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl"
-      >
-        <div class="px-4 pt-2 pb-6 space-y-2 text-center flex flex-col">
-          <a
-            href="#"
-            class="block px-3 py-3 rounded-md text-base font-bold text-gray-900 bg-gray-50"
-            >الرئيسية</a
-          >
-          <a
-            href="#features"
-            class="block px-3 py-3 rounded-md text-base font-semibold text-gray-600 hover:bg-gray-50"
-            >المميزات</a
-          >
-          <a
-            href="#templates"
-            class="block px-3 py-3 rounded-md text-base font-semibold text-gray-600 hover:bg-gray-50"
-            >القوالب</a
-          >
-          <hr class="my-2" />
-          <a
-            href="/login"
-            class="block px-3 py-3 rounded-md text-base font-bold text-gray-900"
-            >دخول</a
-          >
-          <a
-            href="/editor.html"
-            class="block px-3 py-3 rounded-xl text-base font-bold text-white bg-black mx-4 mt-2"
-            >افتح المحرر</a
-          >
+      <div class="tpl-card fu" style="animation-delay:.1s">
+        <div class="tpl-img-wrap">
+          <img src="images/2.png" alt="العيد العصرية"
+            onerror="this.src='images/2.png'"/>
+          <div class="tpl-badge-wrap"><span class="tpl-badge">مجاني</span></div>
+        </div>
+        <div class="tpl-body">
+          <div class="tpl-title">بطاقة العيد العصرية</div>
+          <a href="/editor.html" class="tpl-cta">ابدأ التصميم <i class="fa-solid fa-paintbrush text-xs"></i></a>
         </div>
       </div>
-    </nav>
-
-    <main class="flex-1 w-full relative z-10 pt-20">
-      <div>
-        <section style="background: rgb(23, 23, 23); padding: 0px">
-          <div
-            style="
-              min-height: 90vh;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              position: relative;
-              overflow: hidden;
-              background: linear-gradient(
-                135deg,
-                rgb(23, 23, 23) 0%,
-                rgb(38, 38, 38) 100%
-              );
-            "
-          >
-            <div
-              style="
-                position: relative;
-                z-index: 1;
-                max-width: 800px;
-                margin: 0px auto;
-                padding: 120px 24px;
-                text-align: center;
-              "
-            >
-              <div
-                style="
-                  display: inline-flex;
-                  align-items: center;
-                  gap: 8px;
-                  padding: 8px 16px;
-                  background: rgba(255, 255, 255, 0.1);
-                  border-radius: 100px;
-                  margin-bottom: 32px;
-                  border: 1px solid rgba(255, 255, 255, 0.05);
-                "
-              >
-                <div
-                  class="animate-pulse-custom"
-                  style="
-                    width: 8px;
-                    height: 8px;
-                    border-radius: 50%;
-                    background: rgb(198, 248, 6);
-                    box-shadow: rgba(198, 248, 6, 0.5) 0px 0px 10px;
-                  "
-                ></div>
-                <span
-                  style="
-                    font-size: 13px;
-                    color: rgba(255, 255, 255, 0.9);
-                    font-weight: 600;
-                  "
-                  >نسخة تجريبية — جارٍ إضافة قوالب جديدة باستمرار</span
-                >
-              </div>
-              <h1
-                style="
-                  font-size: clamp(36px, 6vw, 64px);
-                  font-weight: 700;
-                  color: rgb(255, 255, 255);
-                  line-height: 1.1;
-                  margin-bottom: 24px;
-                  letter-spacing: -0.02em;
-                "
-              >
-                صمّم بطاقتك<br /><span style="color: rgb(163, 163, 163)"
-                  >بأناقة واحترافية</span
-                >
-              </h1>
-              <p
-                style="
-                  font-size: 18px;
-                  color: rgba(255, 255, 255, 0.5);
-                  max-width: 480px;
-                  margin: 0px auto 40px;
-                  line-height: 1.7;
-                "
-              >
-                اختر من قوالب فاخرة، خصّصها، وشاركها في ثوانٍ
-              </p>
-              <div
-                style="
-                  display: flex;
-                  justify-content: center;
-                  gap: 12px;
-                  flex-wrap: wrap;
-                "
-              >
-                <a
-                  href="/editor.html"
-                  style="
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 14px 28px;
-                    background: rgb(255, 255, 255);
-                    color: rgb(23, 23, 23);
-                    font-size: 15px;
-                    font-weight: 600;
-                    border-radius: 12px;
-                    text-decoration: none;
-                    transition: 200ms;
-                  "
-                >
-                  ابدأ التصميم
-                  <i class="fa-solid fa-arrow-left"></i>
-                </a>
-                <a
-                  href="/create-diwaniya"
-                  style="
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 14px 28px;
-                    background: linear-gradient(
-                      135deg,
-                      rgb(168, 85, 247) 0%,
-                      rgb(126, 34, 206) 100%
-                    );
-                    color: rgb(255, 255, 255);
-                    font-size: 15px;
-                    font-weight: 700;
-                    border-radius: 12px;
-                    text-decoration: none;
-                    box-shadow: rgba(168, 85, 247, 0.3) 0px 4px 14px;
-                    transition: 200ms;
-                  "
-                  >أطلق ديوانيتك ✨</a
-                >
-                <a
-                  href="/dashboard/diwaniya"
-                  style="
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 14px 28px;
-                    background: linear-gradient(
-                      135deg,
-                      rgb(255, 215, 0) 0%,
-                      rgb(255, 140, 0) 100%
-                    );
-                    color: rgb(23, 23, 23);
-                    font-size: 15px;
-                    font-weight: 700;
-                    border-radius: 12px;
-                    text-decoration: none;
-                    box-shadow: rgba(255, 140, 0, 0.3) 0px 4px 14px;
-                    transition: 200ms;
-                  "
-                >
-                  <span style="font-size: 18px">🎲</span>لعبة العيدية
-                </a>
-              </div>
-              <div
-                style="
-                  display: flex;
-                  justify-content: center;
-                  gap: 48px;
-                  margin-top: 80px;
-                  flex-wrap: wrap;
-                "
-              >
-                <div style="text-align: center">
-                  <div
-                    style="
-                      font-size: 32px;
-                      font-weight: 700;
-                      color: rgb(255, 255, 255);
-                    "
-                  >
-                    +٥٠,٠٠٠
-                  </div>
-                  <div
-                    style="
-                      font-size: 14px;
-                      color: rgba(255, 255, 255, 0.4);
-                      margin-top: 4px;
-                    "
-                  >
-                    بطاقة
-                  </div>
-                </div>
-                <div style="text-align: center">
-                  <div
-                    style="
-                      font-size: 32px;
-                      font-weight: 700;
-                      color: rgb(255, 255, 255);
-                    "
-                  >
-                    +٢٠
-                  </div>
-                  <div
-                    style="
-                      font-size: 14px;
-                      color: rgba(255, 255, 255, 0.4);
-                      margin-top: 4px;
-                    "
-                  >
-                    قالب
-                  </div>
-                </div>
-                <div style="text-align: center">
-                  <div
-                    style="
-                      font-size: 32px;
-                      font-weight: 700;
-                      color: rgb(255, 255, 255);
-                    "
-                  >
-                    ٨
-                  </div>
-                  <div
-                    style="
-                      font-size: 14px;
-                      color: rgba(255, 255, 255, 0.4);
-                      margin-top: 4px;
-                    "
-                  >
-                    خطوط
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            style="
-              background: rgb(10, 10, 10);
-              border-top: 1px solid rgba(255, 255, 255, 0.05);
-              border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-              padding: 14px 0px;
-              overflow: hidden;
-              position: relative;
-              width: 100%;
-              direction: rtl;
-            "
-          >
-            <div class="ticker-container">
-              <div style="display: flex">
-                <div class="ticker-item">
-                  <span style="color: rgba(255, 255, 255, 0.85)"
-                    >تم إضافة لعبة العيدية التفاعلية - انشئ تحدياتك الخاصة</span
-                  ><span class="ticker-item-separator">✧</span>
-                </div>
-                <div class="ticker-item">
-                  <span style="color: rgba(255, 255, 255, 0.85)"
-                    >جاري إضافة ثيمات وقوالب جديدة بشكل مستمر</span
-                  ><span class="ticker-item-separator">✧</span>
-                </div>
-                <div class="ticker-item">
-                  <span style="color: rgba(255, 255, 255, 0.85)"
-                    >تم إضافة فكرة الديوانية - اطلق ديوانيتك الآن</span
-                  ><span class="ticker-item-separator">✧</span>
-                </div>
-                <div class="ticker-item">
-                  <span style="color: rgba(255, 255, 255, 0.85)"
-                    >للشركات والمؤسسات التي تريد تخصيص النظام تواصل معنا</span
-                  ><span class="ticker-item-separator">✧</span>
-                </div>
-                <div class="ticker-item">
-                  <span style="color: rgba(255, 255, 255, 0.85)"
-                    >اكتشف الميزات الجديدة في نسخة العيد 2026</span
-                  ><span class="ticker-item-separator">✧</span>
-                </div>
-              </div>
-              <div style="display: flex">
-                <div class="ticker-item">
-                  <span style="color: rgba(255, 255, 255, 0.85)"
-                    >تم إضافة لعبة العيدية التفاعلية - انشئ تحدياتك الخاصة</span
-                  ><span class="ticker-item-separator">✧</span>
-                </div>
-                <div class="ticker-item">
-                  <span style="color: rgba(255, 255, 255, 0.85)"
-                    >جاري إضافة ثيمات وقوالب جديدة بشكل مستمر</span
-                  ><span class="ticker-item-separator">✧</span>
-                </div>
-                <div class="ticker-item">
-                  <span style="color: rgba(255, 255, 255, 0.85)"
-                    >تم إضافة فكرة الديوانية - اطلق ديوانيتك الآن</span
-                  ><span class="ticker-item-separator">✧</span>
-                </div>
-                <div class="ticker-item">
-                  <span style="color: rgba(255, 255, 255, 0.85)"
-                    >للشركات والمؤسسات التي تريد تخصيص النظام تواصل معنا</span
-                  ><span class="ticker-item-separator">✧</span>
-                </div>
-                <div class="ticker-item">
-                  <span style="color: rgba(255, 255, 255, 0.85)"
-                    >اكتشف الميزات الجديدة في نسخة العيد 2026</span
-                  ><span class="ticker-item-separator">✧</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section
-          style="
-            padding: 80px 0px;
-            background: rgb(255, 255, 255);
-            overflow: hidden;
-          "
-        >
-          <div style="max-width: 1400px; margin: 0px auto; padding: 0px 24px">
-            <div style="text-align: center; margin-bottom: 48px">
-              <h2
-                style="
-                  font-size: clamp(32px, 5vw, 48px);
-                  font-weight: 800;
-                  color: rgb(23, 23, 23);
-                  margin-bottom: 16px;
-                  letter-spacing: -0.02em;
-                "
-              >
-                بطاقات مناسبات مميزة
-              </h2>
-              <p
-                style="
-                  font-size: 18px;
-                  color: rgb(115, 115, 115);
-                  max-width: 600px;
-                  margin: 0px auto;
-                  line-height: 1.6;
-                "
-              >
-                اختر مكتبة تصاميمنا الفاخرة لكل مناسباتك، صممها في ثوانٍ وشاركها
-                بكل حب
-              </p>
-            </div>
-            <div style="position: relative" class="group">
-              <button
-                id="slide-left"
-                class="slider-arrow absolute left-[-20px] top-1/2 -translate-y-1/2 z-10 w-14 h-14 rounded-full bg-white border border-gray-200 hidden md:flex items-center justify-center cursor-pointer shadow-lg hover:bg-gray-900 hover:text-white transition-all duration-300"
-              >
-                <i class="fa-solid fa-chevron-left text-inherit"></i>
-              </button>
-
-              <button
-                id="slide-right"
-                class="slider-arrow absolute right-[-20px] top-1/2 -translate-y-1/2 z-10 w-14 h-14 rounded-full bg-white border border-gray-200 hidden md:flex items-center justify-center cursor-pointer shadow-lg hover:bg-gray-900 hover:text-white transition-all duration-300"
-              >
-                <i class="fa-solid fa-chevron-right text-inherit"></i>
-              </button>
-
-              <div
-                id="occasions-slider"
-                class="hide-scrollbar"
-                style="
-                  display: flex;
-                  gap: 24px;
-                  overflow-x: auto;
-                  padding: 20px 4px 40px;
-                  cursor: grab;
-                  scroll-snap-type: x mandatory;
-                  scroll-behavior: smooth;
-                "
-              >
-                <div
-                  style="flex: 0 0 auto; width: 340px; scroll-snap-align: start"
-                >
-                  <a
-                    class="occasion-card-link group"
-                    href="/editor.html"
-                    style="
-                      display: flex;
-                      flex-direction: column;
-                      align-items: center;
-                      justify-content: center;
-                      padding: 40px 24px;
-                      border-radius: 32px;
-                      background: rgb(255, 255, 255);
-                      border: 1px solid rgb(240, 240, 240);
-                      text-decoration: none;
-                      transition: 0.3s;
-                      height: 100%;
-                      position: relative;
-                      overflow: hidden;
-                    "
-                  >
-                    <div
-                      class="icon-container"
-                      style="
-                        width: 80px;
-                        height: 80px;
-                        border-radius: 24px;
-                        background: rgb(240, 253, 250);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        margin-bottom: 24px;
-                        transition: 0.3s;
-                      "
-                    >
-                      <i class="fa-solid fa-moon text-4xl text-teal-600"></i>
-                    </div>
-                    <h3
-                      style="
-                        font-size: 22px;
-                        font-weight: 700;
-                        color: rgb(23, 23, 23);
-                        margin-bottom: 16px;
-                      "
-                    >
-                      بطاقات العيد
-                    </h3>
-                    <div
-                      class="browse-btn"
-                      style="
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        padding: 10px 24px;
-                        border-radius: 100px;
-                        background: rgb(248, 250, 252);
-                        color: rgb(100, 116, 139);
-                        font-size: 14px;
-                        font-weight: 600;
-                        transition: 0.3s;
-                      "
-                    >
-                      استعرض
-                      <i
-                        class="fa-solid fa-arrow-left text-sm ml-1 group-hover:-translate-x-1 transition-transform"
-                      ></i>
-                    </div>
-                  </a>
-                </div>
-
-                <div
-                  style="flex: 0 0 auto; width: 300px; scroll-snap-align: start"
-                >
-                  <a
-                    class="occasion-card-link group"
-                    href="/editor.html"
-                    style="
-                      display: flex;
-                      flex-direction: column;
-                      align-items: center;
-                      justify-content: center;
-                      padding: 40px 24px;
-                      border-radius: 32px;
-                      background: rgb(255, 255, 255);
-                      border: 1px solid rgb(240, 240, 240);
-                      text-decoration: none;
-                      transition: 0.3s;
-                      height: 100%;
-                      position: relative;
-                      overflow: hidden;
-                    "
-                  >
-                    <div
-                      class="icon-container"
-                      style="
-                        width: 80px;
-                        height: 80px;
-                        border-radius: 24px;
-                        background: rgb(253, 242, 248);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        margin-bottom: 24px;
-                        transition: 0.3s;
-                      "
-                    >
-                      <i class="fa-solid fa-ring text-4xl text-pink-600"></i>
-                    </div>
-                    <h3
-                      style="
-                        font-size: 22px;
-                        font-weight: 700;
-                        color: rgb(23, 23, 23);
-                        margin-bottom: 16px;
-                      "
-                    >
-                      بطاقات الزفاف
-                    </h3>
-                    <div
-                      class="browse-btn"
-                      style="
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        padding: 10px 24px;
-                        border-radius: 100px;
-                        background: rgb(248, 250, 252);
-                        color: rgb(100, 116, 139);
-                        font-size: 14px;
-                        font-weight: 600;
-                        transition: 0.3s;
-                      "
-                    >
-                      استعرض
-                    </div>
-                  </a>
-                </div>
-
-                <div
-                  style="flex: 0 0 auto; width: 300px; scroll-snap-align: start"
-                >
-                  <a
-                    class="occasion-card-link group"
-                    href="/editor.html"
-                    style="
-                      display: flex;
-                      flex-direction: column;
-                      align-items: center;
-                      justify-content: center;
-                      padding: 40px 24px;
-                      border-radius: 32px;
-                      background: rgb(255, 255, 255);
-                      border: 1px solid rgb(240, 240, 240);
-                      text-decoration: none;
-                      transition: 0.3s;
-                      height: 100%;
-                      position: relative;
-                      overflow: hidden;
-                    "
-                  >
-                    <div
-                      class="icon-container"
-                      style="
-                        width: 80px;
-                        height: 80px;
-                        border-radius: 24px;
-                        background: rgb(238, 242, 255);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        margin-bottom: 24px;
-                        transition: 0.3s;
-                      "
-                    >
-                      <i
-                        class="fa-solid fa-graduation-cap text-4xl text-indigo-600"
-                      ></i>
-                    </div>
-                    <h3
-                      style="
-                        font-size: 22px;
-                        font-weight: 700;
-                        color: rgb(23, 23, 23);
-                        margin-bottom: 16px;
-                      "
-                    >
-                      بطاقات التخرج
-                    </h3>
-                    <div
-                      class="browse-btn"
-                      style="
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        padding: 10px 24px;
-                        border-radius: 100px;
-                        background: rgb(248, 250, 252);
-                        color: rgb(100, 116, 139);
-                        font-size: 14px;
-                        font-weight: 600;
-                        transition: 0.3s;
-                      "
-                    >
-                      استعرض
-                    </div>
-                  </a>
-                </div>
-
-                <div
-                  style="flex: 0 0 auto; width: 300px; scroll-snap-align: start"
-                >
-                  <a
-                    class="occasion-card-link group"
-                    href="/editor.html"
-                    style="
-                      display: flex;
-                      flex-direction: column;
-                      align-items: center;
-                      justify-content: center;
-                      padding: 40px 24px;
-                      border-radius: 32px;
-                      background: rgb(255, 255, 255);
-                      border: 1px solid rgb(240, 240, 240);
-                      text-decoration: none;
-                      transition: 0.3s;
-                      height: 100%;
-                      position: relative;
-                      overflow: hidden;
-                    "
-                  >
-                    <div
-                      class="icon-container"
-                      style="
-                        width: 80px;
-                        height: 80px;
-                        border-radius: 24px;
-                        background: rgb(240, 253, 244);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        margin-bottom: 24px;
-                        transition: 0.3s;
-                      "
-                    >
-                      <i
-                        class="fa-solid fa-baby-carriage text-4xl text-green-600"
-                      ></i>
-                    </div>
-                    <h3
-                      style="
-                        font-size: 22px;
-                        font-weight: 700;
-                        color: rgb(23, 23, 23);
-                        margin-bottom: 16px;
-                      "
-                    >
-                      بطاقات المواليد
-                    </h3>
-                    <div
-                      class="browse-btn"
-                      style="
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        padding: 10px 24px;
-                        border-radius: 100px;
-                        background: rgb(248, 250, 252);
-                        color: rgb(100, 116, 139);
-                        font-size: 14px;
-                        font-weight: 600;
-                        transition: 0.3s;
-                      "
-                    >
-                      استعرض
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="templates"
-          style="
-            padding: 100px 0px;
-            background: rgb(248, 250, 252);
-            overflow: hidden;
-          "
-        >
-          <div style="max-width: 1400px; margin: 0px auto; padding: 0px 24px">
-            <div style="text-align: center; margin-bottom: 64px">
-              <h2
-                style="
-                  font-size: clamp(32px, 5vw, 44px);
-                  font-weight: 900;
-                  color: rgb(15, 23, 42);
-                  margin-bottom: 16px;
-                  letter-spacing: -0.02em;
-                "
-              >
-                صمم تهنئتك
-              </h2>
-              <p
-                style="
-                  font-size: 17px;
-                  color: rgb(100, 116, 139);
-                  max-width: 600px;
-                  margin: 0px auto;
-                  line-height: 1.6;
-                "
-              >
-                جميع هذه القوالب متاحة للاستخدام مجانًا، ابدأ في تخصيص تصميمك
-                المفضل الآن
-              </p>
-            </div>
-            <div
-              class="flex gap-6 overflow-x-auto pb-12 snap-x snap-mandatory scrollbar-hide"
-            >
-              <div class="flex-none w-[280px] sm:w-[320px] snap-center">
-                <article
-                  class="group relative flex h-full flex-col overflow-hidden rounded-[18px] border border-[#e8edf2] bg-white text-right shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)]"
-                >
-                  <div
-                    class="relative m-3 mb-0 aspect-[6/5] overflow-hidden rounded-[16px] bg-[#f8fafc]"
-                  >
-                    <img
-                      alt="تصميم الخط الديواني الملكي"
-                      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                      src="/templates/جاهزة/10.png"
-                      onerror="
-                        this.src =
-                          'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=400&auto=format&fit=crop'
-                      "
-                    />
-                    <div
-                      class="absolute top-3 right-3 z-10 flex flex-col items-end gap-2"
-                    >
-                      <span
-                        class="inline-flex items-center rounded-full bg-[#e63946] px-3 py-1 text-[11px] font-extrabold text-white shadow-sm"
-                        >مجاني 100%</span
-                      >
-                    </div>
-                  </div>
-                  <div class="flex flex-1 flex-col p-4 pt-3">
-                    <h3
-                      class="mb-4 min-h-[56px] text-[1.05rem] font-bold leading-7 text-slate-900"
-                    >
-                      تصميم الخط الديواني الملكي
-                    </h3>
-                    <div class="mt-auto border-t border-[#eef2f6] pt-3">
-                      <a
-                        href="/editor.html"
-                        class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-[#d7dde5] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-slate-900 transition-all duration-200 hover:border-slate-900 hover:bg-slate-900 hover:text-white"
-                      >
-                        ابدأ التصميم <i class="fa-solid fa-paintbrush mr-1"></i>
-                      </a>
-                    </div>
-                  </div>
-                </article>
-              </div>
-
-              <div class="flex-none w-[280px] sm:w-[320px] snap-center">
-                <article
-                  class="group relative flex h-full flex-col overflow-hidden rounded-[18px] border border-[#e8edf2] bg-white text-right shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)]"
-                >
-                  <div
-                    class="relative m-3 mb-0 aspect-[6/5] overflow-hidden rounded-[16px] bg-[#f8fafc]"
-                  >
-                    <img
-                      alt="بطاقة العيد العصرية"
-                      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                      src="/templates/جاهزة/11.png"
-                      onerror="
-                        this.src =
-                          'https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=400&auto=format&fit=crop'
-                      "
-                    />
-                    <div
-                      class="absolute top-3 right-3 z-10 flex flex-col items-end gap-2"
-                    >
-                      <span
-                        class="inline-flex items-center rounded-full bg-[#e63946] px-3 py-1 text-[11px] font-extrabold text-white shadow-sm"
-                        >مجاني 100%</span
-                      >
-                    </div>
-                  </div>
-                  <div class="flex flex-1 flex-col p-4 pt-3">
-                    <h3
-                      class="mb-4 min-h-[56px] text-[1.05rem] font-bold leading-7 text-slate-900"
-                    >
-                      بطاقة العيد العصرية
-                    </h3>
-                    <div class="mt-auto border-t border-[#eef2f6] pt-3">
-                      <a
-                        href="/editor.html"
-                        class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-[#d7dde5] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-slate-900 transition-all duration-200 hover:bg-slate-900 hover:text-white"
-                      >
-                        ابدأ التصميم <i class="fa-solid fa-paintbrush mr-1"></i>
-                      </a>
-                    </div>
-                  </div>
-                </article>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="py-20 bg-slate-50 relative overflow-hidden">
-          <div class="max-width-5xl mx-auto px-6 relative z-10 max-w-5xl">
-            <div class="flex flex-col md:flex-row gap-8 items-stretch">
-              <div
-                class="flex-1 group relative p-10 rounded-[40px] bg-white border border-slate-200/60 cursor-pointer overflow-hidden transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] hover:-translate-y-2"
-              >
-                <div
-                  class="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-0 group-hover:opacity-100 transition-opacity"
-                ></div>
-                <div class="relative z-10">
-                  <div
-                    class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500"
-                  >
-                    <i class="fa-solid fa-crown text-2xl"></i>
-                  </div>
-                  <h3 class="text-2xl font-black text-slate-900 mb-3">
-                    دعوات زفاف ملكية
-                  </h3>
-                  <p class="text-slate-500 text-sm leading-relaxed mb-8">
-                    نصمم لك ليلة العمر بأدق التفاصيل، دعوات إلكترونية فاخرة تليق
-                    بمناسبتك السعيدة
-                  </p>
-                  <div
-                    class="flex items-center gap-3 text-rose-600 font-black text-sm uppercase tracking-wider"
-                  >
-                    <span>اطلب الآن</span>
-                    <i class="fa-solid fa-arrow-left"></i>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="flex-1 group relative p-10 rounded-[40px] bg-slate-900 cursor-pointer overflow-hidden transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(13,148,136,0.3)] hover:-translate-y-2"
-              >
-                <div
-                  class="absolute top-0 right-0 w-32 h-32 bg-teal-500/20 rounded-full blur-3xl -mr-16 -mt-16 opacity-0 group-hover:opacity-100 transition-opacity"
-                ></div>
-                <div class="relative z-10">
-                  <div
-                    class="w-14 h-14 rounded-2xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500"
-                  >
-                    <i class="fa-solid fa-calendar-check text-2xl"></i>
-                  </div>
-                  <h3 class="text-2xl font-black text-white mb-3">
-                    مناسبات وفعاليات
-                  </h3>
-                  <p class="text-slate-400 text-sm leading-relaxed mb-8">
-                    لجميع مناسباتك الخاصة والعامة، نوفر لك قوالب عصرية وسريعة
-                    التنفيذ بكفاءة عالية
-                  </p>
-                  <div
-                    class="flex items-center gap-3 text-teal-400 font-black text-sm uppercase tracking-wider"
-                  >
-                    <span>تواصل معنا</span>
-                    <i class="fa-solid fa-arrow-left"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="features" class="py-24 bg-white">
-          <div class="max-w-6xl mx-auto px-6 lg:px-8 text-center">
-            <span
-              class="text-xs font-bold text-gray-400 tracking-[0.1em] uppercase"
-              >المميزات</span
-            >
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-3 mb-16">
-              لماذا سَلِّم؟
-            </h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div
-                class="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-shadow duration-300"
-              >
-                <div
-                  class="w-14 h-14 bg-gray-900 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-md"
-                >
-                  <i
-                    class="fa-solid fa-wand-magic-sparkles text-xl text-white"
-                  ></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">
-                  قوالب احترافية
-                </h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                  أكثر من ٢٠ قالب مصمم بعناية ليناسب ذوقك الرفيع.
-                </p>
-              </div>
-
-              <div
-                class="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-shadow duration-300"
-              >
-                <div
-                  class="w-14 h-14 bg-gray-900 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-md"
-                >
-                  <i class="fa-solid fa-file-export text-xl text-white"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">
-                  تصدير عالي الجودة
-                </h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                  حمّل بطاقتك بصيغ PNG و PDF بأعلى دقة ممكنة للطباعة أو النشر.
-                </p>
-              </div>
-
-              <div
-                class="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-shadow duration-300"
-              >
-                <div
-                  class="w-14 h-14 bg-gray-900 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-md"
-                >
-                  <i class="fa-brands fa-whatsapp text-2xl text-white"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-3">
-                  مشاركة فورية
-                </h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                  شارك إبداعك مباشرة عبر واتساب مع الأهل والأصدقاء بضغطة زر.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section
-          style="
-            padding: 60px 0px;
-            background: linear-gradient(
-              135deg,
-              rgb(255, 215, 0) 0%,
-              rgb(255, 140, 0) 100%
-            );
-          "
-        >
-          <div
-            style="
-              max-width: 800px;
-              margin: 0px auto;
-              padding: 0px 24px;
-              text-align: center;
-            "
-          >
-            <h2
-              style="
-                font-size: 28px;
-                font-weight: 800;
-                color: rgb(255, 255, 255);
-                margin-bottom: 12px;
-              "
-            >
-              لعبة العيدية التفاعلية
-            </h2>
-            <p
-              style="
-                font-size: 16px;
-                color: rgba(255, 255, 255, 0.9);
-                margin-bottom: 24px;
-                line-height: 1.6;
-              "
-            >
-              حول تهنئة العيد إلى مغامرة ممتعة - أنشئ أسئلتك، حدد جوائزك، وتنافس
-              مع عائلتك!
-            </p>
-            <a
-              href="/create-game"
-              style="
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 12px 28px;
-                background: rgb(255, 255, 255);
-                color: rgb(23, 23, 23);
-                font-size: 16px;
-                font-weight: 700;
-                border-radius: 12px;
-                text-decoration: none;
-                transition: 200ms;
-              "
-            >
-              ابدأ الآن <i class="fa-solid fa-arrow-left text-sm ml-1"></i>
-            </a>
-          </div>
-        </section>
-
-        <section class="py-24 bg-gray-50">
-          <div class="max-w-4xl mx-auto px-6">
-            <div class="text-center mb-16">
-              <span
-                class="text-xs font-bold text-gray-400 tracking-[0.1em] uppercase"
-                >كيف تعمل</span
-              >
-              <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-3">
-                ثلاث خطوات بسيطة
-              </h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-              <div>
-                <div
-                  class="text-6xl font-black text-gray-200 leading-none mb-4"
-                >
-                  01
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">
-                  اختر القالب
-                </h3>
-                <p class="text-sm text-gray-500">تصفح مكتبة القوالب المميزة</p>
-              </div>
-              <div>
-                <div
-                  class="text-6xl font-black text-gray-200 leading-none mb-4"
-                >
-                  02
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">
-                  خصص التصميم
-                </h3>
-                <p class="text-sm text-gray-500">أضف اسمك ونصوصك الخاصة</p>
-              </div>
-              <div>
-                <div
-                  class="text-6xl font-black text-gray-200 leading-none mb-4"
-                >
-                  03
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">صدّر وشارك</h3>
-                <p class="text-sm text-gray-500">
-                  حمّل التصميم أو شاركه مباشرة
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="pricing" class="py-24 bg-white">
-          <div class="max-w-6xl mx-auto px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-              <span
-                class="text-xs font-bold text-indigo-600 tracking-[0.1em] uppercase"
-                >الباقات</span
-              >
-              <h2
-                class="text-3xl md:text-4xl font-bold text-gray-900 mt-3 mb-4"
-              >
-                اختر ما يناسبك
-              </h2>
-              <p class="text-gray-500 text-lg">
-                باقات مرنة صُممت لتلبي احتياجات الأفراد والشركات بكل احترافية.
-              </p>
-            </div>
-
-            <div
-              class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
-            >
-              <div
-                class="bg-gray-50 rounded-[2rem] border border-gray-200 p-8 sm:p-10 flex flex-col hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-              >
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">
-                  الباقة المجانية
-                </h3>
-                <p class="text-gray-500 text-sm mb-6">
-                  مثالية للاستخدام الشخصي
-                </p>
-                <div class="mb-8">
-                  <span class="text-5xl font-black text-gray-900">مجاناً</span>
-                </div>
-
-                <ul class="space-y-4 mb-8 flex-1 text-right">
-                  <li class="flex items-center gap-3 text-gray-700">
-                    <i
-                      class="fa-solid fa-circle-check text-green-500 text-lg"
-                    ></i>
-                    <span
-                      >تصميم عدد <strong>غير محدود</strong> من البطاقات</span
-                    >
-                  </li>
-                  <li class="flex items-center gap-3 text-gray-700">
-                    <i
-                      class="fa-solid fa-circle-check text-green-500 text-lg"
-                    ></i>
-                    <span>الوصول لمكتبة القوالب الأساسية</span>
-                  </li>
-                  <li class="flex items-center gap-3 text-gray-700">
-                    <i
-                      class="fa-solid fa-circle-check text-green-500 text-lg"
-                    ></i>
-                    <span>تصدير عالي الجودة للصور</span>
-                  </li>
-                </ul>
-
-                <a
-                  href="/editor.html"
-                  class="w-full text-center py-4 rounded-xl bg-white border-2 border-gray-900 text-gray-900 font-bold hover:bg-gray-900 hover:text-white transition-colors duration-300"
-                >
-                  ابدأ مجاناً الآن
-                </a>
-              </div>
-
-              <div
-                class="bg-gray-900 rounded-[2rem] border border-gray-800 p-8 sm:p-10 flex flex-col relative shadow-2xl transform md:-translate-y-4 hover:shadow-indigo-500/20 transition-all duration-300 hover:-translate-y-5"
-              >
-                <div class="absolute top-0 inset-x-0 flex justify-center -mt-3">
-                  <span
-                    class="bg-indigo-500 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg"
-                    >الأكثر طلباً للأعمال</span
-                  >
-                </div>
-
-                <h3 class="text-2xl font-bold text-white mb-2 mt-2">
-                  باقة الشركات
-                </h3>
-                <p class="text-gray-400 text-sm mb-6">
-                  حلول مخصصة تعكس هوية مؤسستك
-                </p>
-                <div class="mb-8">
-                  <span class="text-4xl font-black text-white">تواصل معنا</span>
-                </div>
-
-                <ul class="space-y-4 mb-8 flex-1 text-right">
-                  <li class="flex items-center gap-3 text-gray-300">
-                    <i
-                      class="fa-solid fa-circle-check text-indigo-400 text-lg"
-                    ></i>
-                    <span>تخصيص كامل للنظام بألوان شركتك</span>
-                  </li>
-                  <li class="flex items-center gap-3 text-gray-300">
-                    <i
-                      class="fa-solid fa-circle-check text-indigo-400 text-lg"
-                    ></i>
-                    <span>إزالة العلامة المائية لسَلِّم</span>
-                  </li>
-                  <li class="flex items-center gap-3 text-gray-300">
-                    <i
-                      class="fa-solid fa-circle-check text-indigo-400 text-lg"
-                    ></i>
-                    <span>قوالب VIP خاصة ومغلقة لشركتك فقط</span>
-                  </li>
-                  <li class="flex items-center gap-3 text-gray-300">
-                    <i
-                      class="fa-solid fa-circle-check text-indigo-400 text-lg"
-                    ></i>
-                    <span>دعم فني وأولوية في التنفيذ</span>
-                  </li>
-                </ul>
-
-                <a
-                  href="mailto:sales@solimanw.com"
-                  class="w-full text-center py-4 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-500 transition-colors duration-300 shadow-[0_0_20px_rgba(79,70,229,0.4)]"
-                >
-                  تواصل مع المبيعات <i class="fa-solid fa-headset mr-1"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section style="padding: 100px 0px; background: rgb(255, 255, 255)">
-          <div style="max-width: 700px; margin: 0px auto; padding: 0px 24px">
-            <div style="text-align: center; margin-bottom: 48px">
-              <span
-                style="
-                  font-size: 12px;
-                  font-weight: 600;
-                  color: rgb(163, 163, 163);
-                  letter-spacing: 0.1em;
-                "
-                >الأسئلة</span
-              >
-              <h2
-                style="
-                  font-size: clamp(28px, 4vw, 40px);
-                  font-weight: 700;
-                  color: rgb(23, 23, 23);
-                  margin-top: 12px;
-                "
-              >
-                أسئلة شائعة
-              </h2>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 12px">
-              <div
-                class="faq-item p-5 bg-gray-50 rounded-xl cursor-pointer transition-all duration-300 border border-transparent hover:border-gray-200"
-              >
-                <div class="flex justify-between items-center">
-                  <h3 class="font-bold text-gray-900">هل المنصة مجانية؟</h3>
-                  <i
-                    class="faq-icon fa-solid fa-chevron-down transition-transform duration-300 text-gray-400"
-                  ></i>
-                </div>
-                <div
-                  class="faq-answer hidden mt-4 text-gray-600 text-sm leading-relaxed"
-                >
-                  نعم، يمكنك استخدام القوالب الأساسية وتصميم بطاقتك وتصديرها
-                  بشكل مجاني تماماً. نوفر أيضاً باقات مدفوعة للشركات التي تحتاج
-                  تخصيص أكبر.
-                </div>
-              </div>
-              <div
-                class="faq-item p-5 bg-gray-50 rounded-xl cursor-pointer transition-all duration-300 border border-transparent hover:border-gray-200"
-              >
-                <div class="flex justify-between items-center">
-                  <h3 class="font-bold text-gray-900">
-                    ما جودة الصور المُصدرة؟
-                  </h3>
-                  <i
-                    class="faq-icon fa-solid fa-chevron-down transition-transform duration-300 text-gray-400"
-                  ></i>
-                </div>
-                <div
-                  class="faq-answer hidden mt-4 text-gray-600 text-sm leading-relaxed"
-                >
-                  نقوم بتصدير الصور بجودة عالية (High Resolution) بصيغة PNG أو
-                  PDF لتكون جاهزة للمشاركة على وسائل التواصل الاجتماعي أو
-                  للطباعة.
-                </div>
-              </div>
-              <div
-                class="faq-item p-5 bg-gray-50 rounded-xl cursor-pointer transition-all duration-300 border border-transparent hover:border-gray-200"
-              >
-                <div class="flex justify-between items-center">
-                  <h3 class="font-bold text-gray-900">
-                    هل تعمل المنصة على الهاتف؟
-                  </h3>
-                  <i
-                    class="faq-icon fa-solid fa-chevron-down transition-transform duration-300 text-gray-400"
-                  ></i>
-                </div>
-                <div
-                  class="faq-answer hidden mt-4 text-gray-600 text-sm leading-relaxed"
-                >
-                  بالتأكيد! المنصة مصممة لتكون متجاوبة بالكامل بنسبة 100% مع
-                  جميع الأجهزة (موبايل، تابلت، كمبيوتر) لضمان أفضل تجربة مستخدم.
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section style="padding: 100px 0px; background: rgb(23, 23, 23)">
-          <div
-            style="
-              max-width: 600px;
-              margin: 0px auto;
-              padding: 0px 24px;
-              text-align: center;
-            "
-          >
-            <h2
-              style="
-                font-size: clamp(28px, 4vw, 40px);
-                font-weight: 700;
-                color: rgb(255, 255, 255);
-                margin-bottom: 16px;
-              "
-            >
-              جاهز للبدء؟
-            </h2>
-            <p
-              style="
-                font-size: 16px;
-                color: rgba(255, 255, 255, 0.5);
-                margin-bottom: 32px;
-              "
-            >
-              صمّم بطاقتك الآن مجاناً
-            </p>
-            <a
-              href="/editor.html"
-              style="
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 14px 28px;
-                background: rgb(255, 255, 255);
-                color: rgb(23, 23, 23);
-                font-size: 15px;
-                font-weight: 600;
-                border-radius: 12px;
-                text-decoration: none;
-              "
-            >
-              ابدأ التصميم
-              <i class="fa-solid fa-arrow-left"></i>
-            </a>
-          </div>
-        </section>
-
-        <section
-          style="
-            padding: 120px 0px;
-            background: rgb(250, 250, 250);
-            position: relative;
-          "
-        >
-          <div style="max-width: 1000px; margin: 0px auto; padding: 0px 24px">
-            <div style="text-align: center; margin-bottom: 64px">
-              <div
-                style="
-                  display: inline-flex;
-                  align-items: center;
-                  gap: 8px;
-                  padding: 6px 16px;
-                  background: rgb(255, 255, 255);
-                  border-radius: 100px;
-                  margin-bottom: 24px;
-                  border: 1px solid rgb(229, 229, 229);
-                "
-              >
-                <span
-                  style="
-                    font-size: 12px;
-                    color: rgb(23, 23, 23);
-                    font-weight: 600;
-                    letter-spacing: 0.02em;
-                  "
-                  >حلول الأعمال</span
-                >
-              </div>
-              <h2
-                style="
-                  font-size: clamp(28px, 4vw, 42px);
-                  font-weight: 700;
-                  color: rgb(23, 23, 23);
-                  margin-bottom: 16px;
-                  line-height: 1.3;
-                "
-              >
-                انضم إلى شركائنا الناجحين
-              </h2>
-              <p
-                style="
-                  font-size: 17px;
-                  color: rgb(115, 115, 115);
-                  max-width: 540px;
-                  margin: 0px auto;
-                  line-height: 1.7;
-                "
-              >
-                نقدم حلولاً متكاملة للشركات، من المتاجر الإلكترونية إلى الحملات
-                التسويقية
-              </p>
-            </div>
-
-            <div style="text-align: center">
-              <div
-                style="
-                  display: inline-flex;
-                  flex-direction: column;
-                  gap: 16px;
-                  align-items: center;
-                "
-              >
-                <a
-                  href="https://wa.me/201007835547?text=مرحباً، أريد الاستفسار عن الشراكة"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style="
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 10px;
-                    padding: 16px 40px;
-                    background: rgb(23, 23, 23);
-                    color: rgb(255, 255, 255);
-                    font-size: 16px;
-                    font-weight: 600;
-                    border-radius: 12px;
-                    text-decoration: none;
-                    transition: 200ms;
-                  "
-                >
-                  تواصل معنا الآن <i class="fa-brands fa-whatsapp text-xl"></i>
-                </a>
-              </div>
-              <p
-                style="
-                  font-size: 13px;
-                  color: rgb(163, 163, 163);
-                  margin-top: 24px;
-                "
-              >
-                🇸🇦 فريق متخصص - نجح معنا أكثر من 50 شركة
-              </p>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
-<section class="py-20 bg-slate-900 relative overflow-hidden">
-          <div class="max-w-6xl mx-auto px-6 relative z-10">
-            <div class="text-center mb-12">
-              <span class="text-xs font-bold text-gray-400 tracking-[0.1em] uppercase">اكتشف المزيد</span>
-              <h2 class="text-3xl md:text-4xl font-bold text-white mt-3">منصاتنا الأخرى</h2>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <a href="https://sabir5-1-1.com/" target="_blank" rel="noopener noreferrer" 
-                 class="group relative p-8 rounded-3xl bg-slate-800 border border-slate-700 hover:border-blue-500 transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-right gap-6">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                
-                <div class="w-16 h-16 rounded-2xl bg-blue-500/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                  <i class="fa-solid fa-globe text-3xl text-blue-400"></i>
-                </div>
-                
-                <div class="relative z-10 flex-1">
-                  <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">موقع صابر</h3>
-                  <p class="text-slate-400 text-sm leading-relaxed mb-4">تصفح أحدث الخدمات والمميزات الإضافية التي نقدمها لك عبر منصتنا.</p>
-                  <span class="text-blue-400 text-sm font-bold flex items-center justify-center sm:justify-start gap-2">
-                    زور الموقع <i class="fa-solid fa-arrow-left group-hover:-translate-x-2 transition-transform"></i>
-                  </span>
-                </div>
-              </a>
-
-              <a href="https://sabir511.com/" target="_blank" rel="noopener noreferrer" 
-                 class="group relative p-8 rounded-3xl bg-slate-800 border border-slate-700 hover:border-purple-500 transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-right gap-6">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl -mr-16 -mt-16 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                
-                <div class="w-16 h-16 rounded-2xl bg-purple-500/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                  <i class="fa-solid fa-rocket text-3xl text-purple-400"></i>
-                </div>
-                
-                <div class="relative z-10 flex-1">
-                  <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">صابر 511</h3>
-                  <p class="text-slate-400 text-sm leading-relaxed mb-4">اكتشف المزيد من الحلول الإبداعية المصممة خصيصاً لتلبية احتياجاتك.</p>
-                  <span class="text-purple-400 text-sm font-bold flex items-center justify-center sm:justify-start gap-2">
-                    زور الموقع <i class="fa-solid fa-arrow-left group-hover:-translate-x-2 transition-transform"></i>
-                  </span>
-                </div>
-              </a>
-            </div>
-          </div>
-        </section>
-    <footer class="bg-white border-t border-gray-200 pt-16 pb-8">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          <div class="col-span-1 md:col-span-2">
-            <div class="flex items-center gap-2 mb-4">
-              <div
-                class="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold"
-              >
-                س
-              </div>
-              <span class="font-black text-2xl text-gray-900 tracking-tight"
-                >سَلِّم</span
-              >
-            </div>
-            <p class="text-gray-500 text-sm leading-relaxed max-w-sm mb-6">
-              المنصة العربية الأولى لتصميم بطاقات التهنئة والمناسبات باحترافية
-              وسهولة. اصنع ذكرياتك بلمسة فنية مميزة وشاركها مع من تحب في ثوانٍ.
-            </p>
-            <div class="flex space-x-4 space-x-reverse">
-              <a
-                href="#"
-                class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-black hover:text-white transition shadow-sm hover:shadow-md"
-              >
-                <i class="fa-brands fa-x-twitter text-lg"></i>
-              </a>
-              <a
-                href="#"
-                class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white transition shadow-sm hover:shadow-md"
-              >
-                <i class="fa-brands fa-linkedin-in text-lg"></i>
-              </a>
-              <a
-                href="#"
-                class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-pink-600 hover:text-white transition shadow-sm hover:shadow-md"
-              >
-                <i class="fa-brands fa-instagram text-lg"></i>
-              </a>
-            </div>
-          </div>
-
-          <div>
-            <h4 class="font-bold text-gray-900 mb-4">الروابط السريعة</h4>
-            <ul class="space-y-3">
-              <li>
-                <a
-                  href="#"
-                  class="text-sm text-gray-500 hover:text-black transition"
-                  >الرئيسية</a
-                >
-              </li>
-              <li>
-                <a
-                  href="/editor.html"
-                  class="text-sm text-gray-500 hover:text-black transition"
-                  >محرر البطاقات</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#templates"
-                  class="text-sm text-gray-500 hover:text-black transition"
-                  >القوالب الجاهزة</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#pricing"
-                  class="text-sm text-gray-500 hover:text-black transition"
-                  >الأسعار والباقات</a
-                >
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 class="font-bold text-gray-900 mb-4">الدعم والمساعدة</h4>
-            <ul class="space-y-3">
-              <li>
-                <a
-                  href="#"
-                  class="text-sm text-gray-500 hover:text-black transition"
-                  >الأسئلة الشائعة</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  class="text-sm text-gray-500 hover:text-black transition"
-                  >شروط الاستخدام</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  class="text-sm text-gray-500 hover:text-black transition"
-                  >سياسة الخصوصية</a
-                >
-              </li>
-              <li>
-                <a
-                  href="#"
-                  class="text-sm text-gray-500 hover:text-black transition"
-                  >تواصل معنا</a
-                >
-              </li>
-            </ul>
-          </div>
+      <div class="tpl-card fu" style="animation-delay:.2s">
+        <div class="tpl-img-wrap">
+          <img src="images/11.png" alt="بطاقة الزفاف"
+            onerror="this.src='images/11.png'"/>
+          <div class="tpl-badge-wrap"><span class="tpl-badge">مجاني</span></div>
         </div>
-
-        <div
-          class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
-        >
-          <p class="text-sm text-gray-400">
-            © 2026 منصة سَلِّم. جميع الحقوق محفوظة.
-          </p>
-          <div class="flex items-center gap-2 text-sm text-gray-400">
-            صُنع بكل <i class="fa-solid fa-heart text-red-500 mx-1"></i> في
-            المملكة العربية السعودية
-          </div>
+        <div class="tpl-body">
+          <div class="tpl-title">بطاقة الزفاف الكلاسيكية</div>
+          <a href="/editor.html" class="tpl-cta">ابدأ التصميم <i class="fa-solid fa-paintbrush text-xs"></i></a>
         </div>
       </div>
-    </footer>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="js/index.js"></script>
-  </body>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FEATURES ══════════ -->
+<section id="features">
+  <div class="container">
+    <div class="fu" style="margin-bottom:48px;text-align:center">
+      <span class="sec-label">المميزات</span>
+      <h2 class="sec-h">لماذا سَلِّم؟</h2>
+    </div>
+    <div class="feat-list">
+      <div class="feat-card c1 fu">
+        <div class="feat-icon" style="background:var(--navy)"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+        <h3 style="font-size:18px;font-weight:900;color:var(--navy);margin-bottom:10px">قوالب احترافية</h3>
+        <p style="color:#7A9AB5;font-size:14px;line-height:1.7">أكثر من ٢٠ قالب مصمم بعناية ليناسب ذوقك الرفيع لكل المناسبات.</p>
+      </div>
+      <div class="feat-card c2 fu" style="animation-delay:.1s">
+        <div class="feat-icon" style="background:var(--jade)"><i class="fa-solid fa-file-export"></i></div>
+        <h3 style="font-size:18px;font-weight:900;color:var(--navy);margin-bottom:10px">تصدير عالي الجودة</h3>
+        <p style="color:#7A9AB5;font-size:14px;line-height:1.7">حمّل بطاقتك بصيغ PNG و PDF بأعلى دقة ممكنة للطباعة أو النشر.</p>
+      </div>
+      <div class="feat-card c3 fu" style="animation-delay:.2s">
+        <div class="feat-icon" style="background:var(--ember)"><i class="fa-brands fa-whatsapp text-2xl"></i></div>
+        <h3 style="font-size:18px;font-weight:900;color:var(--navy);margin-bottom:10px">مشاركة فورية</h3>
+        <p style="color:#7A9AB5;font-size:14px;line-height:1.7">شارك إبداعك مباشرة عبر واتساب مع الأهل والأصدقاء بضغطة زر.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ GAME BANNER ══════════ -->
+<section id="game-banner">
+  <div class="game-left">
+    <div class="game-label">🎮 ميزة جديدة</div>
+    <h2 class="game-h">لعبة العيدية<br/>التفاعلية</h2>
+    <p class="game-p">حوّل تهنئتك إلى مغامرة — أنشئ أسئلتك، حدد جوائزك، وتنافس مع عائلتك!</p>
+    <a href="/" class="game-btn">ابدأ اللعبة <i class="fa-solid fa-arrow-left"></i></a>
+  </div>
+  <div class="game-right">
+    <div class="dice-big">🎲</div>
+  </div>
+</section>
+
+<!-- ══════════ STEPS ══════════ -->
+<section id="steps">
+  <div class="container">
+    <div class="fu" style="text-align:center;margin-bottom:56px">
+      <span class="sec-label">كيف تعمل</span>
+      <h2 class="sec-h">ثلاث خطوات بسيطة</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step fu">
+        <div class="step-num-wrap">01</div>
+        <h3 class="step-title">اختر القالب</h3>
+        <p class="step-desc">تصفح مكتبة القوالب المميزة واختر ما يناسب مناسبتك</p>
+      </div>
+      <div class="step fu" style="animation-delay:.12s">
+        <div class="step-num-wrap" style="border-color:var(--jade);color:var(--jade)">02</div>
+        <h3 class="step-title">خصّص التصميم</h3>
+        <p class="step-desc">أضف اسمك ونصوصك وصورتك بأدوات تحرير سهلة الاستخدام</p>
+      </div>
+      <div class="step fu" style="animation-delay:.24s">
+        <div class="step-num-wrap" style="border-color:var(--ember);color:var(--ember)">03</div>
+        <h3 class="step-title">صدّر وشارك</h3>
+        <p class="step-desc">حمّل التصميم بجودة عالية أو شاركه مباشرة عبر واتساب</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PRICING ══════════ -->
+<section id="pricing">
+  <div class="container">
+    <div class="fu" style="text-align:center;margin-bottom:52px">
+      <span class="sec-label">الباقات</span>
+      <h2 class="sec-h">اختر ما يناسبك</h2>
+      <p class="sec-p">مرن. سهل. يخدم الجميع.</p>
+    </div>
+    <div class="pricing-grid fu">
+      <div class="pc-free">
+        <h3 style="font-size:22px;font-weight:900;color:var(--navy)">الباقة المجانية</h3>
+        <p style="color:#7A9AB5;font-size:14px;margin-top:6px">مثالية للاستخدام الشخصي</p>
+        <div class="pc-price">مجاناً</div>
+        <div class="pc-list">
+          <div class="pc-item"><i class="fa-solid fa-circle-check pc-check-free"></i><span>تصميم <strong>غير محدود</strong> من البطاقات</span></div>
+          <div class="pc-item"><i class="fa-solid fa-circle-check pc-check-free"></i><span>مكتبة القوالب الأساسية</span></div>
+          <div class="pc-item"><i class="fa-solid fa-circle-check pc-check-free"></i><span>تصدير PNG و PDF عالي الجودة</span></div>
+        </div>
+        <a href="/editor.html" class="pc-btn-free">ابدأ مجاناً الآن</a>
+      </div>
+      <div class="pc-pro">
+        <div class="pc-badge">الأكثر طلباً للأعمال</div>
+        <h3 style="font-size:22px;font-weight:900;color:#fff;margin-top:12px">باقة الشركات</h3>
+        <p style="color:rgba(255,255,255,.45);font-size:14px;margin-top:6px">حلول تعكس هوية مؤسستك</p>
+        <div class="pc-price">تواصل معنا</div>
+        <div class="pc-list">
+          <div class="pc-item"><i class="fa-solid fa-circle-check pc-check-pro"></i><span>تخصيص كامل بألوان شركتك</span></div>
+          <div class="pc-item"><i class="fa-solid fa-circle-check pc-check-pro"></i><span>إزالة العلامة المائية</span></div>
+          <div class="pc-item"><i class="fa-solid fa-circle-check pc-check-pro"></i><span>قوالب VIP مغلقة لشركتك</span></div>
+          <div class="pc-item"><i class="fa-solid fa-circle-check pc-check-pro"></i><span>دعم فني ذو أولوية</span></div>
+        </div>
+        <a href="mailto:sales@solimanw.com" class="pc-btn-pro">تواصل مع المبيعات <i class="fa-solid fa-headset mr-1"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FAQ ══════════ -->
+<section id="faq">
+  <div class="container">
+    <div class="fu" style="text-align:center;margin-bottom:48px">
+      <span class="sec-label">الأسئلة</span>
+      <h2 class="sec-h">أسئلة شائعة</h2>
+    </div>
+    <div class="faq-list fu">
+      <div class="faq-item">
+        <div class="faq-head" onclick="faqToggle(this)">
+          <h3>هل المنصة مجانية؟</h3>
+          <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
+        </div>
+        <div class="faq-body">نعم، يمكنك استخدام القوالب الأساسية وتصميم بطاقتك وتصديرها بشكل مجاني تماماً. نوفر أيضاً باقات مدفوعة للشركات التي تحتاج تخصيصاً أكبر.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-head" onclick="faqToggle(this)">
+          <h3>ما جودة الصور المُصدرة؟</h3>
+          <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
+        </div>
+        <div class="faq-body">نصدّر الصور بجودة عالية (High Resolution) بصيغة PNG أو PDF جاهزة للمشاركة على وسائل التواصل أو للطباعة.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-head" onclick="faqToggle(this)">
+          <h3>هل تعمل المنصة على الهاتف؟</h3>
+          <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
+        </div>
+        <div class="faq-body">بالتأكيد! المنصة متجاوبة بالكامل مع جميع الأجهزة — موبايل، تابلت، وكمبيوتر.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CTA BOTTOM ══════════ -->
+<section id="cta-bottom">
+  <div class="cta-inner fu">
+    <h2>جاهز للبدء؟</h2>
+    <p>صمّم بطاقتك الآن مجاناً في أقل من دقيقتين</p>
+    <a href="/editor.html" class="cta-main-btn">
+      ابدأ التصميم مجاناً <i class="fa-solid fa-arrow-left"></i>
+    </a>
+  </div>
+</section>
+
+<!-- ══════════ PARTNERS ══════════ -->
+<section id="partners">
+  <div class="container">
+    <div class="fu" style="text-align:center;margin-bottom:40px">
+      <span class="sec-label" style="color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)">اكتشف المزيد</span>
+      <h2 class="sec-h" style="color:#fff">منصاتنا الأخرى</h2>
+    </div>
+    <div class="partner-grid fu">
+      <a href="https://sabir5-1-1.com/" target="_blank" rel="noopener noreferrer" class="pcard a">
+        <div class="pcard-icon" style="background:rgba(91,192,234,.15)"><i class="fa-solid fa-globe" style="color:var(--azure)"></i></div>
+        <div class="pcard-text">
+          <h3>موقع صابر</h3>
+          <p>تصفح أحدث الخدمات والمميزات الإضافية التي نقدمها.</p>
+          <span class="pcard-go">زور الموقع <i class="fa-solid fa-arrow-left"></i></span>
+        </div>
+      </a>
+      <a href="https://sabir511.com/" target="_blank" rel="noopener noreferrer" class="pcard e">
+        <div class="pcard-icon" style="background:rgba(250,98,103,.12)"><i class="fa-solid fa-rocket" style="color:var(--ember)"></i></div>
+        <div class="pcard-text">
+          <h3>صابر 511</h3>
+          <p>اكتشف الحلول الإبداعية المصممة خصيصاً لتلبية احتياجاتك.</p>
+          <span class="pcard-go">زور الموقع <i class="fa-solid fa-arrow-left"></i></span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer id="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo"><img src="images/logo.webp" alt="سَلِّم"/></div>
+        <p>المنصة العربية الأولى لتصميم بطاقات التهنئة والمناسبات باحترافية وسهولة.</p>
+        <div class="footer-socials">
+          <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>روابط سريعة</h4>
+        <ul>
+          <li><a href="#">الرئيسية</a></li>
+          <li><a href="/editor.html">محرر البطاقات</a></li>
+          <li><a href="#templates">القوالب</a></li>
+          <li><a href="#pricing">الأسعار</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>الدعم</h4>
+        <ul>
+          <li><a href="#">الأسئلة الشائعة</a></li>
+          <li><a href="#">شروط الاستخدام</a></li>
+          <li><a href="#">سياسة الخصوصية</a></li>
+          <li><a href="#">تواصل معنا</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 منصة سَلِّم — جميع الحقوق محفوظة.</p>
+      <p>صُنع بكل <span class="footer-heart">♥</span> في المملكة العربية السعودية</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/index.js"></script>
+<script>
+/* Mobile menu */
+document.getElementById('ham-btn').addEventListener('click',()=>{
+  document.getElementById('mobile-menu').classList.toggle('open');
+});
+/* Close menu on link click */
+document.querySelectorAll('#mobile-menu a').forEach(a=>a.addEventListener('click',()=>{
+  document.getElementById('mobile-menu').classList.remove('open');
+}));
+
+/* FAQ */
+function faqToggle(head){
+  const item=head.closest('.faq-item');
+  document.querySelectorAll('.faq-item.open').forEach(i=>{if(i!==item)i.classList.remove('open')});
+  item.classList.toggle('open');
+}
+
+/* Reveal on scroll */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')});
+},{threshold:.1});
+document.querySelectorAll('.fu').forEach(el=>obs.observe(el));
+
+/* Navbar shadow on scroll */
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').style.boxShadow=
+    window.scrollY>20?'0 4px 28px rgba(42,58,77,.4)':'0 4px 32px rgba(42,58,77,.35)';
+});
+</script>
+</body>
 </html>
