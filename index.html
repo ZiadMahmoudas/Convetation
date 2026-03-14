@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سَلِّم - صمم بطاقتك بأناقة واحترافية</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        html{
+              scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        /* أنيميشن النقطة الخضراء في الهيرو */
+        @keyframes pulse-custom {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .animate-pulse-custom {
+            animation: pulse-custom 2s ease infinite normal none running;
+        }
+
+        /* الشريط الإخباري المتحرك */
+        @keyframes scroll-ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(50%); }
+        }
+        .ticker-container {
+            display: flex;
+            width: max-content;
+            animation: scroll-ticker 40s linear infinite;
+        }
+        .ticker-container:hover {
+            animation-play-state: paused;
+        }
+        .ticker-item {
+            display: flex;
+            align-items: center;
+            padding-left: 32px;
+            color: rgba(255,255,255,0.85);
+            font-size: 16px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .ticker-item-separator {
+            margin-right: 32px;
+            color: rgba(255,215,0,0.6);
+            font-size: 18px;
+            user-select: none;
+        }
+        @media (max-width: 768px) {
+            .ticker-item { padding-left: 20px; font-size: 14px; }
+            .ticker-item-separator { margin-right: 20px; font-size: 14px; }
+            .ticker-container { animation-duration: 25s; }
+            .slider-arrow { display: none !important; }
+        }
+
+        /* إخفاء السكرول بار للقوائم الأفقية */
+        .hide-scrollbar::-webkit-scrollbar, .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar, .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* تأثيرات كروت المناسبات */
+        .occasion-card-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+            border-color: #e5e5e5;
+        }
+        .occasion-card-link:hover .icon-container {
+            transform: translateY(-8px);
+        }
+        .occasion-card-link:hover .browse-btn {
+            background: #171717;
+            color: #fff;
+        }
+        .slider-arrow:hover {
+            background: #171717 !important;
+            border-color: #171717 !important;
+        }
+        .slider-arrow:hover svg {
+            color: #fff !important;
+        }
+
+        /* إعدادات الناف بار الزجاجي */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-white text-[#0f172a] overflow-x-hidden">
+
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                    <div class="w-10 h-10 bg-black rounded-xl flex items-center justify-center text-white font-bold text-xl">س</div>
+                    <span class="font-black text-2xl text-gray-900 tracking-tight">سَلِّم</span>
+                </div>
+
+                <div class="hidden md:flex space-x-8 space-x-reverse items-center">
+                    <a href="#" class="text-gray-900 font-bold hover:text-blue-600 transition">الرئيسية</a>
+                    <a href="#features" class="text-gray-600 font-semibold hover:text-gray-900 transition">المميزات</a>
+                    <a href="#templates" class="text-gray-600 font-semibold hover:text-gray-900 transition">القوالب</a>
+                    <a href="#pricing" class="text-gray-600 font-semibold hover:text-gray-900 transition">الأسعار</a>
+                </div>
+
+                <div class="hidden md:flex items-center gap-4">
+                    <a href="/login" class="text-gray-600 font-bold hover:text-black transition">تسجيل الدخول</a>
+                    <a href="/editor.html" class="inline-flex items-center justify-center px-6 py-2.5 border border-transparent text-sm font-bold rounded-xl text-white bg-black hover:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-pen-nib ml-2"></i> المحرر
+                    </a>
+                </div>
+
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-gray-600 hover:text-black focus:outline-none p-2">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl">
+            <div class="px-4 pt-2 pb-6 space-y-2 text-center flex flex-col">
+                <a href="#" class="block px-3 py-3 rounded-md text-base font-bold text-gray-900 bg-gray-50">الرئيسية</a>
+                <a href="#features" class="block px-3 py-3 rounded-md text-base font-semibold text-gray-600 hover:bg-gray-50">المميزات</a>
+                <a href="#templates" class="block px-3 py-3 rounded-md text-base font-semibold text-gray-600 hover:bg-gray-50">القوالب</a>
+                <hr class="my-2">
+                <a href="/login" class="block px-3 py-3 rounded-md text-base font-bold text-gray-900">دخول</a>
+                <a href="/editor.html" class="block px-3 py-3 rounded-xl text-base font-bold text-white bg-black mx-4 mt-2">افتح المحرر</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 w-full relative z-10 pt-20"> 
+        <div>
+            <section style="background: rgb(23, 23, 23); padding: 0px;">
+                <div style="min-height: 90vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: linear-gradient(135deg, rgb(23, 23, 23) 0%, rgb(38, 38, 38) 100%);">
+                    <div style="position: relative; z-index: 1; max-width: 800px; margin: 0px auto; padding: 120px 24px; text-align: center;">
+                        <div style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255, 255, 255, 0.1); border-radius: 100px; margin-bottom: 32px; border: 1px solid rgba(255, 255, 255, 0.05);">
+                            <div class="animate-pulse-custom" style="width: 8px; height: 8px; border-radius: 50%; background: rgb(198, 248, 6); box-shadow: rgba(198, 248, 6, 0.5) 0px 0px 10px;"></div>
+                            <span style="font-size: 13px; color: rgba(255, 255, 255, 0.9); font-weight: 600;">نسخة تجريبية — جارٍ إضافة قوالب جديدة باستمرار</span>
+                        </div>
+                        <h1 style="font-size: clamp(36px, 6vw, 64px); font-weight: 700; color: rgb(255, 255, 255); line-height: 1.1; margin-bottom: 24px; letter-spacing: -0.02em;">صمّم بطاقتك<br><span style="color: rgb(163, 163, 163);">بأناقة واحترافية</span></h1>
+                        <p style="font-size: 18px; color: rgba(255, 255, 255, 0.5); max-width: 480px; margin: 0px auto 40px; line-height: 1.7;">اختر من قوالب فاخرة، خصّصها، وشاركها في ثوانٍ</p>
+                        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                            <a href="/editor.html" style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: rgb(255, 255, 255); color: rgb(23, 23, 23); font-size: 15px; font-weight: 600; border-radius: 12px; text-decoration: none; transition: 200ms;">
+                                ابدأ التصميم
+                                <i class="fa-solid fa-arrow-left"></i>
+                            </a>
+                            <a href="/create-diwaniya" style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: linear-gradient(135deg, rgb(168, 85, 247) 0%, rgb(126, 34, 206) 100%); color: rgb(255, 255, 255); font-size: 15px; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: rgba(168, 85, 247, 0.3) 0px 4px 14px; transition: 200ms;">أطلق ديوانيتك ✨</a>
+                            <a href="/dashboard/diwaniya" style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: linear-gradient(135deg, rgb(255, 215, 0) 0%, rgb(255, 140, 0) 100%); color: rgb(23, 23, 23); font-size: 15px; font-weight: 700; border-radius: 12px; text-decoration: none; box-shadow: rgba(255, 140, 0, 0.3) 0px 4px 14px; transition: 200ms;">
+                                <span style="font-size: 18px;">🎲</span>لعبة العيدية
+                            </a>
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 48px; margin-top: 80px; flex-wrap: wrap;">
+                            <div style="text-align: center;"><div style="font-size: 32px; font-weight: 700; color: rgb(255, 255, 255);">+٥٠,٠٠٠</div><div style="font-size: 14px; color: rgba(255, 255, 255, 0.4); margin-top: 4px;">بطاقة</div></div>
+                            <div style="text-align: center;"><div style="font-size: 32px; font-weight: 700; color: rgb(255, 255, 255);">+٢٠</div><div style="font-size: 14px; color: rgba(255, 255, 255, 0.4); margin-top: 4px;">قالب</div></div>
+                            <div style="text-align: center;"><div style="font-size: 32px; font-weight: 700; color: rgb(255, 255, 255);">٨</div><div style="font-size: 14px; color: rgba(255, 255, 255, 0.4); margin-top: 4px;">خطوط</div></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: rgb(10, 10, 10); border-top: 1px solid rgba(255, 255, 255, 0.05); border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding: 14px 0px; overflow: hidden; position: relative; width: 100%; direction: rtl;">
+                    <div class="ticker-container">
+                        <div style="display: flex;">
+                            <div class="ticker-item"><span style="color: rgba(255, 255, 255, 0.85);">تم إضافة لعبة العيدية التفاعلية - انشئ تحدياتك الخاصة</span><span class="ticker-item-separator">✧</span></div>
+                            <div class="ticker-item"><span style="color: rgba(255, 255, 255, 0.85);">جاري إضافة ثيمات وقوالب جديدة بشكل مستمر</span><span class="ticker-item-separator">✧</span></div>
+                            <div class="ticker-item"><span style="color: rgba(255, 255, 255, 0.85);">تم إضافة فكرة الديوانية - اطلق ديوانيتك الآن</span><span class="ticker-item-separator">✧</span></div>
+                            <div class="ticker-item"><span style="color: rgba(255, 255, 255, 0.85);">للشركات والمؤسسات التي تريد تخصيص النظام تواصل معنا</span><span class="ticker-item-separator">✧</span></div>
+                            <div class="ticker-item"><span style="color: rgba(255, 255, 255, 0.85);">اكتشف الميزات الجديدة في نسخة العيد 2026</span><span class="ticker-item-separator">✧</span></div>
+                        </div>
+                        <div style="display: flex;">
+                            <div class="ticker-item"><span style="color: rgba(255, 255, 255, 0.85);">تم إضافة لعبة العيدية التفاعلية - انشئ تحدياتك الخاصة</span><span class="ticker-item-separator">✧</span></div>
+                            <div class="ticker-item"><span style="color: rgba(255, 255, 255, 0.85);">جاري إضافة ثيمات وقوالب جديدة بشكل مستمر</span><span class="ticker-item-separator">✧</span></div>
+                            <div class="ticker-item"><span style="color: rgba(255, 255, 255, 0.85);">تم إضافة فكرة الديوانية - اطلق ديوانيتك الآن</span><span class="ticker-item-separator">✧</span></div>
+                            <div class="ticker-item"><span style="color: rgba(255, 255, 255, 0.85);">للشركات والمؤسسات التي تريد تخصيص النظام تواصل معنا</span><span class="ticker-item-separator">✧</span></div>
+                            <div class="ticker-item"><span style="color: rgba(255, 255, 255, 0.85);">اكتشف الميزات الجديدة في نسخة العيد 2026</span><span class="ticker-item-separator">✧</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+    <section style="padding: 80px 0px; background: rgb(255, 255, 255); overflow: hidden;">
+    <div style="max-width: 1400px; margin: 0px auto; padding: 0px 24px;">
+        <div style="text-align: center; margin-bottom: 48px;">
+            <h2 style="font-size: clamp(32px, 5vw, 48px); font-weight: 800; color: rgb(23, 23, 23); margin-bottom: 16px; letter-spacing: -0.02em;">بطاقات مناسبات مميزة</h2>
+            <p style="font-size: 18px; color: rgb(115, 115, 115); max-width: 600px; margin: 0px auto; line-height: 1.6;">اختر مكتبة تصاميمنا الفاخرة لكل مناسباتك، صممها في ثوانٍ وشاركها بكل حب</p>
+        </div>
+        <div style="position: relative;" class="group">
+            <button id="slide-left" class="slider-arrow absolute left-[-20px] top-1/2 -translate-y-1/2 z-10 w-14 h-14 rounded-full bg-white border border-gray-200 hidden md:flex items-center justify-center cursor-pointer shadow-lg hover:bg-gray-900 hover:text-white transition-all duration-300">
+                <i class="fa-solid fa-chevron-left text-inherit"></i>
+            </button>
+            
+            <button id="slide-right" class="slider-arrow absolute right-[-20px] top-1/2 -translate-y-1/2 z-10 w-14 h-14 rounded-full bg-white border border-gray-200 hidden md:flex items-center justify-center cursor-pointer shadow-lg hover:bg-gray-900 hover:text-white transition-all duration-300">
+                <i class="fa-solid fa-chevron-right text-inherit"></i>
+            </button>
+
+            <div id="occasions-slider" class="hide-scrollbar" style="display: flex; gap: 24px; overflow-x: auto; padding: 20px 4px 40px; cursor: grab; scroll-snap-type: x mandatory; scroll-behavior: smooth;">
+                
+                <div style="flex: 0 0 auto; width: 340px; scroll-snap-align: start;">
+                    <a class="occasion-card-link group" href="/editor.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; border-radius: 32px; background: rgb(255, 255, 255); border: 1px solid rgb(240, 240, 240); text-decoration: none; transition: 0.3s; height: 100%; position: relative; overflow: hidden;">
+                        <div class="icon-container" style="width: 80px; height: 80px; border-radius: 24px; background: rgb(240, 253, 250); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; transition: 0.3s;">
+                            <i class="fa-solid fa-moon text-4xl text-teal-600"></i>
+                        </div>
+                        <h3 style="font-size: 22px; font-weight: 700; color: rgb(23, 23, 23); margin-bottom: 16px;">بطاقات العيد</h3>
+                        <div class="browse-btn" style="display: flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 100px; background: rgb(248, 250, 252); color: rgb(100, 116, 139); font-size: 14px; font-weight: 600; transition: 0.3s;">
+                            استعرض <i class="fa-solid fa-arrow-left text-sm ml-1 group-hover:-translate-x-1 transition-transform"></i>
+                        </div>
+                    </a>
+                </div>
+
+                <div style="flex: 0 0 auto; width: 300px; scroll-snap-align: start;">
+                    <a class="occasion-card-link group" href="/editor.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; border-radius: 32px; background: rgb(255, 255, 255); border: 1px solid rgb(240, 240, 240); text-decoration: none; transition: 0.3s; height: 100%; position: relative; overflow: hidden;">
+                        <div class="icon-container" style="width: 80px; height: 80px; border-radius: 24px; background: rgb(253, 242, 248); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; transition: 0.3s;">
+                            <i class="fa-solid fa-ring text-4xl text-pink-600"></i>
+                        </div>
+                        <h3 style="font-size: 22px; font-weight: 700; color: rgb(23, 23, 23); margin-bottom: 16px;">بطاقات الزفاف</h3>
+                        <div class="browse-btn" style="display: flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 100px; background: rgb(248, 250, 252); color: rgb(100, 116, 139); font-size: 14px; font-weight: 600; transition: 0.3s;">استعرض</div>
+                    </a>
+                </div>
+
+                <div style="flex: 0 0 auto; width: 300px; scroll-snap-align: start;">
+                    <a class="occasion-card-link group" href="/editor.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; border-radius: 32px; background: rgb(255, 255, 255); border: 1px solid rgb(240, 240, 240); text-decoration: none; transition: 0.3s; height: 100%; position: relative; overflow: hidden;">
+                        <div class="icon-container" style="width: 80px; height: 80px; border-radius: 24px; background: rgb(238, 242, 255); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; transition: 0.3s;">
+                            <i class="fa-solid fa-graduation-cap text-4xl text-indigo-600"></i>
+                        </div>
+                        <h3 style="font-size: 22px; font-weight: 700; color: rgb(23, 23, 23); margin-bottom: 16px;">بطاقات التخرج</h3>
+                        <div class="browse-btn" style="display: flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 100px; background: rgb(248, 250, 252); color: rgb(100, 116, 139); font-size: 14px; font-weight: 600; transition: 0.3s;">استعرض</div>
+                    </a>
+                </div>
+
+                <div style="flex: 0 0 auto; width: 300px; scroll-snap-align: start;">
+                    <a class="occasion-card-link group" href="/editor.html" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; border-radius: 32px; background: rgb(255, 255, 255); border: 1px solid rgb(240, 240, 240); text-decoration: none; transition: 0.3s; height: 100%; position: relative; overflow: hidden;">
+                        <div class="icon-container" style="width: 80px; height: 80px; border-radius: 24px; background: rgb(240, 253, 244); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; transition: 0.3s;">
+                            <i class="fa-solid fa-baby-carriage text-4xl text-green-600"></i>
+                        </div>
+                        <h3 style="font-size: 22px; font-weight: 700; color: rgb(23, 23, 23); margin-bottom: 16px;">بطاقات المواليد</h3>
+                        <div class="browse-btn" style="display: flex; align-items: center; gap: 8px; padding: 10px 24px; border-radius: 100px; background: rgb(248, 250, 252); color: rgb(100, 116, 139); font-size: 14px; font-weight: 600; transition: 0.3s;">استعرض</div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+            <section id="templates" style="padding: 100px 0px; background: rgb(248, 250, 252); overflow: hidden;">
+                <div style="max-width: 1400px; margin: 0px auto; padding: 0px 24px;">
+                    <div style="text-align: center; margin-bottom: 64px;">
+                        <h2 style="font-size: clamp(32px, 5vw, 44px); font-weight: 900; color: rgb(15, 23, 42); margin-bottom: 16px; letter-spacing: -0.02em;">صمم تهنئتك</h2>
+                        <p style="font-size: 17px; color: rgb(100, 116, 139); max-width: 600px; margin: 0px auto; line-height: 1.6;">جميع هذه القوالب متاحة للاستخدام مجانًا، ابدأ في تخصيص تصميمك المفضل الآن</p>
+                    </div>
+                    <div class="flex gap-6 overflow-x-auto pb-12 snap-x snap-mandatory scrollbar-hide">
+                        <div class="flex-none w-[280px] sm:w-[320px] snap-center">
+                            <article class="group relative flex h-full flex-col overflow-hidden rounded-[18px] border border-[#e8edf2] bg-white text-right shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)]">
+                                <div class="relative m-3 mb-0 aspect-[6/5] overflow-hidden rounded-[16px] bg-[#f8fafc]">
+                                    <img alt="تصميم الخط الديواني الملكي" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" src="/templates/جاهزة/10.png" onerror="this.src='https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=400&auto=format&fit=crop'">
+                                    <div class="absolute top-3 right-3 z-10 flex flex-col items-end gap-2">
+                                        <span class="inline-flex items-center rounded-full bg-[#e63946] px-3 py-1 text-[11px] font-extrabold text-white shadow-sm">مجاني 100%</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-1 flex-col p-4 pt-3">
+                                    <h3 class="mb-4 min-h-[56px] text-[1.05rem] font-bold leading-7 text-slate-900">تصميم الخط الديواني الملكي</h3>
+                                    <div class="mt-auto border-t border-[#eef2f6] pt-3">
+                                        <a href="/editor.html" class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-[#d7dde5] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-slate-900 transition-all duration-200 hover:border-slate-900 hover:bg-slate-900 hover:text-white">
+                                            ابدأ التصميم <i class="fa-solid fa-paintbrush mr-1"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        
+                        <div class="flex-none w-[280px] sm:w-[320px] snap-center">
+                            <article class="group relative flex h-full flex-col overflow-hidden rounded-[18px] border border-[#e8edf2] bg-white text-right shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)]">
+                                <div class="relative m-3 mb-0 aspect-[6/5] overflow-hidden rounded-[16px] bg-[#f8fafc]">
+                                    <img alt="بطاقة العيد العصرية" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" src="/templates/جاهزة/11.png" onerror="this.src='https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=400&auto=format&fit=crop'">
+                                    <div class="absolute top-3 right-3 z-10 flex flex-col items-end gap-2">
+                                        <span class="inline-flex items-center rounded-full bg-[#e63946] px-3 py-1 text-[11px] font-extrabold text-white shadow-sm">مجاني 100%</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-1 flex-col p-4 pt-3">
+                                    <h3 class="mb-4 min-h-[56px] text-[1.05rem] font-bold leading-7 text-slate-900">بطاقة العيد العصرية</h3>
+                                    <div class="mt-auto border-t border-[#eef2f6] pt-3">
+                                        <a href="/editor.html" class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-[#d7dde5] bg-[#f8fafc] px-4 py-3 text-sm font-bold text-slate-900 transition-all duration-200 hover:bg-slate-900 hover:text-white">
+                                            ابدأ التصميم <i class="fa-solid fa-paintbrush mr-1"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="py-20 bg-slate-50 relative overflow-hidden">
+                <div class="max-width-5xl mx-auto px-6 relative z-10 max-w-5xl">
+                    <div class="flex flex-col md:flex-row gap-8 items-stretch">
+                        <div class="flex-1 group relative p-10 rounded-[40px] bg-white border border-slate-200/60 cursor-pointer overflow-hidden transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] hover:-translate-y-2">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="relative z-10">
+                                <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                                    <i class="fa-solid fa-crown text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-black text-slate-900 mb-3">دعوات زفاف ملكية</h3>
+                                <p class="text-slate-500 text-sm leading-relaxed mb-8">نصمم لك ليلة العمر بأدق التفاصيل، دعوات إلكترونية فاخرة تليق بمناسبتك السعيدة</p>
+                                <div class="flex items-center gap-3 text-rose-600 font-black text-sm uppercase tracking-wider"><span>اطلب الآن</span> <i class="fa-solid fa-arrow-left"></i></div>
+                            </div>
+                        </div>
+                        <div class="flex-1 group relative p-10 rounded-[40px] bg-slate-900 cursor-pointer overflow-hidden transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(13,148,136,0.3)] hover:-translate-y-2">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-teal-500/20 rounded-full blur-3xl -mr-16 -mt-16 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="relative z-10">
+                                <div class="w-14 h-14 rounded-2xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                                    <i class="fa-solid fa-calendar-check text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-black text-white mb-3">مناسبات وفعاليات</h3>
+                                <p class="text-slate-400 text-sm leading-relaxed mb-8">لجميع مناسباتك الخاصة والعامة، نوفر لك قوالب عصرية وسريعة التنفيذ بكفاءة عالية</p>
+                                <div class="flex items-center gap-3 text-teal-400 font-black text-sm uppercase tracking-wider"><span>تواصل معنا</span> <i class="fa-solid fa-arrow-left"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="features" class="py-24 bg-white">
+                <div class="max-w-6xl mx-auto px-6 lg:px-8 text-center">
+                    <span class="text-xs font-bold text-gray-400 tracking-[0.1em] uppercase">المميزات</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-3 mb-16">لماذا سَلِّم؟</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-shadow duration-300">
+                            <div class="w-14 h-14 bg-gray-900 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-md">
+                                <i class="fa-solid fa-wand-magic-sparkles text-xl text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">قوالب احترافية</h3>
+                            <p class="text-gray-500 text-sm leading-relaxed">أكثر من ٢٠ قالب مصمم بعناية ليناسب ذوقك الرفيع.</p>
+                        </div>
+                        
+                        <div class="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-shadow duration-300">
+                            <div class="w-14 h-14 bg-gray-900 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-md">
+                                <i class="fa-solid fa-file-export text-xl text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">تصدير عالي الجودة</h3>
+                            <p class="text-gray-500 text-sm leading-relaxed">حمّل بطاقتك بصيغ PNG و PDF بأعلى دقة ممكنة للطباعة أو النشر.</p>
+                        </div>
+                        
+                        <div class="p-8 bg-gray-50 rounded-2xl hover:shadow-lg transition-shadow duration-300">
+                            <div class="w-14 h-14 bg-gray-900 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-md">
+                                <i class="fa-brands fa-whatsapp text-2xl text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3">مشاركة فورية</h3>
+                            <p class="text-gray-500 text-sm leading-relaxed">شارك إبداعك مباشرة عبر واتساب مع الأهل والأصدقاء بضغطة زر.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section style="padding: 60px 0px; background: linear-gradient(135deg, rgb(255, 215, 0) 0%, rgb(255, 140, 0) 100%);">
+                <div style="max-width: 800px; margin: 0px auto; padding: 0px 24px; text-align: center;">
+                    <h2 style="font-size: 28px; font-weight: 800; color: rgb(255, 255, 255); margin-bottom: 12px;">لعبة العيدية التفاعلية</h2>
+                    <p style="font-size: 16px; color: rgba(255, 255, 255, 0.9); margin-bottom: 24px; line-height: 1.6;">حول تهنئة العيد إلى مغامرة ممتعة - أنشئ أسئلتك، حدد جوائزك، وتنافس مع عائلتك!</p>
+                    <a href="/create-game" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; background: rgb(255, 255, 255); color: rgb(23, 23, 23); font-size: 16px; font-weight: 700; border-radius: 12px; text-decoration: none; transition: 200ms;">
+                        ابدأ الآن <i class="fa-solid fa-arrow-left text-sm ml-1"></i>
+                    </a>
+                </div>
+            </section>
+
+            <section class="py-24 bg-gray-50">
+                <div class="max-w-4xl mx-auto px-6">
+                    <div class="text-center mb-16">
+                        <span class="text-xs font-bold text-gray-400 tracking-[0.1em] uppercase">كيف تعمل</span>
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-3">ثلاث خطوات بسيطة</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+                        <div>
+                            <div class="text-6xl font-black text-gray-200 leading-none mb-4">01</div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">اختر القالب</h3>
+                            <p class="text-sm text-gray-500">تصفح مكتبة القوالب المميزة</p>
+                        </div>
+                        <div>
+                            <div class="text-6xl font-black text-gray-200 leading-none mb-4">02</div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">خصص التصميم</h3>
+                            <p class="text-sm text-gray-500">أضف اسمك ونصوصك الخاصة</p>
+                        </div>
+                        <div>
+                            <div class="text-6xl font-black text-gray-200 leading-none mb-4">03</div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">صدّر وشارك</h3>
+                            <p class="text-sm text-gray-500">حمّل التصميم أو شاركه مباشرة</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pricing" class="py-24 bg-white">
+                <div class="max-w-6xl mx-auto px-6 lg:px-8">
+                    <div class="text-center max-w-3xl mx-auto mb-16">
+                        <span class="text-xs font-bold text-indigo-600 tracking-[0.1em] uppercase">الباقات</span>
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-3 mb-4">اختر ما يناسبك</h2>
+                        <p class="text-gray-500 text-lg">باقات مرنة صُممت لتلبي احتياجات الأفراد والشركات بكل احترافية.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                        <div class="bg-gray-50 rounded-[2rem] border border-gray-200 p-8 sm:p-10 flex flex-col hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">الباقة المجانية</h3>
+                            <p class="text-gray-500 text-sm mb-6">مثالية للاستخدام الشخصي</p>
+                            <div class="mb-8">
+                                <span class="text-5xl font-black text-gray-900">مجاناً</span>
+                            </div>
+                            
+                            <ul class="space-y-4 mb-8 flex-1 text-right">
+                                <li class="flex items-center gap-3 text-gray-700">
+                                    <i class="fa-solid fa-circle-check text-green-500 text-lg"></i>
+                                    <span>تصميم عدد <strong>غير محدود</strong> من البطاقات</span>
+                                </li>
+                                <li class="flex items-center gap-3 text-gray-700">
+                                    <i class="fa-solid fa-circle-check text-green-500 text-lg"></i>
+                                    <span>الوصول لمكتبة القوالب الأساسية</span>
+                                </li>
+                                <li class="flex items-center gap-3 text-gray-700">
+                                    <i class="fa-solid fa-circle-check text-green-500 text-lg"></i>
+                                    <span>تصدير عالي الجودة للصور</span>
+                                </li>
+                            </ul>
+                            
+                            <a href="/editor.html" class="w-full text-center py-4 rounded-xl bg-white border-2 border-gray-900 text-gray-900 font-bold hover:bg-gray-900 hover:text-white transition-colors duration-300">
+                                ابدأ مجاناً الآن
+                            </a>
+                        </div>
+
+                        <div class="bg-gray-900 rounded-[2rem] border border-gray-800 p-8 sm:p-10 flex flex-col relative shadow-2xl transform md:-translate-y-4 hover:shadow-indigo-500/20 transition-all duration-300 hover:-translate-y-5">
+                            <div class="absolute top-0 inset-x-0 flex justify-center -mt-3">
+                                <span class="bg-indigo-500 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">الأكثر طلباً للأعمال</span>
+                            </div>
+                            
+                            <h3 class="text-2xl font-bold text-white mb-2 mt-2">باقة الشركات</h3>
+                            <p class="text-gray-400 text-sm mb-6">حلول مخصصة تعكس هوية مؤسستك</p>
+                            <div class="mb-8">
+                                <span class="text-4xl font-black text-white">تواصل معنا</span>
+                            </div>
+                            
+                            <ul class="space-y-4 mb-8 flex-1 text-right">
+                                <li class="flex items-center gap-3 text-gray-300">
+                                    <i class="fa-solid fa-circle-check text-indigo-400 text-lg"></i>
+                                    <span>تخصيص كامل للنظام بألوان شركتك</span>
+                                </li>
+                                <li class="flex items-center gap-3 text-gray-300">
+                                    <i class="fa-solid fa-circle-check text-indigo-400 text-lg"></i>
+                                    <span>إزالة العلامة المائية لسَلِّم</span>
+                                </li>
+                                <li class="flex items-center gap-3 text-gray-300">
+                                    <i class="fa-solid fa-circle-check text-indigo-400 text-lg"></i>
+                                    <span>قوالب VIP خاصة ومغلقة لشركتك فقط</span>
+                                </li>
+                                <li class="flex items-center gap-3 text-gray-300">
+                                    <i class="fa-solid fa-circle-check text-indigo-400 text-lg"></i>
+                                    <span>دعم فني وأولوية في التنفيذ</span>
+                                </li>
+                            </ul>
+                            
+                            <a href="mailto:sales@solimanw.com" class="w-full text-center py-4 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-500 transition-colors duration-300 shadow-[0_0_20px_rgba(79,70,229,0.4)]">
+                                تواصل مع المبيعات <i class="fa-solid fa-headset mr-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section style="padding: 100px 0px; background: rgb(255, 255, 255);">
+                <div style="max-width: 700px; margin: 0px auto; padding: 0px 24px;">
+                    <div style="text-align: center; margin-bottom: 48px;">
+                        <span style="font-size: 12px; font-weight: 600; color: rgb(163, 163, 163); letter-spacing: 0.1em;">الأسئلة</span>
+                        <h2 style="font-size: clamp(28px, 4vw, 40px); font-weight: 700; color: rgb(23, 23, 23); margin-top: 12px;">أسئلة شائعة</h2>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div class="faq-item p-5 bg-gray-50 rounded-xl cursor-pointer transition-all duration-300 border border-transparent hover:border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-gray-900">هل المنصة مجانية؟</h3>
+                                <i class="faq-icon fa-solid fa-chevron-down transition-transform duration-300 text-gray-400"></i>
+                            </div>
+                            <div class="faq-answer hidden mt-4 text-gray-600 text-sm leading-relaxed">
+                                نعم، يمكنك استخدام القوالب الأساسية وتصميم بطاقتك وتصديرها بشكل مجاني تماماً. نوفر أيضاً باقات مدفوعة للشركات التي تحتاج تخصيص أكبر.
+                            </div>
+                        </div>
+                        <div class="faq-item p-5 bg-gray-50 rounded-xl cursor-pointer transition-all duration-300 border border-transparent hover:border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-gray-900">ما جودة الصور المُصدرة؟</h3>
+                                <i class="faq-icon fa-solid fa-chevron-down transition-transform duration-300 text-gray-400"></i>
+                            </div>
+                            <div class="faq-answer hidden mt-4 text-gray-600 text-sm leading-relaxed">
+                                نقوم بتصدير الصور بجودة عالية (High Resolution) بصيغة PNG أو PDF لتكون جاهزة للمشاركة على وسائل التواصل الاجتماعي أو للطباعة.
+                            </div>
+                        </div>
+                        <div class="faq-item p-5 bg-gray-50 rounded-xl cursor-pointer transition-all duration-300 border border-transparent hover:border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-gray-900">هل تعمل المنصة على الهاتف؟</h3>
+                                <i class="faq-icon fa-solid fa-chevron-down transition-transform duration-300 text-gray-400"></i>
+                            </div>
+                            <div class="faq-answer hidden mt-4 text-gray-600 text-sm leading-relaxed">
+                                بالتأكيد! المنصة مصممة لتكون متجاوبة بالكامل بنسبة 100% مع جميع الأجهزة (موبايل، تابلت، كمبيوتر) لضمان أفضل تجربة مستخدم.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section style="padding: 100px 0px; background: rgb(23, 23, 23);">
+                <div style="max-width: 600px; margin: 0px auto; padding: 0px 24px; text-align: center;">
+                    <h2 style="font-size: clamp(28px, 4vw, 40px); font-weight: 700; color: rgb(255, 255, 255); margin-bottom: 16px;">جاهز للبدء؟</h2>
+                    <p style="font-size: 16px; color: rgba(255, 255, 255, 0.5); margin-bottom: 32px;">صمّم بطاقتك الآن مجاناً</p>
+                    <a href="/editor.html" style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: rgb(255, 255, 255); color: rgb(23, 23, 23); font-size: 15px; font-weight: 600; border-radius: 12px; text-decoration: none;">
+                        ابدأ التصميم
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                </div>
+            </section>
+
+            <section style="padding: 120px 0px; background: rgb(250, 250, 250); position: relative;">
+                <div style="max-width: 1000px; margin: 0px auto; padding: 0px 24px;">
+                    <div style="text-align: center; margin-bottom: 64px;">
+                        <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: rgb(255, 255, 255); border-radius: 100px; margin-bottom: 24px; border: 1px solid rgb(229, 229, 229);">
+                            <span style="font-size: 12px; color: rgb(23, 23, 23); font-weight: 600; letter-spacing: 0.02em;">حلول الأعمال</span>
+                        </div>
+                        <h2 style="font-size: clamp(28px, 4vw, 42px); font-weight: 700; color: rgb(23, 23, 23); margin-bottom: 16px; line-height: 1.3;">انضم إلى شركائنا الناجحين</h2>
+                        <p style="font-size: 17px; color: rgb(115, 115, 115); max-width: 540px; margin: 0px auto; line-height: 1.7;">نقدم حلولاً متكاملة للشركات، من المتاجر الإلكترونية إلى الحملات التسويقية</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="display: inline-flex; flex-direction: column; gap: 16px; align-items: center;">
+                            <a href="https://wa.me/201007835547?text=مرحباً، أريد الاستفسار عن الشراكة" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 10px; padding: 16px 40px; background: rgb(23, 23, 23); color: rgb(255, 255, 255); font-size: 16px; font-weight: 600; border-radius: 12px; text-decoration: none; transition: 200ms;">
+                                تواصل معنا الآن <i class="fa-brands fa-whatsapp text-xl"></i>
+                            </a>
+                        </div>
+                        <p style="font-size: 13px; color: rgb(163, 163, 163); margin-top: 24px;">🇸🇦 فريق متخصص - نجح معنا أكثر من 50 شركة</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold">س</div>
+                        <span class="font-black text-2xl text-gray-900 tracking-tight">سَلِّم</span>
+                    </div>
+                    <p class="text-gray-500 text-sm leading-relaxed max-w-sm mb-6">
+                        المنصة العربية الأولى لتصميم بطاقات التهنئة والمناسبات باحترافية وسهولة. اصنع ذكرياتك بلمسة فنية مميزة وشاركها مع من تحب في ثوانٍ.
+                    </p>
+                    <div class="flex space-x-4 space-x-reverse">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-black hover:text-white transition shadow-sm hover:shadow-md">
+                            <i class="fa-brands fa-x-twitter text-lg"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white transition shadow-sm hover:shadow-md">
+                            <i class="fa-brands fa-linkedin-in text-lg"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-pink-600 hover:text-white transition shadow-sm hover:shadow-md">
+                            <i class="fa-brands fa-instagram text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">الروابط السريعة</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-sm text-gray-500 hover:text-black transition">الرئيسية</a></li>
+                        <li><a href="/editor.html" class="text-sm text-gray-500 hover:text-black transition">محرر البطاقات</a></li>
+                        <li><a href="#templates" class="text-sm text-gray-500 hover:text-black transition">القوالب الجاهزة</a></li>
+                        <li><a href="#pricing" class="text-sm text-gray-500 hover:text-black transition">الأسعار والباقات</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-gray-900 mb-4">الدعم والمساعدة</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-sm text-gray-500 hover:text-black transition">الأسئلة الشائعة</a></li>
+                        <li><a href="#" class="text-sm text-gray-500 hover:text-black transition">شروط الاستخدام</a></li>
+                        <li><a href="#" class="text-sm text-gray-500 hover:text-black transition">سياسة الخصوصية</a></li>
+                        <li><a href="#" class="text-sm text-gray-500 hover:text-black transition">تواصل معنا</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-gray-400">© 2026 منصة سَلِّم. جميع الحقوق محفوظة.</p>
+                <div class="flex items-center gap-2 text-sm text-gray-400">
+                    صُنع بكل <i class="fa-solid fa-heart text-red-500 mx-1"></i> في المملكة العربية السعودية
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 4. نظام السلايدر (أزرار وسحب بالماوس)
+const slider = document.getElementById('occasions-slider');
+const slideLeftBtn = document.getElementById('slide-left');
+const slideRightBtn = document.getElementById('slide-right');
+
+if (slider && slideRightBtn && slideLeftBtn) {
+    const scrollAmount = 324; // عرض الكارت + المسافة
+
+    // التحكم بالأزرار (عشان الموقع RTL، الاتجاهات معكوسة برمجياً)
+    slideRightBtn.addEventListener('click', () => {
+        slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+
+    slideLeftBtn.addEventListener('click', () => {
+        slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+
+    // التحكم بالسحب (Drag to scroll) للكمبيوتر
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    slider.addEventListener('mousedown', (e) => {
+        isDown = true;
+        slider.style.cursor = 'grabbing';
+        startX = e.pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+        // إيقاف الـ snap مؤقتاً أثناء السحب لسهولة الحركة
+        slider.style.scrollSnapType = 'none'; 
+    });
+
+    slider.addEventListener('mouseleave', () => {
+        isDown = false;
+        slider.style.cursor = 'grab';
+        slider.style.scrollSnapType = 'x mandatory';
+    });
+
+    slider.addEventListener('mouseup', () => {
+        isDown = false;
+        slider.style.cursor = 'grab';
+        slider.style.scrollSnapType = 'x mandatory';
+    });
+
+    slider.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - slider.offsetLeft;
+        const walk = (x - startX) * 2; // سرعة السحب
+        slider.scrollLeft = scrollLeft - walk;
+    });
+}
+        // 1. التحكم في القائمة الجانبية للموبايل
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // 2. إضافة تأثير Blur للناف بار عند النزول
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-sm');
+            } else {
+                nav.classList.remove('shadow-sm');
+            }
+        });
+
+        // 3. نظام الأسئلة الشائعة (FAQ Accordion)
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const answer = item.querySelector('.faq-answer');
+                const icon = item.querySelector('.faq-icon');
+                
+                // لو هو مفتوح، اقفله
+                if (!answer.classList.contains('hidden')) {
+                    answer.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    // اقفل كل الباقيين الأول
+                    document.querySelectorAll('.faq-answer').forEach(ans => ans.classList.add('hidden'));
+                    document.querySelectorAll('.faq-icon').forEach(ic => ic.style.transform = 'rotate(0deg)');
+                    
+                    // افتح اللي ضغطت عليه
+                    answer.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

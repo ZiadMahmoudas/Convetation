@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محرر البطاقات - سَلِّم</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* ------------------ شريط التمرير ------------------ */
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px;}
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* ------------------ الكانفاس (منطقة التصميم) ------------------ */
+        #canvas-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1 / 1;
+            background-image: url('https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=1000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15);
+            margin: 0 auto;
+        }
+
+        /* ------------------ العناصر القابلة للسحب ------------------ */
+        .draggable-item {
+            position: absolute;
+            cursor: grab;
+            user-select: none;
+            padding: 4px;
+            border: 2px dashed transparent;
+            transition: border 0.2s;
+            transform-origin: center;
+        }
+        .draggable-item.is-text {
+            white-space: pre-wrap;
+            text-align: center;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        .draggable-item:active { cursor: grabbing; }
+        
+        /* تأثير التحديد */
+        .draggable-item.selected {
+            border-color: #3B82F6 !important;
+            background-color: rgba(59, 130, 246, 0.05);
+            z-index: 50;
+        }
+
+        /* ------------------ التبويبات (Tabs) ------------------ */
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        
+        /* البار العلوي للأدوات */
+        .tool-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px 8px;
+            border-radius: 14px;
+            min-width: 72px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            background: transparent;
+            transition: all 0.2s;
+        }
+        .tool-tab i { font-size: 18px; }
+        .tool-tab:hover { background: #f1f5f9; color: #0f172a; }
+        .tool-tab.active { background: #0f172a; color: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+        /* التبويبات الفرعية (للمخطوطات) */
+        .sub-tab {
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            background: #f8fafc;
+            transition: 0.2s;
+        }
+        .sub-tab.active { background: #0f172a; color: #fff; }
+
+        .manu-grid { display: none; }
+        .manu-grid.active { display: grid; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* شكل الـ Slider الاحترافي */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #0f172a;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 pb-12">
+
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold text-sm">س</div>
+                <span class="font-black text-xl tracking-tight">سَلِّم</span>
+            </div>
+            
+            <div class="flex bg-slate-100 p-1 rounded-xl">
+                <button class="px-5 py-2 rounded-lg font-bold text-sm text-slate-500 hover:text-slate-900 transition"><i class="fa-solid fa-users ml-1"></i> جماعي</button>
+                <button class="px-5 py-2 rounded-lg font-bold text-sm bg-black text-white shadow transition"><i class="fa-solid fa-pen-nib ml-1"></i> صمّم</button>
+                <button class="px-5 py-2 rounded-lg font-bold text-sm text-slate-500 hover:text-slate-900 transition"><i class="fa-solid fa-check ml-1"></i> جاهز</button>
+            </div>
+
+            <div class="hidden md:block">
+                <div class="bg-amber-100 border border-amber-200 text-amber-800 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-building"></i> للشركات والراغبين في تصميم خاص؟
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto mt-8 px-4 flex flex-col lg:flex-row gap-8 items-start">
+        
+        <div class="w-full lg:w-[420px] shrink-0">
+            
+            <div class="flex gap-2 mb-6 overflow-x-auto custom-scrollbar pb-2 bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
+                <button onclick="switchTab('format')" id="tab-btn-format" class="tool-tab">
+                    <i class="fa-solid fa-layer-group"></i><span>التنسيق</span>
+                </button>
+                <button onclick="switchTab('texts')" id="tab-btn-texts" class="tool-tab">
+                    <i class="fa-solid fa-comment-dots"></i><span>النصوص</span>
+                </button>
+                <button onclick="switchTab('logo')" id="tab-btn-logo" class="tool-tab">
+                    <i class="fa-solid fa-building"></i><span>الشعار</span>
+                </button>
+                <button onclick="switchTab('photo')" id="tab-btn-photo" class="tool-tab">
+                    <i class="fa-solid fa-user-circle"></i><span>صورة</span>
+                </button>
+                <button onclick="switchTab('manuscripts')" id="tab-btn-manuscripts" class="tool-tab">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i><span>المخطوطات</span>
+                </button>
+                <button onclick="switchTab('backgrounds')" id="tab-btn-backgrounds" class="tool-tab active">
+                    <i class="fa-solid fa-image"></i><span>الخلفية</span>
+                </button>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-5 h-[650px] flex flex-col">
+                
+                <div id="tab-backgrounds" class="tab-content active h-full flex flex-col">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700"><i class="fa-solid fa-image text-lg"></i></div>
+                        <div>
+                            <h3 class="font-bold text-slate-900">الخلفيات</h3>
+                            <p class="text-xs text-slate-400">اختر أو ارفع خلفية</p>
+                        </div>
+                    </div>
+                    <label class="flex items-center justify-center gap-2 w-full p-4 bg-slate-50 border border-dashed border-slate-300 rounded-2xl cursor-pointer hover:bg-slate-100 transition mb-4">
+                        <input type="file" accept="image/*" class="hidden" onchange="uploadBackground(event)">
+                        <i class="fa-solid fa-plus text-slate-400"></i>
+                        <span class="text-sm font-bold text-slate-600">رفع صورة جديدة</span>
+                    </label>
+                    <div class="grid grid-cols-3 gap-3 overflow-y-auto custom-scrollbar pr-1 pb-4">
+                        <button onclick="changeBackground('https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=400')" class="relative aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-black transition group">
+                            <img src="https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=200" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <div class="absolute top-1 left-1 bg-gradient-to-br from-amber-400 to-amber-200 text-black px-2 py-0.5 rounded flex items-center gap-1 text-[9px] font-bold shadow-sm"><i class="fa-solid fa-star text-[8px]"></i> حصري</div>
+                        </button>
+                        <button onclick="changeBackground('https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=400')" class="relative aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-black transition group">
+                            <img src="https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=200" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        </button>
+                        <button onclick="changeBackground('https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=400')" class="relative aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-black transition group">
+                            <img src="https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=200" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        </button>
+                    </div>
+                </div>
+
+                <div id="tab-manuscripts" class="tab-content h-full flex flex-col">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700"><i class="fa-solid fa-wand-magic-sparkles text-lg"></i></div>
+                        <div>
+                            <h3 class="font-bold text-slate-900">المخطوطات</h3>
+                            <p class="text-xs text-slate-400">671 مخطوطة متاحة</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-2 mb-4 bg-slate-50 p-1 rounded-xl">
+                        <button onclick="switchManuGrid('white', this)" class="sub-tab active flex-1">بيضاء</button>
+                        <button onclick="switchManuGrid('3d', this)" class="sub-tab flex-1">ثلاثية الأبعاد</button>
+                        <button onclick="switchManuGrid('black', this)" class="sub-tab flex-1">سوداء</button>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto custom-scrollbar pr-1 relative">
+                        <div id="grid-white" class="manu-grid active grid-cols-3 gap-2">
+                            <button class="bg-slate-900 p-2 rounded-xl border border-slate-100 hover:border-slate-400 transition h-16 flex items-center justify-center"><img src="/templates/مخطوطات بيضاء/تهانينا@3x.png" alt="تهانينا" class="max-h-full invert opacity-80"></button>
+                        </div>
+                        <div id="grid-3d" class="manu-grid grid-cols-3 gap-2">
+                            <button class="bg-slate-900 p-2 rounded-xl border border-slate-100 hover:border-slate-400 transition h-16 flex items-center justify-center"><img src="/templates/مخطوطات ثلاثية الأبعاد/افرح بالعيد@3x.png" alt="3D" class="max-h-full"></button>
+                        </div>
+                        <div id="grid-black" class="manu-grid grid-cols-3 gap-2">
+                            <button class="bg-slate-100 p-2 rounded-xl border border-slate-200 hover:border-slate-400 transition h-16 flex items-center justify-center"><img src="/templates/مخطوطات سوداء/العيد فرحة@3x.png" alt="أسود" class="max-h-full"></button>
+                        </div>
+                    </div>
+
+                    <div id="manu-controls" class="hidden mt-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs font-bold text-slate-500">الحجم</span>
+                            <span id="manu-size-display" class="text-xs font-bold bg-white px-2 py-1 rounded shadow-sm">120px</span>
+                        </div>
+                        <input type="range" min="30" max="300" value="120" oninput="resizeSelected(this.value)">
+                        <button onclick="deleteSelected()" class="mt-4 w-full py-2 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 transition flex items-center justify-center gap-2">
+                            إزالة المخطوطة <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="tab-photo" class="tab-content h-full flex flex-col">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700"><i class="fa-solid fa-user-circle text-lg"></i></div>
+                        <div>
+                            <h3 class="font-bold text-slate-900">الصورة الشخصية</h3>
+                            <p class="text-xs text-slate-400">أضف صورتك على البطاقة</p>
+                        </div>
+                    </div>
+                    
+                    <label class="flex items-center justify-center gap-2 w-full p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition shadow-sm mb-6">
+                        <input type="file" accept="image/*" class="hidden" onchange="uploadPersonalPhoto(event)">
+                        <i class="fa-regular fa-user"></i> <span class="text-sm font-bold">تغيير الصورة</span>
+                    </label>
+
+                    <div class="space-y-6">
+                        <div>
+                            <span class="text-xs font-bold text-slate-500 block mb-2">الشكل</span>
+                            <div class="flex bg-slate-100 p-1 rounded-xl">
+                                <button onclick="setPhotoShape('square', this)" class="flex-1 py-2 text-sm font-bold text-slate-500 rounded-lg">مربع</button>
+                                <button onclick="setPhotoShape('circle', this)" class="flex-1 py-2 text-sm font-bold bg-black text-white rounded-lg shadow">مستدير</button>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-slate-500">الحجم</span>
+                                <span class="text-xs font-bold bg-slate-100 px-2 py-1 rounded">25%</span>
+                            </div>
+                            <input type="range" min="50" max="300" value="150" oninput="resizeElement('user-photo', this.value)">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-logo" class="tab-content h-full flex flex-col">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700"><i class="fa-solid fa-building text-lg"></i></div>
+                        <div>
+                            <h3 class="font-bold text-slate-900">شعار الشركة</h3>
+                            <p class="text-xs text-slate-400">أضف شعارك على البطاقة</p>
+                        </div>
+                    </div>
+                    
+                    <label class="flex items-center justify-center gap-2 w-full p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition shadow-sm mb-6">
+                        <input type="file" accept="image/*" class="hidden" onchange="uploadLogo(event)">
+                        <i class="fa-solid fa-building"></i> <span class="text-sm font-bold">تغيير الشعار</span>
+                    </label>
+
+                    <div class="space-y-6">
+                        <div>
+                            <span class="text-xs font-bold text-slate-500 block mb-2">موقع الشعار</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="setLogoPosition('top-right')" class="py-2 text-sm font-bold bg-black text-white rounded-xl shadow">أعلى يمين</button>
+                                <button onclick="setLogoPosition('top-left')" class="py-2 text-sm font-bold bg-slate-100 text-slate-500 rounded-xl hover:bg-slate-200">أعلى يسار</button>
+                                <button onclick="setLogoPosition('bottom-right')" class="py-2 text-sm font-bold bg-slate-100 text-slate-500 rounded-xl hover:bg-slate-200">أسفل يمين</button>
+                                <button onclick="setLogoPosition('bottom-left')" class="py-2 text-sm font-bold bg-slate-100 text-slate-500 rounded-xl hover:bg-slate-200">أسفل يسار</button>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-slate-500 block mb-2">الحجم</span>
+                            <input type="range" min="30" max="200" value="80" oninput="resizeElement('company-logo', this.value)">
+                        </div>
+                        <button onclick="document.getElementById('company-logo').style.display='none'" class="w-full py-3 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 transition">
+                            إزالة الشعار
+                        </button>
+                    </div>
+                </div>
+
+                <div id="tab-texts" class="tab-content h-full flex flex-col overflow-y-auto custom-scrollbar pr-1">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700"><i class="fa-solid fa-comment-dots text-lg"></i></div>
+                        <div>
+                            <h3 class="font-bold text-slate-900">النصوص</h3>
+                            <p class="text-xs text-slate-400">تعديل نصوص البطاقة</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-5">
+                        <div>
+                            <div class="flex justify-between items-center mb-2"><label class="text-sm font-bold text-slate-700">النص الرئيسي</label><span class="text-[10px] text-slate-400">42px</span></div>
+                            <textarea rows="2" class="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-black shadow-sm resize-none" oninput="updateText('main-text', this.value)">علي القدير أن يجعل أيامكم كلها أعياد، وأن يحفظكم ويبارك فيكم.</textarea>
+                            <input type="range" class="mt-2" min="10" max="60" value="22" oninput="updateFontSize('main-text', this.value)">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-2"><label class="text-sm font-bold text-slate-700">النص الفرعي</label><span class="text-[10px] text-slate-400">40px</span></div>
+                            <textarea rows="2" class="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-black shadow-sm resize-none" oninput="updateText('sub-text', this.value)">مع إشراقة صباح العيد، نرفع أكف الضراعة إلى الله العلي القدير.</textarea>
+                            <input type="range" class="mt-2" min="10" max="60" value="18" oninput="updateFontSize('sub-text', this.value)">
+                        </div>
+                        
+                        <div class="pt-4 border-t border-slate-100">
+                            <label class="text-sm font-bold text-slate-700 block mb-2">نصوص جاهزة</label>
+                            <div class="relative">
+                                <i class="fa-solid fa-search absolute right-3 top-3 text-slate-400"></i>
+                                <input type="text" placeholder="ابحث..." class="w-full p-2 pr-9 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-format" class="tab-content h-full flex flex-col">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700"><i class="fa-solid fa-layer-group text-lg"></i></div>
+                        <div>
+                            <h3 class="font-bold text-slate-900">التنسيق</h3>
+                            <p class="text-xs text-slate-400">الخط والألوان والتأثيرات</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-6 overflow-y-auto custom-scrollbar pr-1">
+                        <div>
+                            <span class="text-xs font-bold text-slate-500 block mb-2">الخط</span>
+                            <div class="flex flex-wrap gap-2">
+                                <button class="px-3 py-1.5 bg-black text-white text-xs font-bold rounded-lg">عام الحرف</button>
+                                <button class="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200">أميري</button>
+                                <button class="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200">القاهرة</button>
+                                <button class="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200">تجول</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="text-xs font-bold text-slate-500 block mb-3">ألوان النصوص</span>
+                            
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm font-bold text-slate-700">الرئيسي</span>
+                                <div class="flex gap-2">
+                                    <div onclick="changeColor('main-text', '#10b981')" class="w-6 h-6 rounded-full bg-emerald-500 cursor-pointer shadow-sm border-2 border-transparent hover:border-black"></div>
+                                    <div onclick="changeColor('main-text', '#f43f5e')" class="w-6 h-6 rounded-full bg-rose-500 cursor-pointer shadow-sm border-2 border-transparent hover:border-black"></div>
+                                    <div onclick="changeColor('main-text', '#eab308')" class="w-6 h-6 rounded-full bg-yellow-500 cursor-pointer shadow-sm border-2 border-black"></div>
+                                    <div onclick="changeColor('main-text', '#3b82f6')" class="w-6 h-6 rounded-full bg-blue-500 cursor-pointer shadow-sm border-2 border-transparent hover:border-black"></div>
+                                    <div onclick="changeColor('main-text', '#ffffff')" class="w-6 h-6 rounded-full bg-white cursor-pointer shadow-sm border border-slate-200"></div>
+                                    <div onclick="changeColor('main-text', '#000000')" class="w-6 h-6 rounded-full bg-black cursor-pointer shadow-sm border-2 border-transparent"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-bold text-slate-700">الفرعي</span>
+                                <div class="flex gap-2">
+                                    <div onclick="changeColor('sub-text', '#10b981')" class="w-6 h-6 rounded-full bg-emerald-500 cursor-pointer shadow-sm border-2 border-transparent hover:border-black"></div>
+                                    <div onclick="changeColor('sub-text', '#f43f5e')" class="w-6 h-6 rounded-full bg-rose-500 cursor-pointer shadow-sm border-2 border-transparent hover:border-black"></div>
+                                    <div onclick="changeColor('sub-text', '#eab308')" class="w-6 h-6 rounded-full bg-yellow-500 cursor-pointer shadow-sm border-2 border-transparent hover:border-black"></div>
+                                    <div onclick="changeColor('sub-text', '#3b82f6')" class="w-6 h-6 rounded-full bg-blue-500 cursor-pointer shadow-sm border-2 border-black"></div>
+                                    <div onclick="changeColor('sub-text', '#ffffff')" class="w-6 h-6 rounded-full bg-white cursor-pointer shadow-sm border border-slate-200"></div>
+                                    <div onclick="changeColor('sub-text', '#000000')" class="w-6 h-6 rounded-full bg-black cursor-pointer shadow-sm border-2 border-transparent"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-100">
+                            <span class="text-xs font-bold text-slate-500 block mb-3">التأثيرات</span>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-sm font-bold text-slate-700">ظل النص</span>
+                                <div class="w-10 h-6 bg-black rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute left-1 top-1"></div></div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-bold text-slate-700">حدود النص</span>
+                                <div class="w-10 h-6 bg-slate-200 rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute right-1 top-1 shadow-sm"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="w-full lg:w-auto flex-1 flex flex-col items-center">
+            
+            <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 w-full max-w-[540px]">
+                <div id="canvas-container">
+                    
+                    <img id="user-photo" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150" class="draggable-item rounded-full border-2 border-white shadow-lg hidden" style="top: 10%; left: 40%; width: 100px; height: 100px; object-fit: cover;">
+                    
+                    <img id="company-logo" src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" class="draggable-item hidden" style="top: 5%; right: 5%; width: 80px; filter: drop-shadow(1px 1px 2px rgba(255,255,255,0.8));">
+
+                    <div id="main-text" class="draggable-item is-text text-[#eab308]" style="top: 35%; left: 10%; width: 80%; font-size: 22px; font-weight: 800;">
+                        علي القدير أن يجعل أيامكم كلها أعياد، وأن يحفظكم ويبارك فيكم.
+                    </div>
+                    
+                    <div id="sub-text" class="draggable-item is-text text-[#3B82F6]" style="top: 60%; left: 10%; width: 80%; font-size: 18px; font-weight: 600;">
+                        مع إشراقة صباح العيد، نرفع أكف الضراعة إلى الله العلي القدير.
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full max-w-[540px] mt-6 flex flex-col gap-3">
+                <div class="flex gap-3">
+                    <button onclick="shareWhatsApp()" class="flex-1 bg-[#25D366] hover:bg-[#1da851] text-white py-3.5 rounded-2xl font-bold flex justify-center items-center gap-2 shadow-sm transition transform hover:-translate-y-0.5">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> واتساب
+                    </button>
+                    <button onclick="downloadPNG()" class="flex-1 bg-black hover:bg-slate-800 text-white py-3.5 rounded-2xl font-bold flex justify-center items-center gap-2 shadow-sm transition transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-download"></i> تحميل PNG
+                    </button>
+                </div>
+                <div class="flex gap-2 justify-center bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
+                    <button onclick="downloadPDF()" class="flex-1 text-slate-600 hover:text-black hover:bg-slate-50 py-2 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2">
+                        <i class="fa-regular fa-file-pdf"></i> PDF
+                    </button>
+                    <div class="w-px bg-slate-200 my-1"></div>
+                    <button onclick="copyImage()" class="flex-1 text-slate-600 hover:text-black hover:bg-slate-50 py-2 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2">
+                        <i class="fa-regular fa-copy"></i> نسخ
+                    </button>
+                    <div class="w-px bg-slate-200 my-1"></div>
+                    <button onclick="shareGeneral()" class="flex-1 text-slate-600 hover:text-black hover:bg-slate-50 py-2 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-share-nodes"></i> مشاركة
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. نظام التبويبات الرئيسي والفرعي
+        // ==========================================
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tool-tab').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.getElementById('tab-btn-' + tabName).classList.add('active');
+        }
+
+        function switchManuGrid(val, btn) {
+            document.querySelectorAll('.manu-grid').forEach(el => el.classList.remove('active'));
+            document.getElementById('grid-' + val).classList.add('active');
+            
+            document.querySelectorAll('.sub-tab').forEach(el => {
+                el.classList.remove('active', 'bg-black', 'text-white');
+                el.classList.add('bg-slate-50', 'text-slate-500');
+            });
+            btn.classList.remove('bg-slate-50', 'text-slate-500');
+            btn.classList.add('active', 'bg-black', 'text-white');
+        }
+
+        // ==========================================
+        // 2. تحديث وتلوين النصوص
+        // ==========================================
+        function updateText(id, val) { document.getElementById(id).innerText = val; }
+        function updateFontSize(id, val) { document.getElementById(id).style.fontSize = val + 'px'; }
+        function changeColor(id, color) { document.getElementById(id).style.color = color; }
+
+        // ==========================================
+        // 3. رفع الصور والخلفيات
+        // ==========================================
+        function changeBackground(src) {
+            document.getElementById('canvas-container').style.backgroundImage = `url('${src}')`;
+        }
+        function uploadBackground(e) {
+            if(e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => changeBackground(e.target.result);
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        }
+
+        function uploadPersonalPhoto(e) {
+            if(e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    const img = document.getElementById('user-photo');
+                    img.src = ev.target.result;
+                    img.style.display = 'block';
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        }
+        function setPhotoShape(shape, btn) {
+            const img = document.getElementById('user-photo');
+            if(shape === 'circle') {
+                img.classList.remove('rounded-lg');
+                img.classList.add('rounded-full');
+            } else {
+                img.classList.remove('rounded-full');
+                img.classList.add('rounded-lg');
+            }
+            
+            // Toggle active styles on buttons
+            btn.parentElement.querySelectorAll('button').forEach(b => {
+                b.classList.remove('bg-black', 'text-white', 'shadow');
+                b.classList.add('text-slate-500');
+            });
+            btn.classList.add('bg-black', 'text-white', 'shadow');
+            btn.classList.remove('text-slate-500');
+        }
+
+        function uploadLogo(e) {
+            if(e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    const img = document.getElementById('company-logo');
+                    img.src = ev.target.result;
+                    img.style.display = 'block';
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        }
+        function setLogoPosition(pos) {
+            const logo = document.getElementById('company-logo');
+            logo.style.top = 'auto'; logo.style.bottom = 'auto'; logo.style.left = 'auto'; logo.style.right = 'auto';
+            if(pos.includes('top')) logo.style.top = '5%'; else logo.style.bottom = '5%';
+            if(pos.includes('right')) logo.style.right = '5%'; else logo.style.left = '5%';
+        }
+        function resizeElement(id, val) {
+            document.getElementById(id).style.width = val + 'px';
+            if(id === 'user-photo') document.getElementById(id).style.height = val + 'px'; // للحفاظ على الدائرة
+        }
+
+        // ==========================================
+        // 4. إضافة المخطوطات والتحكم فيها (Drag & Select)
+        // ==========================================
+        // إضافة المخطوطة عند الضغط عليها
+        document.querySelectorAll('.manu-grid button').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const imgElement = this.querySelector('img');
+                if(imgElement) {
+                    const img = document.createElement('img');
+                    img.src = imgElement.src;
+                    img.className = 'draggable-item is-manu';
+                    img.style.top = '40%'; img.style.left = '35%'; img.style.width = '120px';
+                    if(imgElement.classList.contains('invert')) img.style.filter = 'invert(1)'; // للمخطوطات البيضاء
+                    document.getElementById('canvas-container').appendChild(img);
+                    selectElement(img);
+                }
+            });
+        });
+
+        let activeElement = null;
+        const manuControls = document.getElementById('manu-controls');
+        const manuSizeDisplay = document.getElementById('manu-size-display');
+        const manuSlider = manuControls.querySelector('input[type="range"]');
+
+        function selectElement(el) {
+            if(activeElement) activeElement.classList.remove('selected');
+            activeElement = el;
+            
+            if(el && el.classList.contains('is-manu')) {
+                el.classList.add('selected');
+                manuControls.classList.remove('hidden');
+                manuSlider.value = parseInt(el.style.width);
+                manuSizeDisplay.innerText = manuSlider.value + 'px';
+            } else {
+                manuControls.classList.add('hidden');
+            }
+        }
+
+        function resizeSelected(val) {
+            if(!activeElement || !activeElement.classList.contains('is-manu')) return;
+            activeElement.style.width = val + 'px';
+            manuSizeDisplay.innerText = val + 'px';
+        }
+
+        function deleteSelected() {
+            if(activeElement && activeElement.classList.contains('is-manu')) {
+                activeElement.remove();
+                selectElement(null);
+            }
+        }
+
+        // ==========================================
+        // 5. السحب والإفلات (Drag logic)
+        // ==========================================
+        const container = document.getElementById('canvas-container');
+        let isDragging = false;
+        let currentX, currentY, initialX, initialY;
+
+        container.addEventListener("mousedown", dragStart, false);
+        document.addEventListener("mouseup", dragEnd, false);
+        document.addEventListener("mousemove", drag, false);
+
+        container.addEventListener("touchstart", dragStart, {passive: false});
+        document.addEventListener("touchend", dragEnd, false);
+        document.addEventListener("touchmove", drag, {passive: false});
+
+        function dragStart(e) {
+            if (e.target.classList.contains('draggable-item')) {
+                selectElement(e.target);
+                isDragging = true;
+                if (e.type === "touchstart") {
+                    initialX = e.touches[0].clientX - activeElement.offsetLeft;
+                    initialY = e.touches[0].clientY - activeElement.offsetTop;
+                } else {
+                    initialX = e.clientX - activeElement.offsetLeft;
+                    initialY = e.clientY - activeElement.offsetTop;
+                }
+            } else if (e.target.id === 'canvas-container') {
+                selectElement(null); // إلغاء التحديد لو داس عالفاضي
+            }
+        }
+
+        function dragEnd() { isDragging = false; }
+
+        function drag(e) {
+            if (isDragging && activeElement) {
+                e.preventDefault();
+                if (e.type === "touchmove") {
+                    currentX = e.touches[0].clientX - initialX;
+                    currentY = e.touches[0].clientY - initialY;
+                } else {
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                }
+                activeElement.style.left = currentX + 'px';
+                activeElement.style.top = currentY + 'px';
+            }
+        }
+
+        // ==========================================
+        // 6. التصدير والمشاركة
+        // ==========================================
+        async function captureDesign() {
+            if(activeElement) activeElement.classList.remove('selected'); // خفي إطار التحديد
+            const canvas = await html2canvas(document.getElementById('canvas-container'), { useCORS: true, scale: 2 });
+            if(activeElement) activeElement.classList.add('selected'); // رجعه تاني
+            return canvas;
+        }
+        async function downloadPNG() {
+            const canvas = await captureDesign();
+            const link = document.createElement('a'); link.download = 'sallim-card.png'; link.href = canvas.toDataURL(); link.click();
+        }
+        async function downloadPDF() {
+            const canvas = await captureDesign();
+            const pdf = new window.jspdf.jsPDF({ orientation: 'p', unit: 'px', format: [canvas.width, canvas.height] });
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width, canvas.height);
+            pdf.save('sallim-card.pdf');
+        }
+        async function copyImage() {
+            try {
+                const canvas = await captureDesign();
+                canvas.toBlob(async blob => {
+                    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+                    alert("تم النسخ للحافظة!");
+                });
+            } catch (e) { alert("متصفحك لا يدعم هذه الميزة."); }
+        }
+        async function shareGeneral() {
+            const canvas = await captureDesign();
+            canvas.toBlob(async blob => {
+                if (navigator.share) await navigator.share({ title: 'تهنئة', files: [new File([blob], "card.png", { type: "image/png" })] });
+                else alert("غير مدعوم.");
+            });
+        }
+        function shareWhatsApp() {
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent("تهنئة من منصة سَلِّم")}`, '_blank');
+            alert("حمل الصورة أولاً ثم أرفقها في واتساب.");
+        }
+    </script>
+</body>
+</html>
