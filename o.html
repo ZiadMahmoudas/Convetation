@@ -1,691 +1,967 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محرر البطاقات - سَلِّم</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محرر البطاقات - سَلِّم</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
-    <style>
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background-color: #f8fafc;
-        }
+<style>
+/* ═══════════════════════════════
+   RESET & BASE (كودك الأصلي)
+═══════════════════════════════ */
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: #f0f0f2;
+  overflow: hidden;
+  height: 100vh;
+}
 
-        /* ------------------ شريط التمرير ------------------ */
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px;}
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+/* ═══════════════════════════════
+   TOPBAR
+═══════════════════════════════ */
+#topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  height: 54px; background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+}
+.logo { font-size: 18px; font-weight: 900; }
+.logo em { color: #c9a227; font-style: normal; }
+.top-btns { display: flex; gap: 8px; }
 
-        /* ------------------ الكانفاس (منطقة التصميم) ------------------ */
-        #canvas-container {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            aspect-ratio: 1 / 1;
-            background-image: url('https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=1000&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15);
-            margin: 0 auto;
-        }
+/* ═══════════════════════════════
+   MODE BAR (جاهز / صمّم / جماعي)
+═══════════════════════════════ */
+#modebar {
+  position: fixed; top: 54px; left: 0; right: 0; z-index: 499;
+  height: 46px; background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex; align-items: center;
+  justify-content: center; gap: 6px;
+  padding: 0 16px;
+}
+.mode-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 18px; border-radius: 22px;
+  font-family: 'Tajawal', sans-serif; font-size: 13px; font-weight: 700;
+  cursor: pointer; border: 1px solid #ddd; background: #f7f7f7;
+  color: #666; transition: all .15s;
+}
+.mode-btn:hover { border-color: #aaa; color: #111; }
+.mode-btn.active { background: #111; color: #fff; border-color: #111; }
 
-        /* ------------------ العناصر القابلة للسحب ------------------ */
-        .draggable-item {
-            position: absolute;
-            cursor: grab;
-            user-select: none;
-            padding: 4px;
-            border: 2px dashed transparent;
-            transition: border 0.2s;
-            transform-origin: center;
-        }
-        .draggable-item.is-text {
-            white-space: pre-wrap;
-            text-align: center;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-        }
-        .draggable-item:active { cursor: grabbing; }
-        
-        /* تأثير التحديد */
-        .draggable-item.selected {
-            border-color: #3B82F6 !important;
-            background-color: rgba(59, 130, 246, 0.05);
-            z-index: 50;
-        }
+/* ═══════════════════════════════
+   FILTER BAR
+═══════════════════════════════ */
+#filterbar {
+  position: fixed; top: 100px; left: 0; right: 0; z-index: 498;
+  height: 40px; background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex; align-items: center;
+  gap: 6px; padding: 0 16px;
+  overflow-x: auto;
+}
+#filterbar::-webkit-scrollbar { display: none; }
+.fpill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 13px; border-radius: 18px;
+  border: 1px solid #e0e0e0; background: #fff;
+  font-family: 'Tajawal', sans-serif; font-size: 12px; font-weight: 700;
+  cursor: pointer; white-space: nowrap; color: #666;
+  transition: all .15s; flex-shrink: 0;
+}
+.fpill:hover { border-color: #888; color: #111; }
+.fpill.on { background: #111; color: #fff; border-color: #111; }
+.fdot { width: 7px; height: 7px; border-radius: 50%; }
 
-        /* ------------------ التبويبات (Tabs) ------------------ */
-        .tab-content { display: none; animation: fadeIn 0.3s ease; }
-        .tab-content.active { display: block; }
-        
-        /* البار العلوي للأدوات */
-        .tool-tab {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 12px 8px;
-            border-radius: 14px;
-            min-width: 72px;
-            font-size: 11px;
-            font-weight: 700;
-            color: #64748b;
-            background: transparent;
-            transition: all 0.2s;
-        }
-        .tool-tab i { font-size: 18px; }
-        .tool-tab:hover { background: #f1f5f9; color: #0f172a; }
-        .tool-tab.active { background: #0f172a; color: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+/* ═══════════════════════════════
+   MAIN LAYOUT (للمصمم)
+═══════════════════════════════ */
+#layout {
+  position: fixed;
+  top: 140px; left: 0; right: 0; bottom: 0;
+  display: flex;
+}
 
-        /* التبويبات الفرعية (للمخطوطات) */
-        .sub-tab {
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #64748b;
-            background: #f8fafc;
-            transition: 0.2s;
-        }
-        .sub-tab.active { background: #0f172a; color: #fff; }
+/* ═══════════════════════════════
+   CANVAS AREA
+═══════════════════════════════ */
+#canvas-area {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 14px; overflow: auto; padding: 16px;
+}
+#canvas {
+  position: relative;
+  width: 420px; height: 420px;
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 12px 48px rgba(0,0,0,.18);
+  flex-shrink: 0;
+  background: #1a1a2e url('https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=800') center/cover no-repeat;
+}
+/* draggable elements */
+.el {
+  position: absolute;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.el:active { cursor: grabbing; }
+.el.selected::after {
+  content: '';
+  position: absolute; inset: -4px;
+  border: 2px dashed rgba(255,255,255,.85);
+  border-radius: 5px; pointer-events: none;
+}
+.el-text {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 26px; font-weight: 700;
+  color: #fff; direction: rtl;
+  text-align: right; padding: 3px 6px;
+  white-space: pre-wrap; line-height: 1.4;
+  text-shadow: 0 2px 8px rgba(0,0,0,.5);
+  outline: none; /* إخفاء الأوتلاين عند التعديل */
+}
+.el-img { display: block; }
+/* resize handle */
+.rhandle {
+  position: absolute; bottom: -7px; left: -7px;
+  width: 14px; height: 14px;
+  background: #fff; border: 2.5px solid #333;
+  border-radius: 50%; cursor: se-resize; z-index: 5;
+  display: none; /* مخفي افتراضياً، يظهر عند التحديد */
+}
+.el.selected .rhandle { display: block; }
 
-        .manu-grid { display: none; }
-        .manu-grid.active { display: grid; }
+/* export buttons */
+#export-bar {
+  width: 420px; display: flex; flex-direction: column; gap: 6px;
+}
+#export-row1 { display: flex; gap: 8px; }
+#export-row1 .btn { flex: 1; }
+#export-row2 { display: flex; gap: 6px; }
+#export-row2 .btn { flex: 1; font-size: 12px; padding: 7px; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+/* ═══════════════════════════════
+   SIDEBAR
+═══════════════════════════════ */
+#sidebar {
+  width: 310px; flex-shrink: 0;
+  background: #fff;
+  border-left: 1px solid #e5e5e5;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
 
-        /* شكل الـ Slider الاحترافي */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            background: #e2e8f0;
-            border-radius: 5px;
-            outline: none;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #0f172a;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-    </style>
+/* sidebar tab buttons */
+#stabs {
+  display: flex; border-bottom: 1px solid #e5e5e5;
+  background: #f7f7f7; overflow-x: auto;
+}
+#stabs::-webkit-scrollbar { display: none; }
+.stab {
+  flex: 1; min-width: 46px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; padding: 8px 4px; cursor: pointer; border: none;
+  background: transparent; color: #888;
+  font-family: 'Tajawal', sans-serif; font-size: 10px; font-weight: 700;
+  border-bottom: 2.5px solid transparent; transition: all .14s;
+}
+.stab svg { width: 17px; height: 17px; }
+.stab:hover { color: #111; background: #fff; }
+.stab.on { color: #111; background: #fff; border-bottom-color: #111; }
+
+/* sidebar panels */
+.spanel {
+  display: none; flex-direction: column;
+  flex: 1; overflow-y: auto; padding: 13px; gap: 10px;
+}
+.spanel.on { display: flex; }
+.spanel::-webkit-scrollbar { width: 3px; }
+.spanel::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 3px; }
+
+/* ═══════════════════════════════
+   COMMON UI COMPONENTS
+═══════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 9px 14px; border-radius: 9px;
+  font-family: 'Tajawal', sans-serif; font-size: 13px; font-weight: 700;
+  cursor: pointer; border: none; transition: all .14s; white-space: nowrap;
+}
+.btn-black { background: #111; color: #fff; }
+.btn-black:hover { background: #333; }
+.btn-green { background: #22c55e; color: #fff; }
+.btn-green:hover { background: #16a34a; }
+.btn-gray { background: #f3f3f3; color: #555; border: 1px solid #e0e0e0; }
+.btn-gray:hover { background: #e8e8e8; }
+.btn-red { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+.btn-red:hover { background: #fee2e2; }
+.bfull { width: 100%; }
+
+.box {
+  background: #f7f7fa; border-radius: 9px;
+  padding: 11px; display: flex; flex-direction: column; gap: 8px;
+}
+.lbl { font-size: 12px; font-weight: 700; color: #777; }
+.sec { font-size: 10px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .5px; }
+
+textarea.tinp {
+  width: 100%; padding: 8px 10px; border-radius: 7px;
+  border: 1px solid #e0e0e0; background: #fff;
+  font-family: 'Tajawal', sans-serif; font-size: 13px; resize: none;
+  outline: none; direction: rtl; line-height: 1.5;
+}
+textarea.tinp:focus { border-color: #111; }
+
+select.sinp {
+  width: 100%; padding: 7px 9px; border-radius: 7px;
+  border: 1px solid #e0e0e0; background: #fff;
+  font-family: 'Tajawal', sans-serif; font-size: 13px;
+  outline: none; cursor: pointer;
+}
+
+/* sliders */
+.slrow { display: flex; align-items: center; gap: 8px; }
+.slrow span { font-size: 11px; color: #888; white-space: nowrap; }
+.slrow input[type=range] { flex: 1; accent-color: #111; cursor: pointer; }
+.slval { font-size: 11px; font-weight: 800; color: #111; min-width: 30px; text-align: center; }
+
+/* button groups */
+.bgrp { display: flex; gap: 4px; }
+.gbtn {
+  flex: 1; padding: 5px 4px; border-radius: 7px;
+  border: 1px solid #e0e0e0; background: #fff;
+  font-family: 'Tajawal', sans-serif; font-size: 11px; font-weight: 700;
+  cursor: pointer; transition: all .12s; color: #666;
+  display: flex; align-items: center; justify-content: center;
+}
+.gbtn:hover { border-color: #888; color: #111; }
+.gbtn.on { background: #111; color: #fff; border-color: #111; }
+
+/* color dots */
+.cdots { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+.cdot {
+  width: 21px; height: 21px; border-radius: 50%;
+  cursor: pointer; border: 2px solid transparent;
+  transition: all .12s; flex-shrink: 0;
+}
+.cdot:hover, .cdot.on { border-color: #111; transform: scale(1.2); }
+
+/* grids */
+.cgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.citem {
+  border-radius: 8px; border: 2px solid #e0e0e0; cursor: pointer; min-height: 54px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: all .13s; overflow: hidden; padding: 5px;
+}
+.citem:hover { border-color: #111; transform: scale(1.03); box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+.citem.dk { background: #1a1a2e; }
+.citem.lt { background: #f3f3f3; }
+.citem img { width: 100%; height: auto; max-height: 40px; object-fit: contain; display: block; }
+.citem img.failed { display: none; }
+.citem .clabel { font-size: 9px; font-weight: 700; color: #999; text-align: center; display: none; }
+.citem img.failed + .clabel { display: block; }
+
+.showmore {
+  width: 100%; padding: 8px; border-radius: 8px; border: 1px dashed #ccc; background: #fff;
+  font-family: 'Tajawal', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; color: #888; display: none; margin-top: 5px;
+}
+.showmore.vis { display: flex; }
+
+.bggrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.bgthumb { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; cursor: pointer; border: 2px solid transparent; }
+.bgthumb:hover, .bgthumb.on { border-color: #111; }
+.bgthumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.cattabs { display: flex; gap: 5px; flex-wrap: wrap; }
+.catbtn {
+  padding: 4px 11px; border-radius: 15px; border: 1px solid #e0e0e0; background: #fff;
+  font-family: 'Tajawal', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; color: #777;
+}
+.catbtn.on { background: #111; color: #fff; border-color: #111; }
+
+.rlist { display: flex; flex-direction: column; gap: 5px; max-height: 200px; overflow-y: auto; }
+.ritem {
+  padding: 7px 10px; border-radius: 7px; border: 1px solid #e8e8e8; background: #fff;
+  font-family: 'Tajawal', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; text-align: right; color: #333;
+}
+
+.uarea {
+  width: 100%; padding: 14px; border-radius: 9px; border: 2px dashed #ddd; background: #f7f7fa;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; color: #888;
+}
+
+#notif {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+  background: #111; color: #fff; padding: 9px 22px; border-radius: 30px;
+  font-size: 13px; font-weight: 600; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity .22s;
+}
+#notif.vis { opacity: 1; }
+
+/* ═══════════════════════════════
+   ستايلات إضافية لنظام الجاهز والجماعي
+═══════════════════════════════ */
+.alt-view {
+  position: fixed; top: 100px; left: 0; right: 0; bottom: 0;
+  overflow-y: auto; padding: 20px; display: none; background: #f0f0f2;
+}
+.alt-container {
+  max-width: 800px; margin: 0 auto; display: grid; gap: 20px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) {
+  .alt-container { grid-template-columns: 1fr 1fr; }
+}
+
+.alt-box {
+  background: #fff; border-radius: 16px; padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e5e5e5;
+}
+
+/* المعاينة للجاهز والجماعي */
+.preview-window {
+  position: relative; width: 100%; max-width: 380px; aspect-ratio: 1;
+  margin: 0 auto; border-radius: 12px; overflow: hidden;
+  background-size: cover; background-position: center; box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+.preview-text {
+  position: absolute; width: 100%; text-align: center; left: 0;
+  transform: translateY(-50%); font-family: 'Tajawal', sans-serif;
+  font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+</style>
 </head>
-<body class="min-h-screen text-slate-800 pb-12">
+<body>
 
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold text-sm">س</div>
-                <span class="font-black text-xl tracking-tight">سَلِّم</span>
-            </div>
-            
-            <div class="flex bg-slate-100 p-1 rounded-xl">
-                <button class="px-5 py-2 rounded-lg font-bold text-sm text-slate-500 hover:text-slate-900 transition"><i class="fa-solid fa-users ml-1"></i> جماعي</button>
-                <button class="px-5 py-2 rounded-lg font-bold text-sm bg-black text-white shadow transition"><i class="fa-solid fa-pen-nib ml-1"></i> صمّم</button>
-                <button class="px-5 py-2 rounded-lg font-bold text-sm text-slate-500 hover:text-slate-900 transition"><i class="fa-solid fa-check ml-1"></i> جاهز</button>
-            </div>
+<div id="topbar">
+  <div class="logo">سَ<em>لِّ</em>م</div>
+  <div class="top-btns">
+    <button class="btn btn-gray" onclick="clearAll()">مسح الكل</button>
+  </div>
+</div>
 
-            <div class="hidden md:block">
-                <div class="bg-amber-100 border border-amber-200 text-amber-800 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2">
-                    <i class="fa-solid fa-building"></i> للشركات والراغبين في تصميم خاص؟
-                </div>
-            </div>
-        </div>
-    </header>
+<div id="modebar">
+  <button class="mode-btn" onclick="switchMode('ready')" id="btn-ready">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+    جاهز
+  </button>
+  <button class="mode-btn active" onclick="switchMode('design')" id="btn-design">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4z"/></svg>
+    صمّم
+  </button>
+  <button class="mode-btn" onclick="switchMode('group')" id="btn-group">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    جماعي
+  </button>
+</div>
 
-    <div class="max-w-7xl mx-auto mt-8 px-4 flex flex-col lg:flex-row gap-8 items-start">
-        
-        <div class="w-full lg:w-[420px] shrink-0">
-            
-            <div class="flex gap-2 mb-6 overflow-x-auto custom-scrollbar pb-2 bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
-                <button onclick="switchTab('format')" id="tab-btn-format" class="tool-tab">
-                    <i class="fa-solid fa-layer-group"></i><span>التنسيق</span>
-                </button>
-                <button onclick="switchTab('texts')" id="tab-btn-texts" class="tool-tab">
-                    <i class="fa-solid fa-comment-dots"></i><span>النصوص</span>
-                </button>
-                <button onclick="switchTab('logo')" id="tab-btn-logo" class="tool-tab">
-                    <i class="fa-solid fa-building"></i><span>الشعار</span>
-                </button>
-                <button onclick="switchTab('photo')" id="tab-btn-photo" class="tool-tab">
-                    <i class="fa-solid fa-user-circle"></i><span>صورة</span>
-                </button>
-                <button onclick="switchTab('manuscripts')" id="tab-btn-manuscripts" class="tool-tab">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i><span>المخطوطات</span>
-                </button>
-                <button onclick="switchTab('backgrounds')" id="tab-btn-backgrounds" class="tool-tab active">
-                    <i class="fa-solid fa-image"></i><span>الخلفية</span>
-                </button>
-            </div>
-
-            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-5 h-[650px] flex flex-col">
-                
-                <div id="tab-backgrounds" class="tab-content active h-full flex flex-col">
-                    <div class="flex items-center gap-3 mb-5">
-                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700"><i class="fa-solid fa-image text-lg"></i></div>
-                        <div>
-                            <h3 class="font-bold text-slate-900">الخلفيات</h3>
-                            <p class="text-xs text-slate-400">اختر أو ارفع خلفية</p>
-                        </div>
-                    </div>
-                    <label class="flex items-center justify-center gap-2 w-full p-4 bg-slate-50 border border-dashed border-slate-300 rounded-2xl cursor-pointer hover:bg-slate-100 transition mb-4">
-                        <input type="file" accept="image/*" class="hidden" onchange="uploadBackground(event)">
-                        <i class="fa-solid fa-plus text-slate-400"></i>
-                        <span class="text-sm font-bold text-slate-600">رفع صورة جديدة</span>
-                    </label>
-                    <div class="grid grid-cols-3 gap-3 overflow-y-auto custom-scrollbar pr-1 pb-4">
-                        <button onclick="changeBackground('https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=400')" class="relative aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-black transition group">
-                            <img src="https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=200" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                            <div class="absolute top-1 left-1 bg-gradient-to-br from-amber-400 to-amber-200 text-black px-2 py-0.5 rounded flex items-center gap-1 text-[9px] font-bold shadow-sm"><i class="fa-solid fa-star text-[8px]"></i> حصري</div>
-                        </button>
-                        <button onclick="changeBackground('https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=400')" class="relative aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-black transition group">
-                            <img src="https://images.unsplash.com/photo-1557672172-298e090bd0f1?q=80&w=200" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                        </button>
-                        <button onclick="changeBackground('https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=400')" class="relative aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-black transition group">
-                            <img src="https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=200" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                        </button>
-                    </div>
-                </div>
-
-                <div id="tab-manuscripts" class="tab-content h-full flex flex-col">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700"><i class="fa-solid fa-wand-magic-sparkles text-lg"></i></div>
-                        <div>
-                            <h3 class="font-bold text-slate-900">المخطوطات</h3>
-                            <p class="text-xs text-slate-400">671 مخطوطة متاحة</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex gap-2 mb-4 bg-slate-50 p-1 rounded-xl">
-                        <button onclick="switchManuGrid('white', this)" class="sub-tab active flex-1">بيضاء</button>
-                        <button onclick="switchManuGrid('3d', this)" class="sub-tab flex-1">ثلاثية الأبعاد</button>
-                        <button onclick="switchManuGrid('black', this)" class="sub-tab flex-1">سوداء</button>
-                    </div>
-
-                    <div class="flex-1 overflow-y-auto custom-scrollbar pr-1 relative">
-                        <div id="grid-white" class="manu-grid active grid-cols-3 gap-2">
-                            <button class="bg-slate-900 p-2 rounded-xl border border-slate-100 hover:border-slate-400 transition h-16 flex items-center justify-center"><img src="/templates/مخطوطات بيضاء/تهانينا@3x.png" alt="تهانينا" class="max-h-full invert opacity-80"></button>
-                        </div>
-                        <div id="grid-3d" class="manu-grid grid-cols-3 gap-2">
-                            <button class="bg-slate-900 p-2 rounded-xl border border-slate-100 hover:border-slate-400 transition h-16 flex items-center justify-center"><img src="/templates/مخطوطات ثلاثية الأبعاد/افرح بالعيد@3x.png" alt="3D" class="max-h-full"></button>
-                        </div>
-                        <div id="grid-black" class="manu-grid grid-cols-3 gap-2">
-                            <button class="bg-slate-100 p-2 rounded-xl border border-slate-200 hover:border-slate-400 transition h-16 flex items-center justify-center"><img src="/templates/مخطوطات سوداء/العيد فرحة@3x.png" alt="أسود" class="max-h-full"></button>
-                        </div>
-                    </div>
-
-                    <div id="manu-controls" class="hidden mt-4 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
-                        <div class="flex justify-between items-center mb-3">
-                            <span class="text-xs font-bold text-slate-500">الحجم</span>
-                            <span id="manu-size-display" class="text-xs font-bold bg-white px-2 py-1 rounded shadow-sm">120px</span>
-                        </div>
-                        <input type="range" min="30" max="300" value="120" oninput="resizeSelected(this.value)">
-                        <button onclick="deleteSelected()" class="mt-4 w-full py-2 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 transition flex items-center justify-center gap-2">
-                            إزالة المخطوطة <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div id="tab-photo" class="tab-content h-full flex flex-col">
-                    <div class="flex items-center gap-3 mb-5">
-                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700"><i class="fa-solid fa-user-circle text-lg"></i></div>
-                        <div>
-                            <h3 class="font-bold text-slate-900">الصورة الشخصية</h3>
-                            <p class="text-xs text-slate-400">أضف صورتك على البطاقة</p>
-                        </div>
-                    </div>
-                    
-                    <label class="flex items-center justify-center gap-2 w-full p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition shadow-sm mb-6">
-                        <input type="file" accept="image/*" class="hidden" onchange="uploadPersonalPhoto(event)">
-                        <i class="fa-regular fa-user"></i> <span class="text-sm font-bold">تغيير الصورة</span>
-                    </label>
-
-                    <div class="space-y-6">
-                        <div>
-                            <span class="text-xs font-bold text-slate-500 block mb-2">الشكل</span>
-                            <div class="flex bg-slate-100 p-1 rounded-xl">
-                                <button onclick="setPhotoShape('square', this)" class="flex-1 py-2 text-sm font-bold text-slate-500 rounded-lg">مربع</button>
-                                <button onclick="setPhotoShape('circle', this)" class="flex-1 py-2 text-sm font-bold bg-black text-white rounded-lg shadow">مستدير</button>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-slate-500">الحجم</span>
-                                <span class="text-xs font-bold bg-slate-100 px-2 py-1 rounded">25%</span>
-                            </div>
-                            <input type="range" min="50" max="300" value="150" oninput="resizeElement('user-photo', this.value)">
-                        </div>
-                    </div>
-                </div>
-
-                <div id="tab-logo" class="tab-content h-full flex flex-col">
-                    <div class="flex items-center gap-3 mb-5">
-                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700"><i class="fa-solid fa-building text-lg"></i></div>
-                        <div>
-                            <h3 class="font-bold text-slate-900">شعار الشركة</h3>
-                            <p class="text-xs text-slate-400">أضف شعارك على البطاقة</p>
-                        </div>
-                    </div>
-                    
-                    <label class="flex items-center justify-center gap-2 w-full p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition shadow-sm mb-6">
-                        <input type="file" accept="image/*" class="hidden" onchange="uploadLogo(event)">
-                        <i class="fa-solid fa-building"></i> <span class="text-sm font-bold">تغيير الشعار</span>
-                    </label>
-
-                    <div class="space-y-6">
-                        <div>
-                            <span class="text-xs font-bold text-slate-500 block mb-2">موقع الشعار</span>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button onclick="setLogoPosition('top-right')" class="py-2 text-sm font-bold bg-black text-white rounded-xl shadow">أعلى يمين</button>
-                                <button onclick="setLogoPosition('top-left')" class="py-2 text-sm font-bold bg-slate-100 text-slate-500 rounded-xl hover:bg-slate-200">أعلى يسار</button>
-                                <button onclick="setLogoPosition('bottom-right')" class="py-2 text-sm font-bold bg-slate-100 text-slate-500 rounded-xl hover:bg-slate-200">أسفل يمين</button>
-                                <button onclick="setLogoPosition('bottom-left')" class="py-2 text-sm font-bold bg-slate-100 text-slate-500 rounded-xl hover:bg-slate-200">أسفل يسار</button>
-                            </div>
-                        </div>
-                        <div>
-                            <span class="text-xs font-bold text-slate-500 block mb-2">الحجم</span>
-                            <input type="range" min="30" max="200" value="80" oninput="resizeElement('company-logo', this.value)">
-                        </div>
-                        <button onclick="document.getElementById('company-logo').style.display='none'" class="w-full py-3 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm font-bold hover:bg-red-100 transition">
-                            إزالة الشعار
-                        </button>
-                    </div>
-                </div>
-
-                <div id="tab-texts" class="tab-content h-full flex flex-col overflow-y-auto custom-scrollbar pr-1">
-                    <div class="flex items-center gap-3 mb-5">
-                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700"><i class="fa-solid fa-comment-dots text-lg"></i></div>
-                        <div>
-                            <h3 class="font-bold text-slate-900">النصوص</h3>
-                            <p class="text-xs text-slate-400">تعديل نصوص البطاقة</p>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-5">
-                        <div>
-                            <div class="flex justify-between items-center mb-2"><label class="text-sm font-bold text-slate-700">النص الرئيسي</label><span class="text-[10px] text-slate-400">42px</span></div>
-                            <textarea rows="2" class="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-black shadow-sm resize-none" oninput="updateText('main-text', this.value)">علي القدير أن يجعل أيامكم كلها أعياد، وأن يحفظكم ويبارك فيكم.</textarea>
-                            <input type="range" class="mt-2" min="10" max="60" value="22" oninput="updateFontSize('main-text', this.value)">
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between items-center mb-2"><label class="text-sm font-bold text-slate-700">النص الفرعي</label><span class="text-[10px] text-slate-400">40px</span></div>
-                            <textarea rows="2" class="w-full p-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-black shadow-sm resize-none" oninput="updateText('sub-text', this.value)">مع إشراقة صباح العيد، نرفع أكف الضراعة إلى الله العلي القدير.</textarea>
-                            <input type="range" class="mt-2" min="10" max="60" value="18" oninput="updateFontSize('sub-text', this.value)">
-                        </div>
-                        
-                        <div class="pt-4 border-t border-slate-100">
-                            <label class="text-sm font-bold text-slate-700 block mb-2">نصوص جاهزة</label>
-                            <div class="relative">
-                                <i class="fa-solid fa-search absolute right-3 top-3 text-slate-400"></i>
-                                <input type="text" placeholder="ابحث..." class="w-full p-2 pr-9 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="tab-format" class="tab-content h-full flex flex-col">
-                    <div class="flex items-center gap-3 mb-5">
-                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700"><i class="fa-solid fa-layer-group text-lg"></i></div>
-                        <div>
-                            <h3 class="font-bold text-slate-900">التنسيق</h3>
-                            <p class="text-xs text-slate-400">الخط والألوان والتأثيرات</p>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-6 overflow-y-auto custom-scrollbar pr-1">
-                        <div>
-                            <span class="text-xs font-bold text-slate-500 block mb-2">الخط</span>
-                            <div class="flex flex-wrap gap-2">
-                                <button class="px-3 py-1.5 bg-black text-white text-xs font-bold rounded-lg">عام الحرف</button>
-                                <button class="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200">أميري</button>
-                                <button class="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200">القاهرة</button>
-                                <button class="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200">تجول</button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <span class="text-xs font-bold text-slate-500 block mb-3">ألوان النصوص</span>
-                            
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-sm font-bold text-slate-700">الرئيسي</span>
-                                <div class="flex gap-2">
-                                    <div onclick="changeColor('main-text', '#10b981')" class="w-6 h-6 rounded-full bg-emerald-500 cursor-pointer shadow-sm border-2 border-transparent hover:border-black"></div>
-                                    <div onclick="changeColor('main-text', '#f43f5e')" class="w-6 h-6 rounded-full bg-rose-500 cursor-pointer shadow-sm border-2 border-transparent hover:border-black"></div>
-                                    <div onclick="changeColor('main-text', '#eab308')" class="w-6 h-6 rounded-full bg-yellow-500 cursor-pointer shadow-sm border-2 border-black"></div>
-                                    <div onclick="changeColor('main-text', '#3b82f6')" class="w-6 h-6 rounded-full bg-blue-500 cursor-pointer shadow-sm border-2 border-transparent hover:border-black"></div>
-                                    <div onclick="changeColor('main-text', '#ffffff')" class="w-6 h-6 rounded-full bg-white cursor-pointer shadow-sm border border-slate-200"></div>
-                                    <div onclick="changeColor('main-text', '#000000')" class="w-6 h-6 rounded-full bg-black cursor-pointer shadow-sm border-2 border-transparent"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm font-bold text-slate-700">الفرعي</span>
-                                <div class="flex gap-2">
-                                    <div onclick="changeColor('sub-text', '#10b981')" class="w-6 h-6 rounded-full bg-emerald-500 cursor-pointer shadow-sm border-2 border-transparent hover:border-black"></div>
-                                    <div onclick="changeColor('sub-text', '#f43f5e')" class="w-6 h-6 rounded-full bg-rose-500 cursor-pointer shadow-sm border-2 border-transparent hover:border-black"></div>
-                                    <div onclick="changeColor('sub-text', '#eab308')" class="w-6 h-6 rounded-full bg-yellow-500 cursor-pointer shadow-sm border-2 border-transparent hover:border-black"></div>
-                                    <div onclick="changeColor('sub-text', '#3b82f6')" class="w-6 h-6 rounded-full bg-blue-500 cursor-pointer shadow-sm border-2 border-black"></div>
-                                    <div onclick="changeColor('sub-text', '#ffffff')" class="w-6 h-6 rounded-full bg-white cursor-pointer shadow-sm border border-slate-200"></div>
-                                    <div onclick="changeColor('sub-text', '#000000')" class="w-6 h-6 rounded-full bg-black cursor-pointer shadow-sm border-2 border-transparent"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="pt-4 border-t border-slate-100">
-                            <span class="text-xs font-bold text-slate-500 block mb-3">التأثيرات</span>
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="text-sm font-bold text-slate-700">ظل النص</span>
-                                <div class="w-10 h-6 bg-black rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute left-1 top-1"></div></div>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm font-bold text-slate-700">حدود النص</span>
-                                <div class="w-10 h-6 bg-slate-200 rounded-full relative cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute right-1 top-1 shadow-sm"></div></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="w-full lg:w-auto flex-1 flex flex-col items-center">
-            
-            <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 w-full max-w-[540px]">
-                <div id="canvas-container">
-                    
-                    <img id="user-photo" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=150" class="draggable-item rounded-full border-2 border-white shadow-lg hidden" style="top: 10%; left: 40%; width: 100px; height: 100px; object-fit: cover;">
-                    
-                    <img id="company-logo" src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" class="draggable-item hidden" style="top: 5%; right: 5%; width: 80px; filter: drop-shadow(1px 1px 2px rgba(255,255,255,0.8));">
-
-                    <div id="main-text" class="draggable-item is-text text-[#eab308]" style="top: 35%; left: 10%; width: 80%; font-size: 22px; font-weight: 800;">
-                        علي القدير أن يجعل أيامكم كلها أعياد، وأن يحفظكم ويبارك فيكم.
-                    </div>
-                    
-                    <div id="sub-text" class="draggable-item is-text text-[#3B82F6]" style="top: 60%; left: 10%; width: 80%; font-size: 18px; font-weight: 600;">
-                        مع إشراقة صباح العيد، نرفع أكف الضراعة إلى الله العلي القدير.
-                    </div>
-                </div>
-            </div>
-
-            <div class="w-full max-w-[540px] mt-6 flex flex-col gap-3">
-                <div class="flex gap-3">
-                    <button onclick="shareWhatsApp()" class="flex-1 bg-[#25D366] hover:bg-[#1da851] text-white py-3.5 rounded-2xl font-bold flex justify-center items-center gap-2 shadow-sm transition transform hover:-translate-y-0.5">
-                        <i class="fa-brands fa-whatsapp text-lg"></i> واتساب
-                    </button>
-                    <button onclick="downloadPNG()" class="flex-1 bg-black hover:bg-slate-800 text-white py-3.5 rounded-2xl font-bold flex justify-center items-center gap-2 shadow-sm transition transform hover:-translate-y-0.5">
-                        <i class="fa-solid fa-download"></i> تحميل PNG
-                    </button>
-                </div>
-                <div class="flex gap-2 justify-center bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
-                    <button onclick="downloadPDF()" class="flex-1 text-slate-600 hover:text-black hover:bg-slate-50 py-2 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2">
-                        <i class="fa-regular fa-file-pdf"></i> PDF
-                    </button>
-                    <div class="w-px bg-slate-200 my-1"></div>
-                    <button onclick="copyImage()" class="flex-1 text-slate-600 hover:text-black hover:bg-slate-50 py-2 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2">
-                        <i class="fa-regular fa-copy"></i> نسخ
-                    </button>
-                    <div class="w-px bg-slate-200 my-1"></div>
-                    <button onclick="shareGeneral()" class="flex-1 text-slate-600 hover:text-black hover:bg-slate-50 py-2 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-share-nodes"></i> مشاركة
-                    </button>
-                </div>
-            </div>
-
-        </div>
+<div id="view-design">
+    <div id="filterbar">
+      <button class="fpill on" data-filter="all" onclick="setFilter(this)">
+        <span class="fdot" style="background:#888"></span>الكل
+      </button>
+      <button class="fpill" data-filter="eid-fitr" onclick="setFilter(this)">
+        <span class="fdot" style="background:#10b981"></span>عيد الفطر
+      </button>
+      <button class="fpill" data-filter="eid-adha" onclick="setFilter(this)">
+        <span class="fdot" style="background:#3b82f6"></span>عيد الأضحى
+      </button>
+      <button class="fpill" data-filter="ramadan" onclick="setFilter(this)">
+        <span class="fdot" style="background:#8b5cf6"></span>رمضان
+      </button>
     </div>
 
-    <script>
-        // ==========================================
-        // 1. نظام التبويبات الرئيسي والفرعي
-        // ==========================================
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tool-tab').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tabName).classList.add('active');
-            document.getElementById('tab-btn-' + tabName).classList.add('active');
-        }
+    <div id="layout">
+      <div id="canvas-area">
+        <div id="canvas"></div>
+        <div id="export-bar">
+          <div id="export-row1">
+            <button class="btn btn-green" onclick="shareWA()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.144.566 4.148 1.554 5.887L0 24l6.305-1.539A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.96 0-3.793-.518-5.375-1.42L2.2 21.8l1.24-4.308A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+              واتساب
+            </button>
+            <button class="btn btn-black" onclick="dlPNG()">⬇ PNG</button>
+          </div>
+          <div id="export-row2">
+            <button class="btn btn-gray" onclick="dlPDF()">📄 PDF</button>
+            <button class="btn btn-gray" onclick="copyImg()">📋 نسخ</button>
+            <button class="btn btn-gray" onclick="shareNative()">↗ مشاركة</button>
+          </div>
+        </div>
+      </div>
 
-        function switchManuGrid(val, btn) {
-            document.querySelectorAll('.manu-grid').forEach(el => el.classList.remove('active'));
-            document.getElementById('grid-' + val).classList.add('active');
+      <div id="sidebar">
+        <div id="stabs">
+          <button class="stab on" data-tab="fmt" onclick="switchTab(this)">تنسيق</button>
+          <button class="stab" data-tab="txt" onclick="switchTab(this)">نصوص</button>
+          <button class="stab" data-tab="cal" onclick="switchTab(this)">مخطوطات</button>
+          <button class="stab" data-tab="pho" onclick="switchTab(this)">صورة</button>
+          <button class="stab" data-tab="lgp" onclick="switchTab(this)">شعار</button>
+          <button class="stab" data-tab="bg" onclick="switchTab(this)">خلفية</button>
+        </div>
+
+        <div class="spanel on" id="panel-fmt">
+          <div class="sec">تنسيق العنصر المحدد (دبل كليك للتعديل)</div>
+          <div class="box">
+            <div class="lbl">الخط</div>
+            <select class="sinp" id="p-font" onchange="A('font', this.value)">
+              <option value="Tajawal">Tajawal</option>
+              <option value="Amiri">Amiri</option>
+              <option value="Cairo">Cairo</option>
+            </select>
+            <div class="lbl">سُمك</div>
+            <div class="bgrp" data-grp="fw">
+              <button class="gbtn" data-val="400">عادي</button>
+              <button class="gbtn on" data-val="700">بولد</button>
+            </div>
+          </div>
+          <div class="box">
+            <div class="lbl">الحجم</div>
+            <div class="slrow">
+              <input type="range" min="10" max="150" value="26" id="sl-size" oninput="A('size', this.value); document.getElementById('vl-size').textContent = this.value">
+              <span class="slval" id="vl-size">26</span>
+            </div>
+          </div>
+          <div class="box">
+            <div class="lbl">لون النص</div>
+            <div class="cdots" id="cdots-text">
+              <div class="cdot on" style="background:#fff;border:1px solid #ddd" data-color="#ffffff"></div>
+              <div class="cdot" style="background:#111" data-color="#111111"></div>
+              <div class="cdot" style="background:#FFD700" data-color="#FFD700"></div>
+              <div class="cdot" style="background:#3b82f6" data-color="#3b82f6"></div>
+              <div class="cdot" style="background:#ef4444" data-color="#ef4444"></div>
+              <input type="color" value="#ffffff" style="width:21px;height:21px;border-radius:50%;border:none;cursor:pointer;padding:0" oninput="A('color', this.value)">
+            </div>
+          </div>
+          <button class="btn btn-red bfull" onclick="delSelected()">🗑 حذف العنصر المحدد</button>
+        </div>
+
+        <div class="spanel" id="panel-txt">
+          <div class="sec">النصوص</div>
+          <div class="box">
+            <textarea class="tinp" id="main-txt" rows="2" placeholder="اكتب نصك هنا..."></textarea>
+            <button class="btn btn-black bfull" onclick="addMain()">+ أضف للبطاقة</button>
+          </div>
+          <div class="box">
+            <div class="lbl">نصوص جاهزة</div>
+            <div class="rlist" id="rlist"></div>
+          </div>
+        </div>
+
+        <div class="spanel" id="panel-cal">
+          <div class="cattabs">
+            <button class="catbtn on" data-cat="black" onclick="switchCat(this)">سوداء</button>
+            <button class="catbtn" data-cat="3d" onclick="switchCat(this)">3D</button>
+            <button class="catbtn" data-cat="white" onclick="switchCat(this)">بيضاء</button>
+          </div>
+          <div class="box"><div class="slrow"><span>الحجم</span><input type="range" min="60" max="380" value="180" id="sl-csz" oninput="document.getElementById('vl-csz').textContent=this.value+'px'"><span class="slval" id="vl-csz">180px</span></div></div>
+          <div id="cat-black"><div class="cgrid" id="cg-black"></div><button class="showmore" id="sm-black" onclick="moreCallig('black')">عرض المزيد</button></div>
+          <div id="cat-3d" style="display:none"><div class="cgrid" id="cg-3d"></div><button class="showmore" id="sm-3d" onclick="moreCallig('3d')">عرض المزيد</button></div>
+          <div id="cat-white" style="display:none"><div class="cgrid" id="cg-white"></div><button class="showmore" id="sm-white" onclick="moreCallig('white')">عرض المزيد</button></div>
+        </div>
+
+        <div class="spanel" id="panel-pho">
+          <label class="uarea" for="pho-inp"><span>رفع صورتك الشخصية</span></label>
+          <input type="file" id="pho-inp" accept="image/*" style="display:none" onchange="uploadPhoto(event)">
+          <div class="box" id="pho-ctrl" style="display:none">
+            <div class="slrow"><input type="range" min="40" max="250" value="100" oninput="resizePhoto(this.value)"></div>
+            <div class="bgrp" data-grp="phshape"><button class="gbtn on" data-val="circle">دائري</button><button class="gbtn" data-val="rounded">مستدير</button><button class="gbtn" data-val="square">مربع</button></div>
+          </div>
+        </div>
+
+        <div class="spanel" id="panel-lgp">
+          <label class="uarea" for="lgp-inp"><span>رفع شعار</span></label>
+          <input type="file" id="lgp-inp" accept="image/*" style="display:none" onchange="uploadLogo(event)">
+          <div id="lgp-preview" style="background:#f7f7fa;border-radius:9px;padding:14px;display:flex;align-items:center;justify-content:center;min-height:70px"><span style="font-size:12px;color:#aaa">لم يُرفع شعار</span></div>
+          <div class="box" id="lgp-ctrl" style="display:none">
+            <div class="slrow"><input type="range" min="30" max="250" value="100" oninput="resizeLogo(this.value)"></div>
+          </div>
+        </div>
+
+        <div class="spanel" id="panel-bg">
+          <label class="uarea" for="bg-inp"><span>رفع صورة خاصة كخلفية</span></label>
+          <input type="file" id="bg-inp" accept="image/*" style="display:none" onchange="uploadBg(event)">
+          <div class="bggrid" id="bggrid"></div>
+        </div>
+
+      </div></div>
+</div>
+
+<div id="view-ready" class="alt-view">
+    <div class="alt-container">
+        <div class="alt-box">
+            <div class="sec" style="margin-bottom: 12px; font-size:12px;">تخصيص البطاقة السريعة</div>
             
-            document.querySelectorAll('.sub-tab').forEach(el => {
-                el.classList.remove('active', 'bg-black', 'text-white');
-                el.classList.add('bg-slate-50', 'text-slate-500');
-            });
-            btn.classList.remove('bg-slate-50', 'text-slate-500');
-            btn.classList.add('active', 'bg-black', 'text-white');
-        }
+            <div class="box" style="margin-bottom: 12px;">
+                <div class="lbl">اختر التصميم</div>
+                <div class="bggrid" id="ready-bg-grid">
+                    </div>
+            </div>
 
-        // ==========================================
-        // 2. تحديث وتلوين النصوص
-        // ==========================================
-        function updateText(id, val) { document.getElementById(id).innerText = val; }
-        function updateFontSize(id, val) { document.getElementById(id).style.fontSize = val + 'px'; }
-        function changeColor(id, color) { document.getElementById(id).style.color = color; }
+            <div class="box" style="margin-bottom: 12px;">
+                <div class="lbl">الاسم (النص الرئيسي)</div>
+                <input type="text" id="r-main" class="tinp" value="عائلة محمد" oninput="updateReady()">
+                <div class="slrow" style="margin-top: 8px;">
+                    <span>الحجم</span><input type="range" id="r-msize" min="20" max="80" value="48" oninput="updateReady()">
+                    <span>الموضع</span><input type="range" id="r-mpos" min="10" max="90" value="40" oninput="updateReady()">
+                </div>
+            </div>
 
-        // ==========================================
-        // 3. رفع الصور والخلفيات
-        // ==========================================
-        function changeBackground(src) {
-            document.getElementById('canvas-container').style.backgroundImage = `url('${src}')`;
-        }
-        function uploadBackground(e) {
-            if(e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = e => changeBackground(e.target.result);
-                reader.readAsDataURL(e.target.files[0]);
-            }
-        }
+            <div class="box" style="margin-bottom: 12px;">
+                <div class="lbl">المرسل (النص الفرعي)</div>
+                <input type="text" id="r-sub" class="tinp" value="محبكم أحمد" oninput="updateReady()">
+                <div class="slrow" style="margin-top: 8px;">
+                    <span>الحجم</span><input type="range" id="r-ssize" min="14" max="50" value="24" oninput="updateReady()">
+                    <span>الموضع</span><input type="range" id="r-spos" min="10" max="90" value="80" oninput="updateReady()">
+                </div>
+            </div>
 
-        function uploadPersonalPhoto(e) {
-            if(e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = ev => {
-                    const img = document.getElementById('user-photo');
-                    img.src = ev.target.result;
-                    img.style.display = 'block';
-                };
-                reader.readAsDataURL(e.target.files[0]);
-            }
-        }
-        function setPhotoShape(shape, btn) {
-            const img = document.getElementById('user-photo');
-            if(shape === 'circle') {
-                img.classList.remove('rounded-lg');
-                img.classList.add('rounded-full');
-            } else {
-                img.classList.remove('rounded-full');
-                img.classList.add('rounded-lg');
-            }
+            <div class="box">
+                <div class="lbl">تنسيق عام</div>
+                <div style="display: flex; gap: 10px; align-items: center; margin-top: 5px;">
+                    <select class="sinp" id="r-font" onchange="updateReady()" style="flex:1;">
+                        <option value="Tajawal">تجوّل</option>
+                        <option value="Cairo">القاهرة</option>
+                        <option value="Amiri">أميري</option>
+                    </select>
+                    <input type="color" id="r-color" value="#ffffff" oninput="updateReady()" style="width:30px; height:30px; border-radius:5px; border:none; cursor:pointer;">
+                </div>
+            </div>
+        </div>
+
+        <div class="alt-box" style="display: flex; flex-direction: column; align-items: center;">
+            <div class="sec" style="margin-bottom: 12px; font-size:12px; width: 100%;">المعاينة المباشرة</div>
+            <div id="ready-canvas" class="preview-window" style="background-image: url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=400');">
+                <div id="r-text-main" class="preview-text" style="top: 40%; font-size: 48px; color: #ffffff;">عائلة محمد</div>
+                <div id="r-text-sub" class="preview-text" style="top: 80%; font-size: 24px; color: #ffffff;">محبكم أحمد</div>
+            </div>
+            <button class="btn btn-black bfull" style="margin-top: 20px; padding: 12px; font-size: 15px;" onclick="dlReady()">
+                ⬇ تحميل البطاقة
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="view-group" class="alt-view">
+    <div class="alt-container">
+        <div class="alt-box">
+            <div class="sec" style="margin-bottom: 12px; font-size:12px;">نظام التهنئة الجماعية</div>
             
-            // Toggle active styles on buttons
-            btn.parentElement.querySelectorAll('button').forEach(b => {
-                b.classList.remove('bg-black', 'text-white', 'shadow');
-                b.classList.add('text-slate-500');
-            });
-            btn.classList.add('bg-black', 'text-white', 'shadow');
-            btn.classList.remove('text-slate-500');
-        }
+            <div class="box" style="margin-bottom: 12px;">
+                <div class="lbl">اختر التصميم</div>
+                <div class="bggrid" id="batch-bg-grid">
+                    </div>
+            </div>
 
-        function uploadLogo(e) {
-            if(e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = ev => {
-                    const img = document.getElementById('company-logo');
-                    img.src = ev.target.result;
-                    img.style.display = 'block';
-                };
-                reader.readAsDataURL(e.target.files[0]);
-            }
-        }
-        function setLogoPosition(pos) {
-            const logo = document.getElementById('company-logo');
-            logo.style.top = 'auto'; logo.style.bottom = 'auto'; logo.style.left = 'auto'; logo.style.right = 'auto';
-            if(pos.includes('top')) logo.style.top = '5%'; else logo.style.bottom = '5%';
-            if(pos.includes('right')) logo.style.right = '5%'; else logo.style.left = '5%';
-        }
-        function resizeElement(id, val) {
-            document.getElementById(id).style.width = val + 'px';
-            if(id === 'user-photo') document.getElementById(id).style.height = val + 'px'; // للحفاظ على الدائرة
-        }
+            <div class="box" style="margin-bottom: 12px;">
+                <div class="lbl">قائمة الأسماء (اسم في كل سطر)</div>
+                <textarea id="b-names" class="tinp" rows="6" placeholder="محمد علي&#10;عائلة السعيد&#10;أحمد خالد" oninput="updateBatch()"></textarea>
+            </div>
 
-        // ==========================================
-        // 4. إضافة المخطوطات والتحكم فيها (Drag & Select)
-        // ==========================================
-        // إضافة المخطوطة عند الضغط عليها
-        document.querySelectorAll('.manu-grid button').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const imgElement = this.querySelector('img');
-                if(imgElement) {
-                    const img = document.createElement('img');
-                    img.src = imgElement.src;
-                    img.className = 'draggable-item is-manu';
-                    img.style.top = '40%'; img.style.left = '35%'; img.style.width = '120px';
-                    if(imgElement.classList.contains('invert')) img.style.filter = 'invert(1)'; // للمخطوطات البيضاء
-                    document.getElementById('canvas-container').appendChild(img);
-                    selectElement(img);
-                }
-            });
-        });
+            <div class="box">
+                <div class="lbl">تنسيق الأسماء</div>
+                <div class="slrow" style="margin-top: 8px;">
+                    <span>الحجم</span><input type="range" id="b-size" min="20" max="80" value="44" oninput="updateBatch()">
+                    <span>الموضع</span><input type="range" id="b-pos" min="10" max="90" value="50" oninput="updateBatch()">
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                    <select class="sinp" id="b-font" onchange="updateBatch()" style="flex:1;">
+                        <option value="Tajawal">تجوّل</option>
+                        <option value="Cairo">القاهرة</option>
+                        <option value="Amiri">أميري</option>
+                    </select>
+                    <input type="color" id="b-color" value="#FFD700" oninput="updateBatch()" style="width:30px; height:30px; border-radius:5px; border:none; cursor:pointer;">
+                </div>
+            </div>
+        </div>
 
-        let activeElement = null;
-        const manuControls = document.getElementById('manu-controls');
-        const manuSizeDisplay = document.getElementById('manu-size-display');
-        const manuSlider = manuControls.querySelector('input[type="range"]');
+        <div class="alt-box" style="display: flex; flex-direction: column; align-items: center;">
+            <div class="sec" style="margin-bottom: 12px; font-size:12px; width: 100%;">معاينة البطاقة الموحدة</div>
+            <div id="batch-canvas" class="preview-window" style="background-image: url('https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=400');">
+                <div id="b-text-name" class="preview-text" style="top: 50%; font-size: 44px; color: #FFD700;">الاسم يظهر هنا</div>
+            </div>
+            <button class="btn btn-black bfull" style="margin-top: 20px; padding: 12px; font-size: 15px;" onclick="dlBatchZip(this)">
+                📦 إنشاء وتحميل ملف (Zip)
+            </button>
+            <p style="font-size: 11px; color:#888; text-align:center; margin-top: 8px;">سيتم إنشاء بطاقة لكل اسم في القائمة</p>
+        </div>
+    </div>
+</div>
 
-        function selectElement(el) {
-            if(activeElement) activeElement.classList.remove('selected');
-            activeElement = el;
-            
-            if(el && el.classList.contains('is-manu')) {
-                el.classList.add('selected');
-                manuControls.classList.remove('hidden');
-                manuSlider.value = parseInt(el.style.width);
-                manuSizeDisplay.innerText = manuSlider.value + 'px';
-            } else {
-                manuControls.classList.add('hidden');
-            }
-        }
+<div id="notif"></div>
 
-        function resizeSelected(val) {
-            if(!activeElement || !activeElement.classList.contains('is-manu')) return;
-            activeElement.style.width = val + 'px';
-            manuSizeDisplay.innerText = val + 'px';
-        }
+<script>
+// ══════════════════════════════════════════════
+// DATA & STATE (المتغيرات المشتركة)
+// ══════════════════════════════════════════════
 
-        function deleteSelected() {
-            if(activeElement && activeElement.classList.contains('is-manu')) {
-                activeElement.remove();
-                selectElement(null);
-            }
-        }
+const READY_TEXTS = {
+  all: ["كل عام وأنتم بخير 💛","عيد مبارك وكل عام وأنتم بأفضل حال", "عساكم من عواده"],
+  'eid-fitr': ["عيد فطر مبارك 🌙","أسعد الله عيدكم", "عيدكم مبارك وعساكم من عواده"],
+  'eid-adha': ["عيد أضحى مبارك 🐑","حجّ مبرور وسعي مشكور", "كل عام وأنتم بخير"],
+  ramadan: ["رمضان كريم 🌙","مبارك عليكم الشهر","صوماً مقبولاً"],
+};
 
-        // ==========================================
-        // 5. السحب والإفلات (Drag logic)
-        // ==========================================
-        const container = document.getElementById('canvas-container');
-        let isDragging = false;
-        let currentX, currentY, initialX, initialY;
+const BG_ITEMS = [
+  {src:"https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=500"},
+  {src:"https://images.unsplash.com/photo-1600267204091-5c1ab8b10c02?q=80&w=500"},
+  {src:"https://images.unsplash.com/photo-1563293815-5b3c4b4b9e6a?q=80&w=500"},
+  {src:"https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=500"}
+];
 
-        container.addEventListener("mousedown", dragStart, false);
-        document.addEventListener("mouseup", dragEnd, false);
-        document.addEventListener("mousemove", drag, false);
+let selEl = null; 
+let photoEl = null;
+let logoEl = null; 
+let eid = 0;
+const CV = document.getElementById('canvas');
 
-        container.addEventListener("touchstart", dragStart, {passive: false});
-        document.addEventListener("touchend", dragEnd, false);
-        document.addEventListener("touchmove", drag, {passive: false});
+// ══════════════════════════════════════════════
+// VIEW SWITCHER (منطق التبديل)
+// ══════════════════════════════════════════════
+function switchMode(mode) {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-' + mode).classList.add('active');
 
-        function dragStart(e) {
-            if (e.target.classList.contains('draggable-item')) {
-                selectElement(e.target);
-                isDragging = true;
-                if (e.type === "touchstart") {
-                    initialX = e.touches[0].clientX - activeElement.offsetLeft;
-                    initialY = e.touches[0].clientY - activeElement.offsetTop;
-                } else {
-                    initialX = e.clientX - activeElement.offsetLeft;
-                    initialY = e.clientY - activeElement.offsetTop;
-                }
-            } else if (e.target.id === 'canvas-container') {
-                selectElement(null); // إلغاء التحديد لو داس عالفاضي
-            }
-        }
+    document.getElementById('view-design').style.display = mode === 'design' ? 'block' : 'none';
+    document.getElementById('view-ready').style.display  = mode === 'ready' ? 'block' : 'none';
+    document.getElementById('view-group').style.display  = mode === 'group' ? 'block' : 'none';
 
-        function dragEnd() { isDragging = false; }
+    // تعبئة واجهة الجاهز والجماعي بالصور لو فاضية
+    if(mode === 'ready' && document.getElementById('ready-bg-grid').innerHTML === '') fillAltBgs();
+    if(mode === 'group' && document.getElementById('batch-bg-grid').innerHTML === '') fillAltBgs();
+}
 
-        function drag(e) {
-            if (isDragging && activeElement) {
-                e.preventDefault();
-                if (e.type === "touchmove") {
-                    currentX = e.touches[0].clientX - initialX;
-                    currentY = e.touches[0].clientY - initialY;
-                } else {
-                    currentX = e.clientX - initialX;
-                    currentY = e.clientY - initialY;
-                }
-                activeElement.style.left = currentX + 'px';
-                activeElement.style.top = currentY + 'px';
-            }
-        }
+function fillAltBgs() {
+    const html = BG_ITEMS.map((bg, i) => 
+      `<div class="bgthumb" onclick="setAltBg(this, '${bg.src}')">
+        <img src="${bg.src}">
+      </div>`
+    ).join('');
+    document.getElementById('ready-bg-grid').innerHTML = html;
+    document.getElementById('batch-bg-grid').innerHTML = html;
+}
 
-        // ==========================================
-        // 6. التصدير والمشاركة
-        // ==========================================
-        async function captureDesign() {
-            if(activeElement) activeElement.classList.remove('selected'); // خفي إطار التحديد
-            const canvas = await html2canvas(document.getElementById('canvas-container'), { useCORS: true, scale: 2 });
-            if(activeElement) activeElement.classList.add('selected'); // رجعه تاني
-            return canvas;
+function setAltBg(el, src) {
+    // نعرف إحنا في أي جريد (جاهز ولا جماعي)
+    const parent = el.parentElement;
+    parent.querySelectorAll('.bgthumb').forEach(t => t.classList.remove('on'));
+    el.classList.add('on');
+    
+    if(parent.id === 'ready-bg-grid') document.getElementById('ready-canvas').style.backgroundImage = `url('${src}')`;
+    if(parent.id === 'batch-bg-grid') document.getElementById('batch-canvas').style.backgroundImage = `url('${src}')`;
+}
+
+// ══════════════════════════════════════════════
+// BOOT (تهيئة المصمم)
+// ══════════════════════════════════════════════
+(function init() {
+  buildBgGrid();
+  buildReady('all');
+
+  // نصوص ابتدائية للمصمم
+  addText("عيد مبارك", 48, "#FFD700", 110, 40);
+  addText("كل عام وأنتم بخير", 24, "#ffffff", 90, 120);
+
+  document.addEventListener('mousedown', e => { if (!e.target.closest('.el') && !e.target.closest('#sidebar')) deselect(); });
+  document.addEventListener('touchstart', e => { if (!e.target.closest('.el') && !e.target.closest('#sidebar')) deselect(); }, {passive:true});
+
+  document.addEventListener('click', onGrpClick);
+  document.getElementById('cdots-text').addEventListener('click', onTextDot);
+})();
+
+// ══════════════════════════════════════════════
+// DESIGNER - DRAG & EDIT ENGINE
+// ══════════════════════════════════════════════
+function makeWrap(x, y) {
+  const w = document.createElement('div');
+  w.className = 'el';
+  w.dataset.id = ++eid;
+  w.style.left = x + 'px'; w.style.top = y + 'px';
+  const rh = document.createElement('div');
+  rh.className = 'rhandle';
+  w.appendChild(rh);
+  attachDrag(w, rh);
+  CV.appendChild(w);
+  return w;
+}
+
+function attachDrag(el, rhandle) {
+  let isDrag = false, isResize = false;
+  let ox, oy, ol, ot, ow;
+
+  function gp(e) { const t = e.touches ? e.touches[0] : e; return { x: t.clientX, y: t.clientY }; }
+
+  el.addEventListener('mousedown', startD);
+  el.addEventListener('touchstart', startD, { passive: false });
+
+  function startD(e) {
+    if (e.target === rhandle) { startR(e); return; }
+    // منع السحب لو النص قيد التعديل
+    if (el.querySelector('.el-text') && el.querySelector('.el-text').contentEditable === 'true') return;
+    
+    e.stopPropagation();
+    select(el);
+    const p = gp(e);
+    ox = p.x; oy = p.y; ol = el.offsetLeft; ot = el.offsetTop;
+    isDrag = true;
+    on('mousemove', doD); on('touchmove', doD);
+    on('mouseup', endD); on('touchend', endD);
+  }
+  function doD(e) {
+    if (!isDrag) return;
+    if (e.cancelable) e.preventDefault();
+    const p = gp(e);
+    const nl = Math.max(0, Math.min(ol + p.x - ox, CV.offsetWidth  - el.offsetWidth));
+    const nt = Math.max(0, Math.min(ot + p.y - oy, CV.offsetHeight - el.offsetHeight));
+    el.style.left = nl + 'px'; el.style.top = nt + 'px';
+  }
+  function endD() { isDrag = false; off('mousemove', doD); off('touchmove', doD); off('mouseup', endD); off('touchend', endD); }
+
+  function startR(e) {
+    e.stopPropagation(); select(el);
+    const p = gp(e); ox = p.x; isResize = true;
+    
+    const txt = el.querySelector('.el-text');
+    if(txt) ow = parseFloat(window.getComputedStyle(txt).fontSize);
+    else ow = el.offsetWidth;
+
+    on('mousemove', doR); on('touchmove', doR);
+    on('mouseup', endR); on('touchend', endR);
+  }
+  function doR(e) {
+    if (!isResize) return;
+    if (e.cancelable) e.preventDefault();
+    const p = gp(e);
+    const dx = p.x - ox;
+    
+    const txt = el.querySelector('.el-text');
+    if(txt) {
+        let nSize = Math.max(12, ow + dx);
+        txt.style.fontSize = nSize + 'px';
+        document.getElementById('vl-size').textContent = Math.round(nSize);
+        document.getElementById('sl-size').value = nSize;
+    } else {
+        const img = el.querySelector('img');
+        if (img) { 
+            let nw = Math.max(40, ow + dx);
+            el.style.width = nw + 'px'; img.style.width = nw + 'px'; img.style.maxWidth = nw + 'px'; 
         }
-        async function downloadPNG() {
-            const canvas = await captureDesign();
-            const link = document.createElement('a'); link.download = 'sallim-card.png'; link.href = canvas.toDataURL(); link.click();
-        }
-        async function downloadPDF() {
-            const canvas = await captureDesign();
-            const pdf = new window.jspdf.jsPDF({ orientation: 'p', unit: 'px', format: [canvas.width, canvas.height] });
-            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width, canvas.height);
-            pdf.save('sallim-card.pdf');
-        }
-        async function copyImage() {
-            try {
-                const canvas = await captureDesign();
-                canvas.toBlob(async blob => {
-                    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-                    alert("تم النسخ للحافظة!");
-                });
-            } catch (e) { alert("متصفحك لا يدعم هذه الميزة."); }
-        }
-        async function shareGeneral() {
-            const canvas = await captureDesign();
-            canvas.toBlob(async blob => {
-                if (navigator.share) await navigator.share({ title: 'تهنئة', files: [new File([blob], "card.png", { type: "image/png" })] });
-                else alert("غير مدعوم.");
-            });
-        }
-        function shareWhatsApp() {
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent("تهنئة من منصة سَلِّم")}`, '_blank');
-            alert("حمل الصورة أولاً ثم أرفقها في واتساب.");
-        }
-    </script>
+    }
+  }
+  function endR() { isResize = false; off('mousemove', doR); off('touchmove', doR); off('mouseup', endR); off('touchend', endR); }
+
+  function on(ev, fn)  { document.addEventListener(ev, fn, { passive: false }); }
+  function off(ev, fn) { document.removeEventListener(ev, fn); }
+}
+
+function select(el) {
+  deselect();
+  selEl = el;
+  el.classList.add('selected');
+  // Sync sliders
+  const txt = el.querySelector('.el-text');
+  if (txt) {
+    const fs = parseInt(window.getComputedStyle(txt).fontSize) || 26;
+    document.getElementById('sl-size').value = fs;
+    document.getElementById('vl-size').textContent = fs;
+  }
+  const op = Math.round((parseFloat(el.style.opacity) || 1) * 100);
+  document.getElementById('sl-op').value = op;
+  document.getElementById('vl-op').textContent = op + '%';
+}
+
+function deselect() {
+  document.querySelectorAll('.el').forEach(e => {
+      e.classList.remove('selected');
+      const t = e.querySelector('.el-text');
+      if(t) { t.contentEditable = false; t.style.cursor = 'grab'; }
+  });
+  selEl = null;
+}
+
+function addText(text, size, color, x, y) {
+  const w = makeWrap(x, y);
+  const d = document.createElement('div');
+  d.className = 'el-text text-content-editable';
+  d.style.fontSize   = size + 'px';
+  d.style.color      = color;
+  d.textContent = text;
+  
+  // Double Click لتعديل النص
+  d.addEventListener('dblclick', function(e) {
+      e.stopPropagation();
+      this.contentEditable = true;
+      this.style.cursor = 'text';
+      this.focus();
+      document.execCommand('selectAll', false, null);
+  });
+  
+  w.insertBefore(d, w.firstChild);
+  select(w);
+  return w;
+}
+
+// ══════════════════════════════════════════════
+// DESIGNER HELPERS (Format, Export, etc)
+// ══════════════════════════════════════════════
+function A(prop, val) {
+  if (prop === 'opacity') {
+    if (selEl) selEl.style.opacity = val / 100;
+    document.getElementById('vl-op').textContent = val + '%';
+    return;
+  }
+  if (!selEl) return;
+  const txt = selEl.querySelector('.el-text');
+  switch (prop) {
+    case 'font': if (txt) txt.style.fontFamily = `'${val}', sans-serif`; break;
+    case 'weight': if (txt) txt.style.fontWeight = val; break;
+    case 'size': 
+      if (txt) { txt.style.fontSize = val + 'px'; document.getElementById('vl-size').textContent = val; }
+      break;
+    case 'color': if (txt) txt.style.color = val; break;
+  }
+}
+
+function onGrpClick(e) {
+  const btn = e.target.closest('.gbtn');
+  if (!btn) return;
+  const grp = btn.closest('[data-grp]');
+  if (!grp) return;
+  grp.querySelectorAll('.gbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  if(grp.dataset.grp === 'fw') A('weight', btn.dataset.val);
+}
+
+function onTextDot(e) {
+  const dot = e.target.closest('.cdot');
+  if (!dot) return;
+  document.querySelectorAll('#cdots-text .cdot').forEach(d => d.classList.remove('on'));
+  dot.classList.add('on');
+  A('color', dot.dataset.color);
+}
+
+function addMain() { addText(document.getElementById('main-txt').value || 'نص جديد', 32, '#FFD700', 50, 50); }
+function delSelected() { if(selEl) selEl.remove(); }
+function clearAll() { if (confirm('مسح كل العناصر؟')) document.querySelectorAll('.el').forEach(e => e.remove()); }
+
+function buildBgGrid() {
+  document.getElementById('bggrid').innerHTML = BG_ITEMS.map(bg => `<div class="bgthumb" onclick="setBg(this,'${bg.src}')"><img src="${bg.src}"></div>`).join('');
+}
+function setBg(el, src) {
+  CV.style.backgroundImage = `url('${src}')`;
+  document.querySelectorAll('.bgthumb').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+}
+function setFilter(btn) {
+  document.querySelectorAll('.fpill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  buildReady(btn.dataset.filter);
+}
+function buildReady(key) {
+  const list = READY_TEXTS[key] || READY_TEXTS.all;
+  document.getElementById('rlist').innerHTML = list.map(t => `<div class="ritem" onclick="addText('${t}', 24, '#fff', 50, 50)">${t}</div>`).join('');
+}
+
+// Export Designer
+async function dlPNG() {
+  deselect(); await new Promise(r => setTimeout(r, 100));
+  const c = await html2canvas(CV, { useCORS: true, scale: 3, backgroundColor: null });
+  const a = document.createElement('a');
+  a.download = 'Sallim-Pro.png'; a.href = c.toDataURL('image/png'); a.click();
+}
+
+// ══════════════════════════════════════════════
+// READY MODE LOGIC (جاهز)
+// ══════════════════════════════════════════════
+function updateReady() {
+    const main = document.getElementById('r-text-main');
+    const sub = document.getElementById('r-text-sub');
+
+    main.innerText = document.getElementById('r-main').value || ' ';
+    sub.innerText = document.getElementById('r-sub').value || ' ';
+
+    main.style.fontSize = document.getElementById('r-msize').value + 'px';
+    main.style.top = document.getElementById('r-mpos').value + '%';
+
+    sub.style.fontSize = document.getElementById('r-ssize').value + 'px';
+    sub.style.top = document.getElementById('r-spos').value + '%';
+
+    const font = document.getElementById('r-font').value;
+    const color = document.getElementById('r-color').value;
+    
+    main.style.fontFamily = font; sub.style.fontFamily = font;
+    main.style.color = color; sub.style.color = color === '#000000' ? '#333' : '#fff';
+}
+
+function dlReady() {
+    const box = document.getElementById('ready-canvas');
+    html2canvas(box, { scale: 3, useCORS: true }).then(c => {
+        const a = document.createElement('a');
+        a.download = 'Sallim-Ready.png'; a.href = c.toDataURL('image/png'); a.click();
+    });
+}
+
+// ══════════════════════════════════════════════
+// BATCH MODE LOGIC (جماعي - تحميل Zip)
+// ══════════════════════════════════════════════
+function updateBatch() {
+    const nameEl = document.getElementById('b-text-name');
+    let firstLine = document.getElementById('b-names').value.split('\n')[0] || 'الاسم يظهر هنا';
+    
+    nameEl.innerText = firstLine;
+    nameEl.style.fontSize = document.getElementById('b-size').value + 'px';
+    nameEl.style.top = document.getElementById('b-pos').value + '%';
+    nameEl.style.fontFamily = document.getElementById('b-font').value;
+    nameEl.style.color = document.getElementById('b-color').value;
+}
+
+async function dlBatchZip(btn) {
+    const names = document.getElementById('b-names').value.split('\n').map(n => n.trim()).filter(n => n);
+    if(names.length === 0) return alert('أدخل اسماً واحداً على الأقل!');
+
+    const origHTML = btn.innerHTML;
+    btn.innerHTML = 'جاري التجهيز... الرجاء الانتظار';
+    btn.disabled = true;
+
+    const zip = new JSZip();
+    const box = document.getElementById('batch-canvas');
+    const nameEl = document.getElementById('b-text-name');
+
+    for(let i=0; i<names.length; i++) {
+        nameEl.innerText = names[i];
+        await new Promise(r => setTimeout(r, 100)); // السماح للـ DOM بالتحديث
+        
+        const canvas = await html2canvas(box, { scale: 2, useCORS: true });
+        const imgData = canvas.toDataURL('image/png').split(',')[1];
+        zip.file(`Card_${i+1}_${names[i]}.png`, imgData, {base64: true});
+    }
+
+    zip.generateAsync({type:"blob"}).then(content => {
+        saveAs(content, "Sallim_Batch.zip");
+        btn.innerHTML = origHTML;
+        btn.disabled = false;
+        updateBatch(); // إرجاع الاسم الأول للمعاينة
+    });
+}
+
+// TABS HELPERS
+function openTab(id) {
+  document.querySelectorAll('.stab').forEach(b => b.classList.toggle('on', b.dataset.tab === id));
+  document.querySelectorAll('.spanel').forEach(p => p.classList.toggle('on', p.id === 'panel-' + id));
+}
+function notify(msg) {
+  const n = document.getElementById('notif'); n.textContent = msg; n.classList.add('vis');
+  clearTimeout(n._t); n._t = setTimeout(() => n.classList.remove('vis'), 2000);
+}
+</script>
 </body>
 </html>

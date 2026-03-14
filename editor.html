@@ -4,1297 +4,1384 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>محرر البطاقات - سَلِّم</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
 <style>
-:root {
-  --bg: #f0f0f2;
-  --white: #ffffff;
-  --black: #111111;
-  --gray-100: #f7f7fa;
-  --gray-200: #e8e8ee;
-  --gray-400: #b0b0be;
-  --gray-600: #6b6b80;
-  --accent: #111111;
-  --gold: #c9a227;
-  --radius: 14px;
-  --radius-sm: 9px;
-  --sidebar-w: 310px;
-  --shadow: 0 4px 20px rgba(0,0,0,0.09);
-  --shadow-lg: 0 14px 50px rgba(0,0,0,0.16);
-}
+/* ═══ RESET & BASE ═══ */
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Tajawal',sans-serif; background:var(--bg); min-height:100vh; overflow:hidden; }
+body { font-family:'Tajawal',sans-serif; background:#f0f0f2; overflow:hidden; height:100vh; }
 
-/* ── TOPBAR ── */
-.topbar {
-  position:fixed; top:0; left:0; right:0; z-index:300;
-  background:#fff; border-bottom:1px solid var(--gray-200);
-  display:flex; align-items:center; justify-content:space-between;
-  padding:0 20px; height:56px;
+/* ═══ TOPBAR ═══ */
+#topbar {
+  position:fixed; top:0; left:0; right:0; z-index:600;
+  height:54px; background:#fff; border-bottom:1px solid #e5e5e5;
+  display:flex; align-items:center; justify-content:space-between; padding:0 18px;
 }
-.logo { font-size:19px; font-weight:900; }
-.logo span { color:#c9a227; }
-.top-actions { display:flex; gap:8px; align-items:center; }
+.logo { font-size:20px; font-weight:900; letter-spacing:-0.5px; }
+.logo em { color:#c9a227; font-style:normal; }
+.top-btns { display:flex; gap:8px; }
 
-/* filter bar */
-.filter-bar {
-  position:fixed; top:56px; left:0; right:0; z-index:299;
-  background:#fff; border-bottom:1px solid var(--gray-200);
-  display:flex; gap:8px; padding:8px 16px; overflow-x:auto;
+/* ═══ MODE BAR ═══ */
+#modebar {
+  position:fixed; top:54px; left:0; right:0; z-index:599;
+  height:46px; background:#fff; border-bottom:1px solid #e5e5e5;
+  display:flex; align-items:center; justify-content:center; gap:6px; padding:0 16px;
 }
-.filter-bar::-webkit-scrollbar { display:none; }
-.filter-pill {
+.mode-btn {
   display:inline-flex; align-items:center; gap:5px;
-  padding:5px 14px; border-radius:20px; border:1px solid var(--gray-200);
-  background:#fff; font-family:'Tajawal',sans-serif; font-size:12px;
-  font-weight:700; cursor:pointer; white-space:nowrap; transition:all .15s;
-  color:var(--gray-600);
+  padding:6px 18px; border-radius:22px;
+  font-family:'Tajawal',sans-serif; font-size:13px; font-weight:700;
+  cursor:pointer; border:1px solid #ddd; background:#f7f7f7;
+  color:#666; transition:all .15s;
 }
-.filter-pill:hover { border-color:#333; color:#111; }
-.filter-pill.active { background:#111; color:#fff; border-color:#111; }
-.filter-pill .dot { width:8px; height:8px; border-radius:50%; }
+.mode-btn:hover { border-color:#aaa; color:#111; }
+.mode-btn.active { background:#111; color:#fff; border-color:#111; }
 
-/* ── LAYOUT ── */
-.editor-layout {
-  display:flex;
-  margin-top:100px; /* topbar + filterbar */
-  height:calc(100vh - 100px);
+/* ═══ FILTER BAR (Design mode only) ═══ */
+#filterbar {
+  position:fixed; top:100px; left:0; right:0; z-index:598;
+  height:40px; background:#fff; border-bottom:1px solid #e5e5e5;
+  display:flex; align-items:center; gap:6px; padding:0 16px; overflow-x:auto;
+}
+#filterbar::-webkit-scrollbar { display:none; }
+.fpill {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:4px 13px; border-radius:18px; border:1px solid #e0e0e0; background:#fff;
+  font-family:'Tajawal',sans-serif; font-size:12px; font-weight:700;
+  cursor:pointer; white-space:nowrap; color:#666; transition:all .15s; flex-shrink:0;
+}
+.fpill:hover { border-color:#888; color:#111; }
+.fpill.on { background:#111; color:#fff; border-color:#111; }
+.fdot { width:7px; height:7px; border-radius:50%; }
+
+/* ═══ MAIN LAYOUT (Design) ═══ */
+#view-design {
+  position:fixed; top:140px; left:0; right:0; bottom:0; display:flex;
 }
 
-/* ── SIDEBAR ── */
-.sidebar {
-  width:var(--sidebar-w);
-  background:#fff;
-  border-left:1px solid var(--gray-200);
-  display:flex; flex-direction:column;
-  overflow:hidden; flex-shrink:0;
-  position:relative; z-index:100;
+/* ═══ CANVAS AREA ═══ */
+#canvas-area {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:14px; overflow:auto; padding:16px;
 }
-.sidebar-tabs {
-  display:flex;
-  border-bottom:1px solid var(--gray-200);
-  background:var(--gray-100);
-  overflow-x:auto;
+#canvas {
+  position:relative; width:420px; height:420px;
+  border-radius:16px; overflow:hidden;
+  box-shadow:0 12px 48px rgba(0,0,0,.22); flex-shrink:0;
+  background:#1a1a2e url('https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=800') center/cover no-repeat;
 }
-.sidebar-tabs::-webkit-scrollbar { display:none; }
+
+/* ═══ DRAGGABLE ELEMENTS ═══ */
+.el { position:absolute; cursor:grab; user-select:none; touch-action:none; }
+.el:active { cursor:grabbing; }
+.el.selected::after {
+  content:''; position:absolute; inset:-4px;
+  border:2px dashed rgba(255,255,255,.85); border-radius:5px; pointer-events:none;
+}
+.el-text {
+  font-family:'Tajawal',sans-serif; font-size:26px; font-weight:700;
+  color:#fff; direction:rtl; text-align:right; padding:3px 6px;
+  white-space:pre-wrap; line-height:1.4; text-shadow:0 2px 8px rgba(0,0,0,.5);
+  outline:none; cursor:inherit;
+}
+.el-img { display:block; }
+.rhandle {
+  position:absolute; bottom:-7px; left:-7px; width:14px; height:14px;
+  background:#fff; border:2.5px solid #333; border-radius:50%; cursor:se-resize;
+  z-index:5; display:none;
+}
+.el.selected .rhandle { display:block; }
+
+/* ═══ EXPORT BAR ═══ */
+#export-bar { width:420px; display:flex; flex-direction:column; gap:6px; }
+#export-row1 { display:flex; gap:8px; }
+#export-row1 .btn { flex:1; }
+#export-row2 { display:flex; gap:6px; }
+#export-row2 .btn { flex:1; font-size:12px; padding:7px; }
+
+/* ═══ SIDEBAR ═══ */
+#sidebar {
+  width:310px; flex-shrink:0; background:#fff;
+  border-left:1px solid #e5e5e5; display:flex; flex-direction:column; overflow:hidden;
+}
+#stabs {
+  display:flex; border-bottom:1px solid #e5e5e5; background:#f7f7f7; overflow-x:auto;
+}
+#stabs::-webkit-scrollbar { display:none; }
 .stab {
-  flex:1; min-width:52px; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:3px;
-  padding:8px 4px; cursor:pointer; border:none;
-  background:transparent; color:var(--gray-600);
-  font-family:'Tajawal',sans-serif; font-size:10px; font-weight:700;
-  border-bottom:2px solid transparent; transition:all .15s; white-space:nowrap;
+  flex:1; min-width:46px; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:2px; padding:8px 4px; cursor:pointer; border:none;
+  background:transparent; color:#888; font-family:'Tajawal',sans-serif; font-size:10px;
+  font-weight:700; border-bottom:2.5px solid transparent; transition:all .14s;
 }
-.stab svg { width:18px; height:18px; }
+.stab svg { width:16px; height:16px; }
 .stab:hover { color:#111; background:#fff; }
-.stab.active { color:#111; background:#fff; border-bottom-color:#111; }
+.stab.on { color:#111; background:#fff; border-bottom-color:#111; }
+.spanel { display:none; flex-direction:column; flex:1; overflow-y:auto; padding:13px; gap:10px; }
+.spanel.on { display:flex; }
+.spanel::-webkit-scrollbar { width:3px; }
+.spanel::-webkit-scrollbar-thumb { background:#e0e0e0; border-radius:3px; }
 
-.sidebar-panel { display:none; flex-direction:column; flex:1; overflow-y:auto; padding:14px; gap:12px; }
-.sidebar-panel.active { display:flex; }
-.sidebar-panel::-webkit-scrollbar { width:3px; }
-.sidebar-panel::-webkit-scrollbar-thumb { background:var(--gray-200); border-radius:3px; }
-
-/* ── COMMON COMPONENTS ── */
+/* ═══ COMMON UI ═══ */
 .btn {
   display:inline-flex; align-items:center; justify-content:center; gap:5px;
-  padding:9px 16px; border-radius:var(--radius-sm);
-  font-family:'Tajawal',sans-serif; font-size:13px; font-weight:700;
-  cursor:pointer; border:none; transition:all .15s; white-space:nowrap;
+  padding:9px 14px; border-radius:9px; font-family:'Tajawal',sans-serif; font-size:13px;
+  font-weight:700; cursor:pointer; border:none; transition:all .14s; white-space:nowrap;
 }
-.btn-primary { background:#111; color:#fff; }
-.btn-primary:hover { background:#333; }
-.btn-ghost { background:var(--gray-100); color:var(--gray-600); border:1px solid var(--gray-200); }
-.btn-ghost:hover { background:var(--gray-200); }
-.btn-green { background:#25d366; color:#fff; }
-.btn-green:hover { background:#1fb956; }
-.btn-outline { background:#fff; color:#111; border:1px solid var(--gray-200); }
-.btn-outline:hover { background:var(--gray-100); }
-.btn-danger { background:#fef2f2; color:#dc2626; border:1px solid #fecaca; }
-.btn-danger:hover { background:#fee2e2; }
-.btn-full { width:100%; }
+.btn-black { background:#111; color:#fff; }
+.btn-black:hover { background:#333; }
+.btn-green { background:#22c55e; color:#fff; }
+.btn-green:hover { background:#16a34a; }
+.btn-gray { background:#f3f3f3; color:#555; border:1px solid #e0e0e0; }
+.btn-gray:hover { background:#e8e8e8; }
+.btn-red { background:#fef2f2; color:#dc2626; border:1px solid #fecaca; }
+.btn-red:hover { background:#fee2e2; }
+.bfull { width:100%; }
 
-.section-title {
-  font-size:11px; font-weight:800; color:var(--gray-600);
-  text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;
+.box { background:#f7f7fa; border-radius:9px; padding:11px; display:flex; flex-direction:column; gap:8px; }
+.lbl { font-size:12px; font-weight:700; color:#777; }
+.sec { font-size:10px; font-weight:800; color:#888; text-transform:uppercase; letter-spacing:.5px; }
+
+textarea.tinp, input[type=text].tinp {
+  width:100%; padding:8px 10px; border-radius:7px; border:1px solid #e0e0e0; background:#fff;
+  font-family:'Tajawal',sans-serif; font-size:13px; resize:none; outline:none; direction:rtl; line-height:1.5;
 }
-.card-box {
-  background:var(--gray-100); border-radius:var(--radius-sm);
-  padding:12px; display:flex; flex-direction:column; gap:8px;
-}
-.field-label { font-size:12px; font-weight:700; color:var(--gray-600); }
-textarea.field-input {
-  width:100%; padding:8px 10px; border-radius:8px;
-  border:1px solid var(--gray-200); background:#fff;
-  font-family:'Tajawal',sans-serif; font-size:13px; resize:none;
-  outline:none; transition:border .15s; direction:rtl; line-height:1.5;
-}
-textarea.field-input:focus { border-color:#111; }
-.slider-row { display:flex; align-items:center; gap:8px; }
-.slider-row label { font-size:11px; color:var(--gray-600); white-space:nowrap; }
-input[type=range] { flex:1; accent-color:#111; cursor:pointer; }
-.slider-val { font-size:11px; font-weight:800; color:#111; min-width:28px; text-align:center; }
-.color-row { display:flex; gap:5px; flex-wrap:wrap; align-items:center; }
-.color-dot {
-  width:20px; height:20px; border-radius:50%; cursor:pointer;
-  border:2px solid transparent; transition:all .12s; flex-shrink:0;
-}
-.color-dot:hover,.color-dot.sel { border-color:#111; transform:scale(1.2); }
-select.field-select {
-  width:100%; padding:7px 10px; border-radius:8px;
-  border:1px solid var(--gray-200); background:#fff;
-  font-family:'Tajawal',sans-serif; font-size:13px;
-  outline:none; cursor:pointer;
+textarea.tinp:focus, input[type=text].tinp:focus { border-color:#111; }
+select.sinp {
+  width:100%; padding:7px 9px; border-radius:7px; border:1px solid #e0e0e0; background:#fff;
+  font-family:'Tajawal',sans-serif; font-size:13px; outline:none; cursor:pointer;
 }
 
-/* ── FORMAT PANEL ── */
-.weight-btns { display:flex; gap:4px; }
-.weight-btn {
-  flex:1; padding:5px; border-radius:6px; border:1px solid var(--gray-200);
-  background:#fff; font-family:'Tajawal',sans-serif; font-size:12px;
-  font-weight:700; cursor:pointer; transition:all .12s; color:var(--gray-600);
-}
-.weight-btn.active { background:#111; color:#fff; border-color:#111; }
-.align-btns { display:flex; gap:4px; }
-.align-btn {
-  flex:1; padding:5px; border-radius:6px; border:1px solid var(--gray-200);
-  background:#fff; cursor:pointer; transition:all .12s;
-  display:flex; align-items:center; justify-content:center;
-}
-.align-btn:hover,.align-btn.active { background:#111; color:#fff; border-color:#111; }
-.align-btn svg { width:14px; height:14px; fill:currentColor; }
+.slrow { display:flex; align-items:center; gap:8px; }
+.slrow span { font-size:11px; color:#888; white-space:nowrap; }
+.slrow input[type=range] { flex:1; accent-color:#111; cursor:pointer; }
+.slval { font-size:11px; font-weight:800; color:#111; min-width:30px; text-align:center; }
 
-/* ── CALLIGRAPHY ── */
-.callig-cat-tabs { display:flex; gap:5px; flex-wrap:wrap; }
-.cat-btn {
-  padding:4px 11px; border-radius:16px; border:1px solid var(--gray-200);
-  background:#fff; font-family:'Tajawal',sans-serif; font-size:11px;
-  font-weight:700; cursor:pointer; transition:all .12s; color:var(--gray-600);
+.bgrp { display:flex; gap:4px; }
+.gbtn {
+  flex:1; padding:5px 4px; border-radius:7px; border:1px solid #e0e0e0; background:#fff;
+  font-family:'Tajawal',sans-serif; font-size:11px; font-weight:700; cursor:pointer;
+  transition:all .12s; color:#666; display:flex; align-items:center; justify-content:center;
 }
-.cat-btn.active { background:#111; color:#fff; border-color:#111; }
-.callig-grid {
-  display:grid; grid-template-columns:repeat(3,1fr); gap:5px;
-}
-.callig-item {
-  padding:7px; border-radius:9px; border:2px solid var(--gray-200);
-  cursor:pointer; min-height:56px; display:flex; align-items:center;
-  justify-content:center; transition:all .14s;
-}
-.callig-item:hover { border-color:#111; transform:scale(1.03); box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-.callig-item.dark-bg { background:#1a1a2e; }
-.callig-item.light-bg { background:#f5f5f5; }
-.callig-item img { width:100%; height:auto; max-height:42px; object-fit:contain; }
-.show-more-btn {
-  width:100%; padding:8px; border-radius:9px;
-  border:1px dashed var(--gray-400); background:#fff;
-  font-family:'Tajawal',sans-serif; font-size:12px; font-weight:700;
-  cursor:pointer; color:var(--gray-600); transition:all .14s;
-  display:flex; align-items:center; justify-content:center; gap:5px;
-}
-.show-more-btn:hover { border-color:#111; color:#111; background:var(--gray-100); }
+.gbtn:hover { border-color:#888; color:#111; }
+.gbtn.on { background:#111; color:#fff; border-color:#111; }
 
-/* ── BACKGROUNDS ── */
-.bg-upload-btn {
-  width:100%; padding:11px; border-radius:var(--radius-sm);
-  border:2px dashed var(--gray-200); background:var(--gray-100);
-  color:var(--gray-600); font-family:'Tajawal',sans-serif;
-  font-size:13px; font-weight:700; cursor:pointer;
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  transition:all .15s;
+.cdots { display:flex; gap:5px; flex-wrap:wrap; align-items:center; }
+.cdot {
+  width:21px; height:21px; border-radius:50%; cursor:pointer; border:2px solid transparent;
+  transition:all .12s; flex-shrink:0;
 }
-.bg-upload-btn:hover { border-color:#111; color:#111; background:#fff; }
-.bg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; }
-.bg-thumb {
-  position:relative; aspect-ratio:1; border-radius:9px; overflow:hidden;
-  cursor:pointer; border:2px solid transparent; transition:all .14s;
+.cdot:hover, .cdot.on { border-color:#111; transform:scale(1.2); }
+
+.cgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; }
+.citem {
+  border-radius:8px; border:2px solid #e0e0e0; cursor:pointer; min-height:54px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  transition:all .13s; overflow:hidden; padding:5px;
 }
-.bg-thumb:hover,.bg-thumb.sel { border-color:#111; }
-.bg-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-.bg-badge {
-  position:absolute; top:4px; right:4px;
+.citem:hover { border-color:#111; transform:scale(1.03); box-shadow:0 2px 8px rgba(0,0,0,.1); }
+.citem.dk { background:#1a1a2e; }
+.citem.lt { background:#f3f3f3; }
+.citem img { width:100%; height:auto; max-height:40px; object-fit:contain; display:block; }
+.citem img.failed { display:none; }
+.citem .clabel { font-size:9px; font-weight:700; color:#999; text-align:center; display:none; word-break:break-all; padding:2px; }
+.citem img.failed + .clabel { display:block; }
+
+.showmore {
+  width:100%; padding:8px; border-radius:8px; border:1px dashed #ccc; background:#fff;
+  font-family:'Tajawal',sans-serif; font-size:12px; font-weight:700; cursor:pointer; color:#888;
+  display:none; align-items:center; justify-content:center; gap:5px; margin-top:5px; transition:all .13s;
+}
+.showmore:hover { border-color:#111; color:#111; background:#f7f7f7; }
+.showmore.vis { display:flex; }
+
+.bggrid { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; }
+.bgthumb {
+  position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden;
+  cursor:pointer; border:2px solid transparent; transition:all .13s;
+}
+.bgthumb:hover, .bgthumb.on { border-color:#111; }
+.bgthumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.bgbadge {
+  position:absolute; top:3px; right:3px;
   background:linear-gradient(135deg,#d4af37,#f5d874);
-  color:#000; padding:2px 5px; border-radius:4px;
-  font-size:8px; font-weight:800;
+  color:#000; padding:2px 5px; border-radius:4px; font-size:8px; font-weight:800;
 }
 
-/* ── PERSONAL PHOTO ── */
-.photo-drop {
-  border:2px dashed var(--gray-200); border-radius:var(--radius-sm);
-  padding:20px; display:flex; flex-direction:column; align-items:center;
-  justify-content:center; gap:8px; cursor:pointer; transition:all .15s;
-  background:var(--gray-100);
+.cattabs { display:flex; gap:5px; flex-wrap:wrap; }
+.catbtn {
+  padding:4px 11px; border-radius:15px; border:1px solid #e0e0e0; background:#fff;
+  font-family:'Tajawal',sans-serif; font-size:11px; font-weight:700; cursor:pointer; color:#777; transition:all .12s;
 }
-.photo-drop:hover { border-color:#111; background:#fff; }
-.photo-drop svg { color:var(--gray-400); }
-.photo-drop span { font-size:12px; font-weight:700; color:var(--gray-600); }
+.catbtn:hover { border-color:#888; color:#111; }
+.catbtn.on { background:#111; color:#fff; border-color:#111; }
 
-/* ── LOGO PANEL ── */
-.logo-preview {
-  width:100%; padding:16px; background:var(--gray-100);
-  border-radius:var(--radius-sm); display:flex; align-items:center;
-  justify-content:center; min-height:80px;
+.rlist { display:flex; flex-direction:column; gap:5px; max-height:200px; overflow-y:auto; }
+.rlist::-webkit-scrollbar { width:3px; }
+.ritem {
+  padding:7px 10px; border-radius:7px; border:1px solid #e8e8e8; background:#fff;
+  font-family:'Tajawal',sans-serif; font-size:12px; font-weight:600; cursor:pointer;
+  text-align:right; color:#333; transition:all .12s;
 }
-.logo-preview img { max-width:100%; max-height:60px; object-fit:contain; }
+.ritem:hover { border-color:#111; background:#f7f7f7; }
 
-/* ── CANVAS AREA ── */
-.canvas-area {
-  flex:1; display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  padding:20px; gap:16px; overflow:auto;
+.uarea {
+  width:100%; padding:14px; border-radius:9px; border:2px dashed #ddd; background:#f7f7fa;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:6px; cursor:pointer; transition:all .14s; color:#888;
 }
-#canvas-wrap {
-  position:relative;
-  width:440px; height:440px;
-  border-radius:18px; overflow:hidden;
-  box-shadow:var(--shadow-lg);
-  flex-shrink:0;
-  background:#1a1a2e url('https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=800') center/cover;
+.uarea:hover { border-color:#111; color:#111; background:#fff; }
+.uarea svg { width:28px; height:28px; }
+.uarea span { font-size:12px; font-weight:700; }
+.uarea small { font-size:10px; color:#aaa; }
+
+/* ═══ ALT VIEWS (جاهز / جماعي) ═══ */
+.alt-view {
+  position:fixed; top:100px; left:0; right:0; bottom:0;
+  overflow-y:auto; padding:24px 20px; background:#f0f0f2; display:none;
 }
-/* Selection ring */
-.el-wrap {
-  position:absolute; cursor:grab; user-select:none;
+.alt-container {
+  max-width:860px; margin:0 auto; display:grid; gap:20px;
+  grid-template-columns:1fr;
 }
-.el-wrap:active { cursor:grabbing; }
-.el-wrap.selected::after {
-  content:''; position:absolute; inset:-3px;
-  border:2px dashed rgba(255,255,255,0.85);
-  border-radius:6px; pointer-events:none;
+@media(min-width:768px) { .alt-container { grid-template-columns:1fr 1fr; } }
+
+.alt-box {
+  background:#fff; border-radius:16px; padding:20px;
+  box-shadow:0 2px 12px rgba(0,0,0,.05); border:1px solid #e5e5e5;
 }
-.canvas-text {
-  font-family:'Tajawal',sans-serif;
-  font-size:24px; font-weight:700; color:#fff;
-  text-align:center; padding:4px 8px;
-  white-space:pre-wrap; line-height:1.45;
-  text-shadow:0 2px 10px rgba(0,0,0,0.45);
-  direction:rtl;
+.alt-box-title { font-size:11px; font-weight:800; color:#888; text-transform:uppercase; letter-spacing:.5px; margin-bottom:14px; }
+
+.preview-window {
+  position:relative; width:100%; aspect-ratio:1; border-radius:12px; overflow:hidden;
+  background-size:cover; background-position:center;
+  box-shadow:0 8px 24px rgba(0,0,0,.12); flex-shrink:0;
 }
-.canvas-img { display:block; max-width:100%; height:auto; }
-.canvas-photo {
-  border-radius:50%; object-fit:cover; border:3px solid #fff;
-  box-shadow:0 4px 16px rgba(0,0,0,0.3);
-}
-/* Resize handle */
-.r-handle {
-  position:absolute; bottom:-5px; left:-5px;
-  width:12px; height:12px; background:#fff;
-  border:2px solid #333; border-radius:50%;
-  cursor:se-resize; z-index:10;
+.preview-text {
+  position:absolute; width:100%; text-align:center; left:0;
+  transform:translateY(-50%); font-family:'Tajawal',sans-serif;
+  font-weight:bold; text-shadow:0 2px 6px rgba(0,0,0,.45); padding:0 12px;
+  line-height:1.3;
 }
 
-/* ── ACTIONS ── */
-.actions-bar { width:440px; display:flex; flex-direction:column; gap:7px; }
-.actions-row { display:flex; gap:8px; }
-.actions-row .btn { flex:1; }
-.actions-row-sm { display:flex; gap:6px; }
-.actions-row-sm .btn { flex:1; padding:8px; font-size:12px; }
-
-/* ── NOTIFICATION ── */
-.notif {
-  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+/* ═══ NOTIFICATION ═══ */
+#notif {
+  position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
   background:#111; color:#fff; padding:9px 22px; border-radius:30px;
-  font-size:13px; font-weight:600; z-index:9999;
-  opacity:0; transition:opacity .22s; pointer-events:none;
+  font-size:13px; font-weight:600; z-index:9999; opacity:0;
+  transition:opacity .22s; pointer-events:none;
 }
-.notif.show { opacity:1; }
-
-/* ready texts list */
-.ready-list { display:flex; flex-direction:column; gap:5px; max-height:220px; overflow-y:auto; }
-.ready-list::-webkit-scrollbar { width:3px; }
-.ready-list::-webkit-scrollbar-thumb { background:var(--gray-200); }
-.ready-item {
-  padding:7px 10px; border-radius:8px; border:1px solid var(--gray-200);
-  background:#fff; font-family:'Tajawal',sans-serif; font-size:12px;
-  font-weight:600; cursor:pointer; text-align:right; transition:all .12s;
-  color:#333;
-}
-.ready-item:hover { border-color:#111; background:var(--gray-100); }
+#notif.vis { opacity:1; }
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="logo">سَ<span>لِّ</span>م</div>
-  <div class="top-actions">
-    <button class="btn btn-ghost" onclick="clearCanvas()">مسح الكل</button>
-    <button class="btn btn-primary" onclick="downloadPNG()">⬇ تحميل PNG</button>
+<!-- ══ TOPBAR ══ -->
+<div id="topbar">
+  <div class="logo">سَ<em>لِّ</em>م</div>
+  <div class="top-btns">
+    <button class="btn btn-gray" onclick="clearAll()">مسح الكل</button>
+    <button class="btn btn-black" onclick="dlPNG()">⬇ تحميل</button>
   </div>
 </div>
 
-<!-- FILTER BAR -->
-<div class="filter-bar" id="filter-bar">
-  <button class="filter-pill active" onclick="setFilter('all',this)">
-    <span class="dot" style="background:#888"></span> الكل
+<!-- ══ MODE BAR ══ -->
+<div id="modebar">
+  <button class="mode-btn" id="btn-ready" onclick="switchMode('ready')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+    جاهز
   </button>
-  <button class="filter-pill" onclick="setFilter('eid-fitr',this)">
-    <span class="dot" style="background:#10b981"></span> عيد الفطر
+  <button class="mode-btn active" id="btn-design" onclick="switchMode('design')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4z"/></svg>
+    صمّم
   </button>
-  <button class="filter-pill" onclick="setFilter('eid-adha',this)">
-    <span class="dot" style="background:#3b82f6"></span> عيد الأضحى
-  </button>
-  <button class="filter-pill" onclick="setFilter('ramadan',this)">
-    <span class="dot" style="background:#8b5cf6"></span> رمضان
-  </button>
-  <button class="filter-pill" onclick="setFilter('congrats',this)">
-    <span class="dot" style="background:#f59e0b"></span> تهاني عامة
-  </button>
-  <button class="filter-pill" onclick="setFilter('new-year',this)">
-    <span class="dot" style="background:#ec4899"></span> رأس السنة
-  </button>
-  <button class="filter-pill" onclick="setFilter('national',this)">
-    <span class="dot" style="background:#ef4444"></span> أعياد وطنية
+  <button class="mode-btn" id="btn-group" onclick="switchMode('group')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    جماعي
   </button>
 </div>
 
-<!-- EDITOR -->
-<div class="editor-layout">
+<!-- ══════════════════════════════════
+     VIEW: DESIGN (صمّم)
+══════════════════════════════════ -->
+<div id="view-design">
 
-  <!-- CANVAS -->
-  <div class="canvas-area">
-    <div id="canvas-wrap"></div>
-    <div class="actions-bar">
-      <div class="actions-row">
-        <button class="btn btn-green" onclick="shareWhatsApp()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.144.566 4.148 1.554 5.887L0 24l6.305-1.539A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.96 0-3.793-.518-5.375-1.42L2.2 21.8l1.24-4.308A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-          واتساب
+  <!-- FILTER BAR -->
+  <div id="filterbar">
+    <button class="fpill on" data-filter="all" onclick="setFilter(this)"><span class="fdot" style="background:#888"></span>الكل</button>
+    <button class="fpill" data-filter="eid-fitr" onclick="setFilter(this)"><span class="fdot" style="background:#10b981"></span>عيد الفطر</button>
+    <button class="fpill" data-filter="eid-adha" onclick="setFilter(this)"><span class="fdot" style="background:#3b82f6"></span>عيد الأضحى</button>
+    <button class="fpill" data-filter="ramadan" onclick="setFilter(this)"><span class="fdot" style="background:#8b5cf6"></span>رمضان</button>
+    <button class="fpill" data-filter="congrats" onclick="setFilter(this)"><span class="fdot" style="background:#f59e0b"></span>تهاني</button>
+    <button class="fpill" data-filter="new-year" onclick="setFilter(this)"><span class="fdot" style="background:#ec4899"></span>رأس السنة</button>
+    <button class="fpill" data-filter="national" onclick="setFilter(this)"><span class="fdot" style="background:#ef4444"></span>وطنية</button>
+  </div>
+
+  <!-- LAYOUT: CANVAS + SIDEBAR -->
+  <div style="position:fixed;top:140px;left:0;right:0;bottom:0;display:flex;">
+
+    <!-- CANVAS AREA -->
+    <div id="canvas-area">
+      <div id="canvas"></div>
+      <div id="export-bar">
+        <div id="export-row1">
+          <button class="btn btn-green" onclick="shareWA()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.144.566 4.148 1.554 5.887L0 24l6.305-1.539A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.96 0-3.793-.518-5.375-1.42L2.2 21.8l1.24-4.308A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+            واتساب
+          </button>
+          <button class="btn btn-black" onclick="dlPNG()">⬇ PNG</button>
+        </div>
+        <div id="export-row2">
+          <button class="btn btn-gray" onclick="dlPDF()">📄 PDF</button>
+          <button class="btn btn-gray" onclick="copyImg()">📋 نسخ</button>
+          <button class="btn btn-gray" onclick="shareNative()">↗ مشاركة</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div id="sidebar">
+      <div id="stabs">
+        <button class="stab on" data-tab="fmt" onclick="switchTab(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4z"/></svg>تنسيق
         </button>
-        <button class="btn btn-primary" onclick="downloadPNG()">⬇ PNG</button>
+        <button class="stab" data-tab="txt" onclick="switchTab(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>نصوص
+        </button>
+        <button class="stab" data-tab="cal" onclick="switchTab(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/></svg>مخطوطات
+        </button>
+        <button class="stab" data-tab="pho" onclick="switchTab(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.582-7 8-7s8 3 8 7"/></svg>صورة
+        </button>
+        <button class="stab" data-tab="lgp" onclick="switchTab(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/></svg>شعار
+        </button>
+        <button class="stab" data-tab="bg" onclick="switchTab(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>خلفية
+        </button>
       </div>
-      <div class="actions-row-sm">
-        <button class="btn btn-outline" onclick="downloadPDF()">📄 PDF</button>
-        <button class="btn btn-outline" onclick="copyImage()">📋 نسخ</button>
-        <button class="btn btn-outline" onclick="shareGeneral()">↗ مشاركة</button>
+
+      <!-- PANEL: FORMAT -->
+      <div class="spanel on" id="panel-fmt">
+        <div class="sec">تنسيق العنصر — دبل كليك لتعديل النص</div>
+        <div class="box">
+          <div class="lbl">الخط</div>
+          <select class="sinp" id="p-font" onchange="A('font', this.value)">
+            <option value="Tajawal">Tajawal</option>
+            <option value="Amiri">Amiri</option>
+            <option value="Cairo">Cairo</option>
+          </select>
+          <div class="lbl">سُمك</div>
+          <div class="bgrp" data-grp="fw">
+            <button class="gbtn" data-val="400">عادي</button>
+            <button class="gbtn" data-val="600">متوسط</button>
+            <button class="gbtn on" data-val="700">بولد</button>
+            <button class="gbtn" data-val="900">أسود</button>
+          </div>
+          <div class="lbl">محاذاة</div>
+          <div class="bgrp" data-grp="ta">
+            <button class="gbtn on" data-val="right">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="2"/><rect x="7" y="9" width="14" height="2"/><rect x="3" y="14" width="18" height="2"/><rect x="7" y="19" width="14" height="2"/></svg>
+            </button>
+            <button class="gbtn" data-val="center">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="2"/><rect x="6" y="9" width="12" height="2"/><rect x="3" y="14" width="18" height="2"/><rect x="6" y="19" width="12" height="2"/></svg>
+            </button>
+            <button class="gbtn" data-val="left">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="2"/><rect x="3" y="9" width="14" height="2"/><rect x="3" y="14" width="18" height="2"/><rect x="3" y="19" width="14" height="2"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="box">
+          <div class="lbl">الحجم</div>
+          <div class="slrow">
+            <input type="range" min="10" max="90" value="26" id="sl-size"
+              oninput="A('size',this.value); document.getElementById('vl-size').textContent=this.value">
+            <span class="slval" id="vl-size">26</span>
+          </div>
+          <div class="lbl">الشفافية</div>
+          <div class="slrow">
+            <input type="range" min="10" max="100" value="100" id="sl-op"
+              oninput="A('opacity',this.value); document.getElementById('vl-op').textContent=this.value+'%'">
+            <span class="slval" id="vl-op">100%</span>
+          </div>
+          <div class="lbl">ظل النص</div>
+          <div class="slrow">
+            <input type="range" min="0" max="25" value="5" id="sl-sh"
+              oninput="A('shadow',this.value); document.getElementById('vl-sh').textContent=this.value">
+            <span class="slval" id="vl-sh">5</span>
+          </div>
+        </div>
+        <div class="box">
+          <div class="lbl">لون النص</div>
+          <div class="cdots" id="cdots-text">
+            <div class="cdot on" style="background:#fff;border:1px solid #ddd" data-color="#ffffff"></div>
+            <div class="cdot" style="background:#111" data-color="#111111"></div>
+            <div class="cdot" style="background:#FFD700" data-color="#FFD700"></div>
+            <div class="cdot" style="background:#c9a227" data-color="#c9a227"></div>
+            <div class="cdot" style="background:#3b82f6" data-color="#3b82f6"></div>
+            <div class="cdot" style="background:#10b981" data-color="#10b981"></div>
+            <div class="cdot" style="background:#ef4444" data-color="#ef4444"></div>
+            <div class="cdot" style="background:#f97316" data-color="#f97316"></div>
+            <div class="cdot" style="background:#8b5cf6" data-color="#8b5cf6"></div>
+            <div class="cdot" style="background:#ec4899" data-color="#ec4899"></div>
+            <input type="color" value="#ffffff" id="custom-color"
+              style="width:21px;height:21px;border-radius:50%;border:none;cursor:pointer;padding:0"
+              oninput="A('color',this.value)">
+          </div>
+        </div>
+        <div class="box">
+          <div class="lbl">نص سريع</div>
+          <textarea class="tinp" id="fmt-quick" rows="2" placeholder="اكتب نصاً وأضفه..."></textarea>
+          <button class="btn btn-black bfull" onclick="addQuick()">+ إضافة للبطاقة</button>
+        </div>
+        <button class="btn btn-red bfull" onclick="delSelected()">🗑 حذف العنصر المحدد</button>
       </div>
-    </div>
+
+      <!-- PANEL: TEXTS -->
+      <div class="spanel" id="panel-txt">
+        <div class="sec">النصوص</div>
+        <div class="box">
+          <div class="lbl">النص الرئيسي</div>
+          <textarea class="tinp" id="main-txt" rows="3" placeholder="اكتب نصك الرئيسي..."></textarea>
+          <div class="slrow">
+            <span>الحجم</span>
+            <input type="range" min="14" max="70" value="26"
+              oninput="mainSz=+this.value; document.getElementById('vl-ms').textContent=this.value">
+            <span class="slval" id="vl-ms">26</span>
+          </div>
+          <button class="btn btn-black bfull" onclick="addMain()">+ أضف للبطاقة</button>
+        </div>
+        <div class="box">
+          <div class="lbl">النص الفرعي</div>
+          <textarea class="tinp" id="sub-txt" rows="3" placeholder="اكتب نصاً فرعياً..."></textarea>
+          <div class="slrow">
+            <span>الحجم</span>
+            <input type="range" min="10" max="40" value="16"
+              oninput="subSz=+this.value; document.getElementById('vl-ss').textContent=this.value">
+            <span class="slval" id="vl-ss">16</span>
+          </div>
+          <button class="btn btn-gray bfull" onclick="addSub()">+ أضف للبطاقة</button>
+        </div>
+        <div class="box">
+          <div class="lbl">نصوص جاهزة — اضغط لإضافة</div>
+          <div class="rlist" id="rlist"></div>
+        </div>
+      </div>
+
+      <!-- PANEL: CALLIGRAPHY -->
+      <div class="spanel" id="panel-cal">
+        <div class="sec">المخطوطات</div>
+        <div class="cattabs">
+          <button class="catbtn on" data-cat="black" onclick="switchCat(this)">سوداء</button>
+          <button class="catbtn" data-cat="3d" onclick="switchCat(this)">ثلاثية أبعاد</button>
+          <button class="catbtn" data-cat="white" onclick="switchCat(this)">بيضاء</button>
+        </div>
+        <div class="box">
+          <div class="slrow">
+            <span>الحجم</span>
+            <input type="range" min="60" max="380" value="180" id="sl-csz"
+              oninput="document.getElementById('vl-csz').textContent=this.value+'px'">
+            <span class="slval" id="vl-csz">180px</span>
+          </div>
+        </div>
+        <div id="cat-black"><div class="cgrid" id="cg-black"></div><button class="showmore" id="sm-black" onclick="moreCallig('black')">▼ عرض المزيد</button></div>
+        <div id="cat-3d" style="display:none"><div class="cgrid" id="cg-3d"></div><button class="showmore" id="sm-3d" onclick="moreCallig('3d')">▼ عرض المزيد</button></div>
+        <div id="cat-white" style="display:none"><div class="cgrid" id="cg-white"></div><button class="showmore" id="sm-white" onclick="moreCallig('white')">▼ عرض المزيد</button></div>
+      </div>
+
+      <!-- PANEL: PHOTO -->
+      <div class="spanel" id="panel-pho">
+        <div class="sec">الصورة الشخصية</div>
+        <label class="uarea" for="pho-inp">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.582-7 8-7s8 3 8 7"/></svg>
+          <span>اضغط لرفع صورتك الشخصية</span>
+          <small>PNG · JPG · WEBP</small>
+        </label>
+        <input type="file" id="pho-inp" accept="image/*" style="display:none" onchange="uploadPhoto(event)">
+        <div class="box" id="pho-ctrl" style="display:none">
+          <div class="lbl">الحجم</div>
+          <div class="slrow">
+            <input type="range" min="40" max="250" value="100" id="sl-phsz"
+              oninput="resizePhoto(this.value); document.getElementById('vl-phsz').textContent=this.value">
+            <span class="slval" id="vl-phsz">100</span>
+          </div>
+          <div class="lbl">الشكل</div>
+          <div class="bgrp" data-grp="phshape">
+            <button class="gbtn on" data-val="circle">دائري</button>
+            <button class="gbtn" data-val="rounded">مستدير</button>
+            <button class="gbtn" data-val="square">مربع</button>
+          </div>
+          <div class="lbl">إطار</div>
+          <div class="cdots" id="cdots-photo">
+            <div class="cdot on" style="background:#fff;border:1px solid #ddd" data-color="#fff"></div>
+            <div class="cdot" style="background:#FFD700" data-color="#FFD700"></div>
+            <div class="cdot" style="background:#3b82f6" data-color="#3b82f6"></div>
+            <div class="cdot" style="background:#10b981" data-color="#10b981"></div>
+            <div class="cdot" style="background:transparent;border:1px dashed #aaa" data-color="transparent"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: LOGO -->
+      <div class="spanel" id="panel-lgp">
+        <div class="sec">شعار الشركة / العلامة التجارية</div>
+        <label class="uarea" for="lgp-inp">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/></svg>
+          <span>ارفع شعارك هنا</span>
+          <small>PNG · SVG · JPG</small>
+        </label>
+        <input type="file" id="lgp-inp" accept="image/*" style="display:none" onchange="uploadLogo(event)">
+        <div id="lgp-preview" style="background:#f7f7fa;border-radius:9px;padding:14px;display:flex;align-items:center;justify-content:center;min-height:70px">
+          <span style="font-size:12px;color:#aaa">لم يُرفع شعار بعد</span>
+        </div>
+        <div class="box" id="lgp-ctrl" style="display:none">
+          <div class="lbl">الحجم</div>
+          <div class="slrow">
+            <input type="range" min="30" max="250" value="100" id="sl-lgsz"
+              oninput="resizeLogo(this.value); document.getElementById('vl-lgsz').textContent=this.value+'px'">
+            <span class="slval" id="vl-lgsz">100px</span>
+          </div>
+          <div class="lbl">الموضع</div>
+          <div class="bgrp" data-grp="lgpos">
+            <button class="gbtn" data-val="tr">↗ أعلى يمين</button>
+            <button class="gbtn" data-val="tl">↖ أعلى يسار</button>
+          </div>
+          <div class="bgrp" data-grp="lgpos" style="margin-top:4px">
+            <button class="gbtn" data-val="br">↘ أسفل يمين</button>
+            <button class="gbtn" data-val="bl">↙ أسفل يسار</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: BG -->
+      <div class="spanel" id="panel-bg">
+        <div class="sec">الخلفية</div>
+        <label class="uarea" for="bg-inp">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>ارفع صورة خاصة كخلفية</span>
+        </label>
+        <input type="file" id="bg-inp" accept="image/*" style="display:none" onchange="uploadBg(event)">
+        <div class="sec" style="margin-top:4px">خلفيات جاهزة</div>
+        <div class="bggrid" id="bggrid"></div>
+      </div>
+
+    </div><!-- /sidebar -->
   </div>
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-tabs">
-      <!-- تنسيق -->
-      <button class="stab active" id="stab-format" onclick="switchTab('format')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-        <span>تنسيق</span>
-      </button>
-      <!-- نصوص -->
-      <button class="stab" id="stab-texts" onclick="switchTab('texts')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
-        <span>نصوص</span>
-      </button>
-      <!-- مخطوطات -->
-      <button class="stab" id="stab-callig" onclick="switchTab('callig')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
-        <span>مخطوطات</span>
-      </button>
-      <!-- صورة شخصية -->
-      <button class="stab" id="stab-photo" onclick="switchTab('photo')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.582-7 8-7s8 3 8 7"/></svg>
-        <span>صورة</span>
-      </button>
-      <!-- شعار -->
-      <button class="stab" id="stab-logo" onclick="switchTab('logo')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/></svg>
-        <span>شعار</span>
-      </button>
-      <!-- خلفية -->
-      <button class="stab" id="stab-bg" onclick="switchTab('bg')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
-        <span>خلفية</span>
-      </button>
-    </div>
-
-    <!-- ═══ PANEL: FORMAT ═══ -->
-    <div class="sidebar-panel active" id="panel-format">
-      <div class="section-title">تنسيق العنصر المحدد</div>
-
-      <div class="card-box">
-        <div class="field-label">الخط</div>
-        <select class="field-select" id="fmt-font" onchange="fmt('font',this.value)">
-          <option value="'Tajawal',sans-serif">Tajawal</option>
-          <option value="'Amiri',serif">Amiri</option>
-          <option value="'Cairo',sans-serif">Cairo</option>
-          <option value="'Almarai',sans-serif">Almarai</option>
-        </select>
-        <div class="weight-btns">
-          <button class="weight-btn" onclick="fmt('weight','400',this)">عادي</button>
-          <button class="weight-btn" onclick="fmt('weight','600',this)">متوسط</button>
-          <button class="weight-btn active" onclick="fmt('weight','700',this)">بولد</button>
-          <button class="weight-btn" onclick="fmt('weight','900',this)">أسود</button>
-        </div>
-        <div class="align-btns">
-          <button class="align-btn active" onclick="fmt('align','right',this)" title="يمين">
-            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="2"/><rect x="7" y="9" width="14" height="2"/><rect x="3" y="14" width="18" height="2"/><rect x="7" y="19" width="14" height="2"/></svg>
-          </button>
-          <button class="align-btn" onclick="fmt('align','center',this)" title="وسط">
-            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="2"/><rect x="6" y="9" width="12" height="2"/><rect x="3" y="14" width="18" height="2"/><rect x="6" y="19" width="12" height="2"/></svg>
-          </button>
-          <button class="align-btn" onclick="fmt('align','left',this)" title="يسار">
-            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="2"/><rect x="3" y="9" width="14" height="2"/><rect x="3" y="14" width="18" height="2"/><rect x="3" y="19" width="14" height="2"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="card-box">
-        <div class="field-label">الحجم</div>
-        <div class="slider-row">
-          <input type="range" id="fmt-size" min="10" max="90" value="24" oninput="fmt('size',this.value);document.getElementById('fmt-size-v').textContent=this.value">
-          <span class="slider-val" id="fmt-size-v">24</span>
-        </div>
-        <div class="field-label" style="margin-top:4px">الشفافية</div>
-        <div class="slider-row">
-          <input type="range" id="fmt-opacity" min="10" max="100" value="100" oninput="fmt('opacity',this.value);document.getElementById('fmt-op-v').textContent=this.value+'%'">
-          <span class="slider-val" id="fmt-op-v">100%</span>
-        </div>
-        <div class="field-label" style="margin-top:4px">ظل النص</div>
-        <div class="slider-row">
-          <input type="range" id="fmt-shadow" min="0" max="25" value="5" oninput="fmt('shadow',this.value);document.getElementById('fmt-sh-v').textContent=this.value">
-          <span class="slider-val" id="fmt-sh-v">5</span>
-        </div>
-      </div>
-
-      <div class="card-box">
-        <div class="field-label">لون النص</div>
-        <div class="color-row" id="cr-text">
-          <div class="color-dot sel" style="background:#fff;border:1px solid #ccc" onclick="fmt('color','#ffffff',this)"></div>
-          <div class="color-dot" style="background:#111;border:1px solid #ddd" onclick="fmt('color','#000000',this)"></div>
-          <div class="color-dot" style="background:#FFD700" onclick="fmt('color','#FFD700',this)"></div>
-          <div class="color-dot" style="background:#c9a227" onclick="fmt('color','#c9a227',this)"></div>
-          <div class="color-dot" style="background:#3b82f6" onclick="fmt('color','#3b82f6',this)"></div>
-          <div class="color-dot" style="background:#10b981" onclick="fmt('color','#10b981',this)"></div>
-          <div class="color-dot" style="background:#ef4444" onclick="fmt('color','#ef4444',this)"></div>
-          <div class="color-dot" style="background:#f97316" onclick="fmt('color','#f97316',this)"></div>
-          <div class="color-dot" style="background:#8b5cf6" onclick="fmt('color','#8b5cf6',this)"></div>
-          <div class="color-dot" style="background:#ec4899" onclick="fmt('color','#ec4899',this)"></div>
-          <input type="color" title="لون مخصص" style="width:20px;height:20px;border-radius:50%;border:none;cursor:pointer;padding:0" oninput="fmt('color',this.value,null)">
-        </div>
-      </div>
-
-      <div class="card-box">
-        <div class="field-label">إضافة نص جديد إلى البطاقة</div>
-        <textarea class="field-input" id="quick-text" rows="2" placeholder="اكتب نصك هنا..."></textarea>
-        <button class="btn btn-primary btn-full" onclick="addQuickText()">+ إضافة نص</button>
-      </div>
-
-      <button class="btn btn-danger btn-full" onclick="deleteSelected()">🗑 حذف العنصر المحدد</button>
-    </div>
-
-    <!-- ═══ PANEL: TEXTS ═══ -->
-    <div class="sidebar-panel" id="panel-texts">
-      <div class="section-title">النصوص</div>
-
-      <div class="card-box">
-        <div class="field-label">النص الرئيسي</div>
-        <textarea class="field-input" id="main-txt" rows="3" placeholder="اكتب نصك الرئيسي..."></textarea>
-        <div class="slider-row">
-          <label>الحجم</label>
-          <input type="range" min="14" max="70" value="26" oninput="mainSize=+this.value;document.getElementById('ms-v').textContent=this.value">
-          <span class="slider-val" id="ms-v">26</span>
-        </div>
-        <button class="btn btn-primary btn-full" onclick="addMainText()">+ أضف للبطاقة</button>
-      </div>
-
-      <div class="card-box">
-        <div class="field-label">النص الفرعي</div>
-        <textarea class="field-input" id="sub-txt" rows="3" placeholder="اكتب نصاً فرعياً..."></textarea>
-        <div class="slider-row">
-          <label>الحجم</label>
-          <input type="range" min="10" max="40" value="16" oninput="subSize=+this.value;document.getElementById('ss-v').textContent=this.value">
-          <span class="slider-val" id="ss-v">16</span>
-        </div>
-        <button class="btn btn-ghost btn-full" onclick="addSubText()">+ أضف للبطاقة</button>
-      </div>
-
-      <div class="card-box">
-        <div class="field-label">نصوص جاهزة — اضغط لإضافتها</div>
-        <div class="ready-list" id="ready-list">
-          <!-- populated by JS based on filter -->
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ PANEL: CALLIGRAPHY ═══ -->
-    <div class="sidebar-panel" id="panel-callig">
-      <div class="section-title">المخطوطات</div>
-
-      <div class="callig-cat-tabs">
-        <button class="cat-btn active" onclick="switchCalligCat('black',this)">سوداء</button>
-        <button class="cat-btn" onclick="switchCalligCat('3d',this)">ثلاثية أبعاد</button>
-        <button class="cat-btn" onclick="switchCalligCat('white',this)">بيضاء</button>
-      </div>
-
-      <div class="card-box">
-        <div class="slider-row">
-          <label>الحجم</label>
-          <input type="range" id="callig-sz" min="60" max="400" value="180" oninput="document.getElementById('callig-sz-v').textContent=this.value+'px'">
-          <span class="slider-val" id="callig-sz-v">180px</span>
-        </div>
-      </div>
-
-      <div id="callig-black">
-        <div class="callig-grid" id="callig-black-grid"></div>
-        <button class="show-more-btn" id="callig-black-more" onclick="showMoreCallig('black')" style="display:none;margin-top:6px">▼ عرض المزيد</button>
-      </div>
-      <div id="callig-3d" style="display:none">
-        <div class="callig-grid" id="callig-3d-grid"></div>
-        <button class="show-more-btn" id="callig-3d-more" onclick="showMoreCallig('3d')" style="display:none;margin-top:6px">▼ عرض المزيد</button>
-      </div>
-      <div id="callig-white" style="display:none">
-        <div class="callig-grid" id="callig-white-grid"></div>
-        <button class="show-more-btn" id="callig-white-more" onclick="showMoreCallig('white')" style="display:none;margin-top:6px">▼ عرض المزيد</button>
-      </div>
-    </div>
-
-    <!-- ═══ PANEL: PERSONAL PHOTO ═══ -->
-    <div class="sidebar-panel" id="panel-photo">
-      <div class="section-title">الصورة الشخصية</div>
-
-      <label class="photo-drop" for="photo-upload">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.582-7 8-7s8 3 8 7"/></svg>
-        <span>اضغط لرفع صورتك الشخصية</span>
-        <span style="font-size:11px;color:#aaa">PNG, JPG, WEBP</span>
-      </label>
-      <input type="file" id="photo-upload" accept="image/*" style="display:none" onchange="uploadPhoto(event)">
-
-      <div class="card-box" id="photo-controls" style="display:none">
-        <div class="field-label">حجم الصورة</div>
-        <div class="slider-row">
-          <input type="range" id="photo-sz" min="40" max="250" value="100" oninput="resizeSelectedPhoto(this.value)">
-          <span class="slider-val" id="photo-sz-v">100px</span>
-        </div>
-        <div class="field-label" style="margin-top:4px">الشكل</div>
-        <div class="weight-btns">
-          <button class="weight-btn active" onclick="setPhotoShape('circle',this)">دائري</button>
-          <button class="weight-btn" onclick="setPhotoShape('rounded',this)">مستدير</button>
-          <button class="weight-btn" onclick="setPhotoShape('square',this)">مربع</button>
-        </div>
-        <div class="field-label" style="margin-top:4px">إطار</div>
-        <div class="color-row">
-          <div class="color-dot sel" style="background:#fff;border:1px solid #ccc" onclick="setPhotoBorder('#fff',this)"></div>
-          <div class="color-dot" style="background:#FFD700" onclick="setPhotoBorder('#FFD700',this)"></div>
-          <div class="color-dot" style="background:#3b82f6" onclick="setPhotoBorder('#3b82f6',this)"></div>
-          <div class="color-dot" style="background:#10b981" onclick="setPhotoBorder('#10b981',this)"></div>
-          <div class="color-dot" style="background:transparent;border:1px dashed #999" onclick="setPhotoBorder('transparent',this)"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ PANEL: LOGO ═══ -->
-    <div class="sidebar-panel" id="panel-logo">
-      <div class="section-title">شعار الشركة / العلامة التجارية</div>
-
-      <label class="bg-upload-btn" for="logo-upload" style="flex-direction:column;gap:6px;padding:16px">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/></svg>
-        <span>ارفع شعارك هنا</span>
-      </label>
-      <input type="file" id="logo-upload" accept="image/*" style="display:none" onchange="uploadLogo(event)">
-
-      <div class="logo-preview" id="logo-preview">
-        <span style="font-size:12px;color:#aaa">لم يُرفع شعار بعد</span>
-      </div>
-
-      <div class="card-box" id="logo-controls" style="display:none">
-        <div class="field-label">حجم الشعار</div>
-        <div class="slider-row">
-          <input type="range" id="logo-sz" min="30" max="250" value="100" oninput="resizeSelectedLogo(this.value);document.getElementById('logo-sz-v').textContent=this.value+'px'">
-          <span class="slider-val" id="logo-sz-v">100px</span>
-        </div>
-        <div class="field-label" style="margin-top:4px">موضع الشعار</div>
-        <div class="weight-btns">
-          <button class="weight-btn" onclick="moveLogoTo('top-right',this)">↗ أعلى يمين</button>
-          <button class="weight-btn" onclick="moveLogoTo('top-left',this)">↖ أعلى يسار</button>
-        </div>
-        <div class="weight-btns" style="margin-top:4px">
-          <button class="weight-btn" onclick="moveLogoTo('bottom-right',this)">↘ أسفل يمين</button>
-          <button class="weight-btn" onclick="moveLogoTo('bottom-left',this)">↙ أسفل يسار</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ PANEL: BACKGROUND ═══ -->
-    <div class="sidebar-panel" id="panel-bg">
-      <div class="section-title">الخلفية</div>
-
-      <label class="bg-upload-btn" for="bg-upload">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        رفع صورة خاصة كخلفية
-      </label>
-      <input type="file" id="bg-upload" accept="image/*" style="display:none" onchange="uploadBg(event)">
-
-      <div class="section-title" style="margin-top:4px">خلفيات جاهزة</div>
-      <div class="bg-grid" id="bg-grid"></div>
-    </div>
-
-  </div><!-- /sidebar -->
 </div>
 
-<div class="notif" id="notif"></div>
+<!-- ══════════════════════════════════
+     VIEW: READY (جاهز)
+══════════════════════════════════ -->
+<div id="view-ready" class="alt-view">
+  <div class="alt-container">
+    <div class="alt-box">
+      <div class="alt-box-title">تخصيص البطاقة السريعة</div>
 
+      <div class="box" style="margin-bottom:12px">
+        <div class="lbl">اختر الخلفية</div>
+        <div class="bggrid" id="ready-bg-grid"></div>
+      </div>
+
+      <div class="box" style="margin-bottom:12px">
+        <div class="lbl">الاسم (النص الرئيسي)</div>
+        <input type="text" id="r-main" class="tinp" value="عائلة محمد" oninput="updateReady()">
+        <div class="slrow" style="margin-top:8px">
+          <span>حجم</span>
+          <input type="range" id="r-msize" min="20" max="80" value="48" oninput="updateReady()">
+          <span class="slval" id="vl-rms">48</span>
+        </div>
+        <div class="slrow">
+          <span>موضع</span>
+          <input type="range" id="r-mpos" min="10" max="90" value="40" oninput="updateReady()">
+          <span class="slval" id="vl-rmp">40%</span>
+        </div>
+      </div>
+
+      <div class="box" style="margin-bottom:12px">
+        <div class="lbl">المرسل (النص الفرعي)</div>
+        <input type="text" id="r-sub" class="tinp" value="محبكم أحمد" oninput="updateReady()">
+        <div class="slrow" style="margin-top:8px">
+          <span>حجم</span>
+          <input type="range" id="r-ssize" min="14" max="50" value="24" oninput="updateReady()">
+          <span class="slval" id="vl-rss">24</span>
+        </div>
+        <div class="slrow">
+          <span>موضع</span>
+          <input type="range" id="r-spos" min="10" max="90" value="78" oninput="updateReady()">
+          <span class="slval" id="vl-rsp">78%</span>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="lbl">الخط واللون</div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:5px">
+          <select class="sinp" id="r-font" onchange="updateReady()" style="flex:1">
+            <option value="Tajawal">Tajawal</option>
+            <option value="Cairo">Cairo</option>
+            <option value="Amiri">Amiri</option>
+          </select>
+          <input type="color" id="r-color" value="#ffffff" oninput="updateReady()"
+            style="width:34px;height:34px;border-radius:7px;border:1px solid #e0e0e0;cursor:pointer;padding:2px">
+        </div>
+      </div>
+    </div>
+
+    <div class="alt-box" style="display:flex;flex-direction:column;align-items:center;gap:16px">
+      <div class="alt-box-title" style="width:100%">المعاينة المباشرة</div>
+      <div id="ready-canvas" class="preview-window"
+        style="background-image:url('https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=500')">
+        <div id="r-text-main" class="preview-text" style="top:40%;font-size:48px;color:#ffffff;font-family:Tajawal">عائلة محمد</div>
+        <div id="r-text-sub"  class="preview-text" style="top:78%;font-size:24px;color:#ffffff;font-family:Tajawal">محبكم أحمد</div>
+      </div>
+      <button class="btn btn-green bfull" style="padding:13px;font-size:15px" onclick="dlReady()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        تحميل البطاقة
+      </button>
+      <button class="btn btn-gray bfull" onclick="shareReadyWA()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.144.566 4.148 1.554 5.887L0 24l6.305-1.539A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.96 0-3.793-.518-5.375-1.42L2.2 21.8l1.24-4.308A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        مشاركة عبر واتساب
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     VIEW: GROUP (جماعي)
+══════════════════════════════════ -->
+<div id="view-group" class="alt-view">
+  <div class="alt-container">
+    <div class="alt-box">
+      <div class="alt-box-title">نظام التهنئة الجماعية</div>
+
+      <div class="box" style="margin-bottom:12px">
+        <div class="lbl">اختر الخلفية</div>
+        <div class="bggrid" id="batch-bg-grid"></div>
+      </div>
+
+      <div class="box" style="margin-bottom:12px">
+        <div class="lbl">قائمة الأسماء (اسم في كل سطر)</div>
+        <textarea id="b-names" class="tinp" rows="7"
+          placeholder="محمد علي&#10;عائلة السعيد&#10;أحمد خالد&#10;سارة محمود"
+          oninput="updateBatch()"></textarea>
+        <div style="font-size:11px;color:#aaa;text-align:right" id="b-count">0 أسماء</div>
+      </div>
+
+      <div class="box">
+        <div class="lbl">تنسيق الأسماء</div>
+        <div class="slrow" style="margin-top:5px">
+          <span>حجم</span>
+          <input type="range" id="b-size" min="20" max="80" value="44" oninput="updateBatch()">
+          <span class="slval" id="vl-bs">44</span>
+        </div>
+        <div class="slrow">
+          <span>موضع</span>
+          <input type="range" id="b-pos" min="10" max="90" value="50" oninput="updateBatch()">
+          <span class="slval" id="vl-bp">50%</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
+          <select class="sinp" id="b-font" onchange="updateBatch()" style="flex:1">
+            <option value="Tajawal">Tajawal</option>
+            <option value="Cairo">Cairo</option>
+            <option value="Amiri">Amiri</option>
+          </select>
+          <input type="color" id="b-color" value="#FFD700" oninput="updateBatch()"
+            style="width:34px;height:34px;border-radius:7px;border:1px solid #e0e0e0;cursor:pointer;padding:2px">
+        </div>
+      </div>
+    </div>
+
+    <div class="alt-box" style="display:flex;flex-direction:column;align-items:center;gap:16px">
+      <div class="alt-box-title" style="width:100%">معاينة + تحميل</div>
+      <div id="batch-canvas" class="preview-window"
+        style="background-image:url('https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=500')">
+        <div id="b-text-name" class="preview-text" style="top:50%;font-size:44px;color:#FFD700;font-family:Tajawal">الاسم يظهر هنا</div>
+      </div>
+      <button class="btn btn-black bfull" style="padding:13px;font-size:15px" id="btn-batch" onclick="dlBatchZip()">
+        📦 إنشاء وتحميل ملف ZIP
+      </button>
+      <p style="font-size:11px;color:#888;text-align:center">سيتم إنشاء بطاقة منفصلة لكل اسم</p>
+    </div>
+  </div>
+</div>
+
+<div id="notif"></div>
+
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════ -->
 <script>
-// ═══════════════════════════════════════════════════════════════════
-// DATA — calligraphy items
-// ═══════════════════════════════════════════════════════════════════
-const CALLIG = {
-  black: [
-    "افرح بالعيد","العيد فرحة","أهلاً بالعيد","تهانينا","جانا العيد لحد البيت",
+// ══════════════════════════
+// DATA
+// ══════════════════════════
+const CAL_NAMED = {
+  black: ["افرح بالعيد","العيد فرحة","أهلاً بالعيد","تهانينا","جانا العيد لحد البيت",
     "صوماً مقبولاً","عساكم من عواده (2)","عساكم من عواده","عود يا عيد","عيد جديد",
     "عيد سعيد (2)","عيد سعيد 2","عيد سعيد","عيد فطر مبارك","عيد مبارك 1 (2)",
     "عيد مبارك 1","عيد مبارك 2","عيد مبارك","عيد يا عيد (2)","عيد يا عيد",
     "عيدك في بيتك","عيدكم صحه","عيدكم مبارك","عيدنا غير","فطر سعيد",
     "كل عام و انتم بخير (2)","كل عام و انتم بخير","كل عام وأنتم بخير","كل عام وانتم بخير",
-    "مرحب بالعيد","هتفرج في العيد","هلا بالعيد","يا مراحب بالعيد",
-    ...Array.from({length:50},(_,i)=>`Asset ${i+1}`),
-    ...Array.from({length:50},(_,i)=>`Asset ${i+51}`),
-    ...Array.from({length:50},(_,i)=>`Asset ${i+101}`),
-    ...Array.from({length:50},(_,i)=>`Asset ${i+151}`),
-    ...Array.from({length:50},(_,i)=>`Asset ${i+201}`),
-    ...Array.from({length:50},(_,i)=>`Asset ${i+251}`),
-    ...Array.from({length:50},(_,i)=>`Asset ${i+301}`),
-    ...Array.from({length:50},(_,i)=>`Asset ${i+351}`)
-  ],
-  '3d': [
-    "افرح بالعيد","العيد فرحة","أهلاً بالعيد","جانا العيد لحد البيت","صوماً مقبولاً",
+    "مرحب بالعيد","هتفرج في العيد","هلا بالعيد","يا مراحب بالعيد"],
+  '3d': ["افرح بالعيد","العيد فرحة","أهلاً بالعيد","جانا العيد لحد البيت","صوماً مقبولاً",
     "عساكم من عواده","عيد جديد","عيد سعيد 2","عيد فطر مبارك","عيدكم مبارك","عيدنا غير",
-    "فطر سعيد","كل عام وأنتم بخير","هلا بالعيد","يا مراحب بالعيد",
-    ...Array.from({length:72},(_,i)=>`Asset ${672+i}`)
-  ],
-  white: [
-    "تهانينا","عود يا عيد","عيد سعيد (2)","عيد سعيد","عيد مبارك 1 (2)","عيد مبارك 1",
+    "فطر سعيد","كل عام وأنتم بخير","هلا بالعيد","يا مراحب بالعيد"],
+  white: ["تهانينا","عود يا عيد","عيد سعيد (2)","عيد سعيد","عيد مبارك 1 (2)","عيد مبارك 1",
     "عيد مبارك 2","عيد مبارك","عيد يا عيد (2)","عيد يا عيد","عيدك في بيتك","عيدكم صحه",
-    "كل عام و انتم بخير (2)","كل عام و انتم بخير","كل عام وانتم بخير","مرحب بالعيد","هتفرج في العيد",
-    ...Array.from({length:100},(_,i)=>`Asset ${i+1}`)
-  ]
+    "كل عام و انتم بخير (2)","كل عام و انتم بخير","كل عام وانتم بخير","مرحب بالعيد","هتفرج في العيد"]
 };
 
-// How many to show initially (then "show more")
-const CALLIG_LIMIT = 30;
-const calligShown = { black: CALLIG_LIMIT, '3d': CALLIG_LIMIT, white: CALLIG_LIMIT };
+const CAL_LIMIT = 30;
+const calShown = { black: CAL_LIMIT, '3d': CAL_LIMIT, white: CAL_LIMIT };
+const CAL = {
+  black: [...CAL_NAMED.black, ...Array.from({length:200},(_,i)=>`Asset ${i+1}`)],
+  '3d':  [...CAL_NAMED['3d'], ...Array.from({length:50}, (_,i)=>`Asset ${i+1}`)],
+  white: [...CAL_NAMED.white, ...Array.from({length:80}, (_,i)=>`Asset ${i+1}`)]
+};
 
-// Ready texts per filter
 const READY_TEXTS = {
-  all: [
-    "كل عام وأنتم بخير 💛","عيد مبارك وكل عام وأنتم بأفضل حال",
+  all: ["كل عام وأنتم بخير 💛","عيد مبارك وكل عام وأنتم بأفضل حال",
     "تقبل الله منا ومنكم","عساكم من عواده","أعادها الله عليكم وأنتم بخير",
-    "بمناسبة المناسبة السعيدة","مع أجمل التهاني والتمنيات",
-    "أسعد الله أيامكم وبارك فيكم",
-  ],
-  'eid-fitr': [
-    "عيد فطر مبارك 🌙","كل عام وأنتم بخير بمناسبة عيد الفطر المبارك",
-    "تقبل الله صيامكم وقيامكم","أسعد الله عيدكم","عيدكم مبارك وعساكم من عواده",
-    "فطر سعيد وكل عام وأنتم بألف خير","بارك الله لكم في عيد الفطر السعيد",
-    "أعاد الله علينا وعليكم هذا العيد بالخير واليُمن والبركات",
-  ],
-  'eid-adha': [
-    "عيد أضحى مبارك 🐑","كل عام وأنتم بخير بمناسبة عيد الأضحى المبارك",
-    "تقبل الله ضحاياكم وأعمالكم","أعادها الله عليكم بالخير والبركة",
-    "حجّ مبرور وسعي مشكور وذنب مغفور",
-    "أسعد الله أيامكم في هذا العيد المبارك",
-  ],
-  ramadan: [
-    "رمضان كريم 🌙","مبارك عليكم الشهر","رمضان مبارك وكل عام وأنتم بخير",
-    "تقبل الله صيامكم وقيامكم","أهلاً رمضان","صوماً مقبولاً وإفطاراً هنيئاً",
-    "شهر مبارك مليء بالخير والبركة",
-  ],
-  congrats: [
-    "مبروك! 🎉","ألف مبروك وألف تهنئة","بالرفاء والبنين","أسعد الله أوقاتكم",
-    "تهانينا الحارة بهذه المناسبة السعيدة",
-    "يسعدني تهنئتكم بهذه المناسبة الغالية",
-  ],
-  'new-year': [
-    "سنة جديدة سعيدة 🎊","كل عام وأنتم بخير","عام مليء بالسعادة والنجاح",
-    "أتمنى لكم عاماً جديداً موفقاً",
-    "عام جديد بداية جديدة وأمل جديد",
-  ],
-  national: [
-    "اليوم الوطني المجيد 🇸🇦","يحيا الوطن وتحيا أمجاده","عاشت بلادنا وعاش شعبها",
-    "نفخر بانتمائنا لهذا الوطن الغالي",
-    "وطن نعتز بتاريخه ونفخر بحاضره",
-  ],
+    "مع أجمل التهاني والتمنيات","أسعد الله أيامكم وبارك فيكم"],
+  'eid-fitr': ["عيد فطر مبارك 🌙","تقبل الله صيامكم وقيامكم","أسعد الله عيدكم",
+    "فطر سعيد وكل عام وأنتم بألف خير","عيدكم مبارك وعساكم من عواده"],
+  'eid-adha': ["عيد أضحى مبارك 🐑","تقبل الله ضحاياكم","حجّ مبرور وسعي مشكور وذنب مغفور",
+    "أعادها الله عليكم بالخير والبركة"],
+  ramadan: ["رمضان كريم 🌙","مبارك عليكم الشهر","صوماً مقبولاً وإفطاراً هنيئاً",
+    "تقبل الله صيامكم وقيامكم","أهلاً رمضان"],
+  congrats: ["مبروك! 🎉","ألف مبروك وألف تهنئة","بالرفاء والبنين","تهانينا الحارة"],
+  'new-year': ["سنة جديدة سعيدة 🎊","عام مليء بالسعادة والنجاح","عام جديد بداية جديدة"],
+  national: ["اليوم الوطني المجيد 🇸🇦","يحيا الوطن وتحيا أمجاده","نفخر بانتمائنا لهذا الوطن الغالي"]
 };
 
-// Backgrounds
-const BG_LIST = [
-  { src:"/templates/مصمم/14.png", badge:"حصري" },
-  { src:"/templates/مصمم/15.png", badge:"حصري" },
-  { src:"/templates/مصمم/16.png", badge:"حصري" },
-  { src:"/templates/مصمم/17.png", badge:"حصري" },
-  { src:"/templates/مصمم/18.png", badge:"حصري" },
-  { src:"/templates/مصمم/19.png", badge:"حصري" },
-  { src:"/templates/مصمم/Artboard 1.png", badge:"حصري" },
-  { src:"/templates/مصمم/Artboard 2.png", badge:"حصري" },
-  { src:"/templates/مصمم/Artboard 3.png", badge:"حصري" },
-  { src:"/templates/مصمم/Artboard 4.png", badge:"حصري" },
-  { src:"/templates/مصمم/Artboard 5.png", badge:"حصري" },
-  { src:"/templates/مصمم/Artboard 6.png", badge:"حصري" },
-  { src:"/templates/مصمم/Artboard 7.png", badge:"حصري" },
-  { src:"/templates/مصمم/Artboard 12.png", badge:"حصري" },
-  { src:"/templates/مصمم/تصميم لرفع صورة.png", badge:"حصري" },
-  // Online fallback Eid-themed images
-  { src:"https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=500", badge:"" },
-  { src:"https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=500", badge:"" },
-  { src:"https://images.unsplash.com/photo-1600267204091-5c1ab8b10c02?q=80&w=500", badge:"" },
-  { src:"https://images.unsplash.com/photo-1563293815-5b3c4b4b9e6a?q=80&w=500", badge:"" },
-  { src:"https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=500", badge:"" },
-  { src:"https://images.unsplash.com/photo-1533922922960-9fceb9ef4733?q=80&w=500", badge:"" },
+const BG_ITEMS = [
+  { src:"https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=500" },
+  { src:"https://images.unsplash.com/photo-1600267204091-5c1ab8b10c02?q=80&w=500" },
+  { src:"https://images.unsplash.com/photo-1563293815-5b3c4b4b9e6a?q=80&w=500" },
+  { src:"https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=500" },
+  { src:"https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=500" },
+  { src:"https://images.unsplash.com/photo-1545127398-14699f92334b?q=80&w=500" }
 ];
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════
 // STATE
-// ═══════════════════════════════════════════════════════════════════
-let selectedEl = null;
-let activePhotoEl = null;
-let activeLogoEl = null;
-let activeFilter = 'all';
-let mainSize = 26, subSize = 16;
-let elId = 0;
+// ══════════════════════════
+let selEl = null, photoEl = null, logoEl = null;
+let mainSz = 26, subSz = 16, eid = 0;
+const CV = document.getElementById('canvas');
 
-const canvasWrap = document.getElementById('canvas-wrap');
+// ══════════════════════════
+// BOOT
+// ══════════════════════════
+(function init() {
+  buildBgGrid();
+  buildCalGrid('black');
+  buildCalGrid('3d');
+  buildCalGrid('white');
+  buildReady('all');
 
-// ═══════════════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════════════
-function init() {
-  renderBgGrid();
-  renderCalligGrid('black');
-  renderCalligGrid('3d');
-  renderCalligGrid('white');
-  renderReadyTexts('all');
-
-  // Default texts
-  addTextEl("عيد مبارك", 30, "#FFD700", 120, 30);
-  addTextEl("كل عام وأنتم بخير", 18, "#ffffff", 100, 80);
+  addText("عيد مبارك", 38, "#FFD700", 90, 50);
+  addText("كل عام وأنتم بخير", 20, "#ffffff", 70, 115);
 
   document.addEventListener('mousedown', e => {
-    if (!e.target.closest('.el-wrap')) deselectAll();
+    if (!e.target.closest('.el') && !e.target.closest('#sidebar')) deselect();
   });
+  document.addEventListener('touchstart', e => {
+    if (!e.target.closest('.el') && !e.target.closest('#sidebar')) deselect();
+  }, { passive:true });
+
+  document.addEventListener('click', onGrpClick);
+  document.getElementById('cdots-text').addEventListener('click', onTextDot);
+  document.getElementById('cdots-photo').addEventListener('click', onPhotoDot);
+})();
+
+// ══════════════════════════
+// MODE SWITCHER
+// ══════════════════════════
+function switchMode(mode) {
+  ['ready','design','group'].forEach(m => {
+    document.getElementById('btn-' + m).classList.toggle('active', m === mode);
+    const v = document.getElementById('view-' + m);
+    if (v) v.style.display = m === mode ? (m === 'design' ? 'flex' : 'block') : 'none';
+  });
+  if (mode === 'design') document.getElementById('filterbar').style.display = 'flex';
+  else document.getElementById('filterbar').style.display = 'none';
+
+  if (mode !== 'design') {
+    fillAltBgs();
+  }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// FILTER BAR
-// ═══════════════════════════════════════════════════════════════════
-function setFilter(key, btn) {
-  activeFilter = key;
-  document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  renderReadyTexts(key);
+// ══════════════════════════
+// FILTER
+// ══════════════════════════
+function setFilter(btn) {
+  document.querySelectorAll('.fpill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  buildReady(btn.dataset.filter);
+}
+function buildReady(key) {
+  const list = READY_TEXTS[key] || READY_TEXTS.all;
+  document.getElementById('rlist').innerHTML = list.map(t =>
+    `<div class="ritem" onclick="readyClick(this)">${t}</div>`).join('');
+}
+function readyClick(el) {
+  addText(el.textContent, 22, '#FFD700', 30, 60);
+  notify('تمت الإضافة ✓');
+  openTab('fmt');
 }
 
-function renderReadyTexts(key) {
-  const texts = READY_TEXTS[key] || READY_TEXTS.all;
-  const list = document.getElementById('ready-list');
-  list.innerHTML = texts.map(t =>
-    `<div class="ready-item" onclick="quickAddText(\`${t}\`)">${t}</div>`
-  ).join('');
+// ══════════════════════════
+// TABS
+// ══════════════════════════
+function switchTab(btn) {
+  document.querySelectorAll('.stab').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.spanel').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('panel-' + btn.dataset.tab).classList.add('on');
+}
+function openTab(id) {
+  document.querySelectorAll('.stab').forEach(b => b.classList.toggle('on', b.dataset.tab === id));
+  document.querySelectorAll('.spanel').forEach(p => p.classList.toggle('on', p.id === 'panel-' + id));
 }
 
-function quickAddText(txt) {
-  document.getElementById('main-txt').value = txt;
-  addMainText();
-  switchTab('format');
+// ══════════════════════════
+// GROUP BUTTONS
+// ══════════════════════════
+function onGrpClick(e) {
+  const btn = e.target.closest('.gbtn');
+  if (!btn) return;
+  const grp = btn.closest('[data-grp]');
+  if (!grp) return;
+  grp.querySelectorAll('.gbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const val = btn.dataset.val, g = grp.dataset.grp;
+  if (g === 'fw') A('weight', val);
+  else if (g === 'ta') A('align', val);
+  else if (g === 'phshape') setPhotoShape(val);
+  else if (g === 'lgpos') setLogoPos(val);
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// TAB SWITCHING
-// ═══════════════════════════════════════════════════════════════════
-function switchTab(id) {
-  document.querySelectorAll('.sidebar-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.stab').forEach(b => b.classList.remove('active'));
-  document.getElementById('panel-' + id).classList.add('active');
-  document.getElementById('stab-' + id).classList.add('active');
+// ══════════════════════════
+// COLOR DOTS
+// ══════════════════════════
+function onTextDot(e) {
+  const dot = e.target.closest('.cdot');
+  if (!dot) return;
+  document.querySelectorAll('#cdots-text .cdot').forEach(d => d.classList.remove('on'));
+  dot.classList.add('on');
+  A('color', dot.dataset.color);
+}
+function onPhotoDot(e) {
+  const dot = e.target.closest('.cdot');
+  if (!dot || !photoEl) return;
+  document.querySelectorAll('#cdots-photo .cdot').forEach(d => d.classList.remove('on'));
+  dot.classList.add('on');
+  const img = photoEl.querySelector('img');
+  if (img) img.style.borderColor = dot.dataset.color;
 }
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════
+// APPLY FORMAT
+// ══════════════════════════
+function A(prop, val) {
+  if (prop === 'opacity') {
+    if (selEl) selEl.style.opacity = val / 100;
+    document.getElementById('vl-op').textContent = val + '%';
+    return;
+  }
+  if (!selEl) { notify('اختر عنصراً أولاً'); return; }
+  const txt = selEl.querySelector('.el-text');
+  const img = selEl.querySelector('img');
+  switch(prop) {
+    case 'font':   if (txt) txt.style.fontFamily = `'${val}',sans-serif`; break;
+    case 'weight': if (txt) txt.style.fontWeight = val; break;
+    case 'align':  if (txt) txt.style.textAlign = val; break;
+    case 'size':
+      if (txt) txt.style.fontSize = val + 'px';
+      else if (img) { img.style.width = (val*4)+'px'; img.style.maxWidth = (val*4)+'px'; }
+      document.getElementById('vl-size').textContent = val;
+      document.getElementById('sl-size').value = val;
+      break;
+    case 'shadow':
+      if (txt) txt.style.textShadow = val > 0 ? `0 ${Math.ceil(val/4)}px ${val}px rgba(0,0,0,.6)` : 'none';
+      break;
+    case 'color':  if (txt) txt.style.color = val; break;
+  }
+}
+
+// ══════════════════════════
+// DRAG ENGINE
+// ══════════════════════════
+function makeWrap(x, y) {
+  const w = document.createElement('div');
+  w.className = 'el'; w.dataset.id = ++eid;
+  w.style.left = x + 'px'; w.style.top = y + 'px';
+  const rh = document.createElement('div'); rh.className = 'rhandle';
+  w.appendChild(rh);
+  attachDrag(w, rh);
+  CV.appendChild(w);
+  return w;
+}
+
+function attachDrag(el, rhandle) {
+  let isDrag=false, isResize=false, ox, oy, ol, ot, ow, startFontSize;
+  function gp(e) { const t=e.touches?e.touches[0]:e; return {x:t.clientX,y:t.clientY}; }
+
+  el.addEventListener('mousedown', startD);
+  el.addEventListener('touchstart', startD, {passive:false});
+
+  function startD(e) {
+    if (e.target === rhandle) { startR(e); return; }
+    const txt = el.querySelector('.el-text');
+    if (txt && txt.contentEditable === 'true') return;
+    e.stopPropagation();
+    select(el);
+    const p = gp(e); ox=p.x; oy=p.y; ol=el.offsetLeft; ot=el.offsetTop;
+    isDrag = true;
+    on('mousemove',doD); on('touchmove',doD); on('mouseup',endD); on('touchend',endD);
+  }
+  function doD(e) {
+    if (!isDrag) return;
+    if (e.cancelable) e.preventDefault();
+    const p = gp(e);
+    el.style.left = Math.max(0, Math.min(ol+p.x-ox, CV.offsetWidth-el.offsetWidth)) + 'px';
+    el.style.top  = Math.max(0, Math.min(ot+p.y-oy, CV.offsetHeight-el.offsetHeight)) + 'px';
+  }
+  function endD() { isDrag=false; off('mousemove',doD); off('touchmove',doD); off('mouseup',endD); off('touchend',endD); }
+
+  function startR(e) {
+    e.stopPropagation(); select(el);
+    const p = gp(e); ox=p.x;
+    const txt = el.querySelector('.el-text');
+    if (txt) startFontSize = parseFloat(window.getComputedStyle(txt).fontSize) || 26;
+    else ow = el.offsetWidth;
+    isResize = true;
+    on('mousemove',doR); on('touchmove',doR); on('mouseup',endR); on('touchend',endR);
+  }
+  function doR(e) {
+    if (!isResize) return;
+    if (e.cancelable) e.preventDefault();
+    const p = gp(e); const dx = p.x - ox;
+    const txt = el.querySelector('.el-text');
+    if (txt) {
+      const nSize = Math.max(10, startFontSize + dx * 0.4);
+      txt.style.fontSize = nSize + 'px';
+      document.getElementById('sl-size').value = Math.round(nSize);
+      document.getElementById('vl-size').textContent = Math.round(nSize);
+    } else {
+      const img = el.querySelector('img');
+      if (img) { const nw=Math.max(40,ow+dx); el.style.width=nw+'px'; img.style.width=nw+'px'; img.style.maxWidth=nw+'px'; }
+    }
+  }
+  function endR() { isResize=false; off('mousemove',doR); off('touchmove',doR); off('mouseup',endR); off('touchend',endR); }
+
+  function on(ev,fn)  { document.addEventListener(ev,fn,{passive:false}); }
+  function off(ev,fn) { document.removeEventListener(ev,fn); }
+}
+
+function select(el) {
+  deselect(); selEl = el; el.classList.add('selected');
+  const txt = el.querySelector('.el-text');
+  if (txt) {
+    const fs = parseInt(window.getComputedStyle(txt).fontSize) || 26;
+    document.getElementById('sl-size').value = fs;
+    document.getElementById('vl-size').textContent = fs;
+  }
+  const op = Math.round((parseFloat(el.style.opacity)||1)*100);
+  document.getElementById('sl-op').value = op;
+  document.getElementById('vl-op').textContent = op + '%';
+}
+function deselect() {
+  document.querySelectorAll('.el').forEach(e => {
+    e.classList.remove('selected');
+    const t = e.querySelector('.el-text');
+    if (t) { t.contentEditable = 'false'; t.style.cursor = 'inherit'; }
+  });
+  selEl = null;
+}
+
+// ══════════════════════════
+// ADD ELEMENTS
+// ══════════════════════════
+function addText(text, size, color, x, y) {
+  const w = makeWrap(x, y);
+  const d = document.createElement('div');
+  d.className = 'el-text';
+  d.style.fontSize = size + 'px';
+  d.style.color = color;
+  d.style.fontFamily = "'Tajawal',sans-serif";
+  d.style.fontWeight = '700';
+  d.style.textAlign = 'right';
+  d.textContent = text;
+  d.addEventListener('dblclick', function(e) {
+    e.stopPropagation();
+    this.contentEditable = 'true';
+    this.style.cursor = 'text';
+    this.focus();
+    const range = document.createRange(); range.selectNodeContents(this);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+  });
+  d.addEventListener('blur', function() {
+    this.contentEditable = 'false'; this.style.cursor = 'inherit';
+  });
+  w.insertBefore(d, w.firstChild);
+  select(w); return w;
+}
+
+function addMain() {
+  const v = document.getElementById('main-txt').value.trim();
+  if (!v) { notify('اكتب نصاً أولاً!'); return; }
+  addText(v, mainSz, '#FFD700', 30, 40); notify('تمت إضافة النص ✓');
+}
+function addSub() {
+  const v = document.getElementById('sub-txt').value.trim();
+  if (!v) { notify('اكتب نصاً أولاً!'); return; }
+  addText(v, subSz, '#ffffff', 30, 100); notify('تمت إضافة النص ✓');
+}
+function addQuick() {
+  const v = document.getElementById('fmt-quick').value.trim();
+  if (!v) { notify('اكتب نصاً!'); return; }
+  addText(v, 22, '#fff', 30, 60);
+  document.getElementById('fmt-quick').value = '';
+  notify('تمت الإضافة ✓');
+}
+
+function addCallig(src, name) {
+  const sz = parseInt(document.getElementById('sl-csz').value) || 180;
+  const x  = Math.max(0, CV.offsetWidth/2 - sz/2);
+  const y  = Math.max(0, CV.offsetHeight/2 - 70);
+  const w  = makeWrap(x, y);
+  const img = document.createElement('img');
+  img.src = src; img.alt = name; img.className = 'el-img';
+  img.style.width = sz+'px'; img.style.maxWidth = sz+'px'; img.style.height = 'auto';
+  img.onerror = () => { notify('"'+name+'" — الملف غير متاح'); w.remove(); };
+  w.insertBefore(img, w.firstChild);
+  select(w); notify('تمت إضافة المخطوطة ✓');
+}
+
+function delSelected() {
+  if (!selEl) { notify('اختر عنصراً أولاً'); return; }
+  selEl.remove(); selEl = null; notify('تم الحذف ✓');
+}
+function clearAll() {
+  if (!confirm('مسح كل العناصر من البطاقة؟')) return;
+  document.querySelectorAll('.el').forEach(e => e.remove()); selEl = null;
+}
+
+// ══════════════════════════
 // CALLIGRAPHY
-// ═══════════════════════════════════════════════════════════════════
-function renderCalligGrid(cat) {
-  const folder = cat === 'black' ? 'مخطوطات سوداء' :
-                 cat === '3d'    ? 'مخطوطات ثلاثية الأبعاد' : 'مخطوطات بيضاء';
-  const bgClass = cat === 'black' ? 'light-bg' : 'dark-bg';
-  const items = CALLIG[cat];
-  const limit = calligShown[cat];
-  const shown = items.slice(0, limit);
-  const grid = document.getElementById(`callig-${cat}-grid`);
-  grid.innerHTML = shown.map(name => {
-    const src = `/templates/${encodeURIComponent(folder)}/${encodeURIComponent(name)}@3x.png`;
-    return `<div class="callig-item ${bgClass}" onclick="addCalligEl('${src}','${name}')">
-      <img src="${src}" alt="${name}" loading="lazy" onerror="this.parentElement.style.display='none'">
+// ══════════════════════════
+function buildCalGrid(cat) {
+  const folders = { black:'مخطوطات سوداء', '3d':'مخطوطات ثلاثية الأبعاد', white:'مخطوطات بيضاء' };
+  const bgcls = cat === 'black' ? 'lt' : 'dk';
+  const items = CAL[cat], lim = calShown[cat];
+  const grid = document.getElementById('cg-'+cat);
+  grid.innerHTML = items.slice(0,lim).map(name => {
+    const src = `/templates/${encodeURIComponent(folders[cat])}/${encodeURIComponent(name)}@3x.png`;
+    return `<div class="citem ${bgcls}" onclick="addCallig('${src.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}')">
+      <img src="${src}" alt="${name}" loading="lazy" onerror="this.classList.add('failed')">
+      <div class="clabel">${name}</div>
     </div>`;
   }).join('');
-  const moreBtn = document.getElementById(`callig-${cat}-more`);
-  moreBtn.style.display = items.length > limit ? 'flex' : 'none';
-  moreBtn.textContent = `▼ عرض المزيد (${items.length - limit} متبقية)`;
+  const btn = document.getElementById('sm-'+cat);
+  if (items.length > lim) { btn.classList.add('vis'); btn.textContent = `▼ عرض المزيد (${items.length-lim} متبقية)`; }
+  else btn.classList.remove('vis');
+}
+function moreCallig(cat) { calShown[cat] += 30; buildCalGrid(cat); }
+function switchCat(btn) {
+  document.querySelectorAll('.catbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const cat = btn.dataset.cat;
+  ['black','3d','white'].forEach(c =>
+    document.getElementById('cat-'+c).style.display = c===cat ? 'block' : 'none');
 }
 
-function showMoreCallig(cat) {
-  calligShown[cat] += 30;
-  renderCalligGrid(cat);
+// ══════════════════════════
+// BACKGROUND
+// ══════════════════════════
+function buildBgGrid() {
+  document.getElementById('bggrid').innerHTML = BG_ITEMS.map((bg,i) =>
+    `<div class="bgthumb" onclick="setBg(this,'${bg.src}')">
+      <img src="${bg.src}" loading="lazy" alt="خلفية ${i+1}" onerror="this.parentElement.style.display='none'">
+    </div>`).join('');
 }
-
-function switchCalligCat(cat, btn) {
-  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  ['black','3d','white'].forEach(c => {
-    document.getElementById('callig-' + c).style.display = c === cat ? 'block' : 'none';
-  });
+function setBg(el, src) {
+  CV.style.backgroundImage = `url('${src}')`;
+  document.querySelectorAll('#bggrid .bgthumb').forEach(t => t.classList.remove('on'));
+  el.classList.add('on'); notify('تم تغيير الخلفية ✓');
 }
-
-// ═══════════════════════════════════════════════════════════════════
-// BACKGROUND GRID
-// ═══════════════════════════════════════════════════════════════════
-function renderBgGrid() {
-  document.getElementById('bg-grid').innerHTML = BG_LIST.map((b,i) => `
-    <div class="bg-thumb" onclick="setBg('${b.src}',this)">
-      <img src="${b.src}" loading="lazy" alt="خلفية ${i+1}" onerror="this.parentElement.style.display='none'">
-      ${b.badge ? `<div class="bg-badge">⭐ ${b.badge}</div>` : ''}
-    </div>
-  `).join('');
-}
-
-function setBg(src, el) {
-  canvasWrap.style.backgroundImage = `url('${src}')`;
-  document.querySelectorAll('.bg-thumb').forEach(t => t.classList.remove('sel'));
-  if (el) el.classList.add('sel');
-  showNotif('تم تغيير الخلفية ✓');
-}
-
 function uploadBg(e) {
   const f = e.target.files[0]; if (!f) return;
   const r = new FileReader();
-  r.onload = ev => { canvasWrap.style.backgroundImage = `url('${ev.target.result}')`; showNotif('تم رفع الخلفية ✓'); };
+  r.onload = ev => { CV.style.backgroundImage = `url('${ev.target.result}')`; notify('تم رفع الخلفية ✓'); };
   r.readAsDataURL(f);
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// DRAGGABLE ENGINE
-// ═══════════════════════════════════════════════════════════════════
-function makeWrap(type, x, y) {
-  const w = document.createElement('div');
-  w.className = 'el-wrap';
-  w.dataset.type = type;
-  w.dataset.id = ++elId;
-  w.style.cssText = `left:${x}px;top:${y}px;position:absolute;`;
-
-  const rh = document.createElement('div');
-  rh.className = 'r-handle';
-  w.appendChild(rh);
-
-  enableDrag(w, rh);
-  canvasWrap.appendChild(w);
-  return w;
-}
-
-function enableDrag(el, resizeHandle) {
-  let dragging = false, resizing = false;
-  let sx, sy, sl, st, sw, sh;
-
-  function gpos(e) {
-    const t = e.touches ? e.touches[0] : e;
-    return { x: t.clientX, y: t.clientY };
-  }
-
-  // Drag
-  el.addEventListener('mousedown', onDragStart);
-  el.addEventListener('touchstart', onDragStart, { passive: false });
-
-  function onDragStart(e) {
-    if (e.target === resizeHandle) return;
-    e.stopPropagation();
-    selectEl(el);
-    const p = gpos(e);
-    sx = p.x; sy = p.y;
-    sl = el.offsetLeft; st = el.offsetTop;
-    dragging = true;
-    document.addEventListener('mousemove', onDragMove);
-    document.addEventListener('touchmove', onDragMove, { passive: false });
-    document.addEventListener('mouseup', onDragEnd);
-    document.addEventListener('touchend', onDragEnd);
-  }
-  function onDragMove(e) {
-    if (!dragging) return;
-    if (e.cancelable) e.preventDefault();
-    const p = gpos(e);
-    const maxL = canvasWrap.offsetWidth - el.offsetWidth;
-    const maxT = canvasWrap.offsetHeight - el.offsetHeight;
-    el.style.left = Math.max(0, Math.min(sl + p.x - sx, maxL)) + 'px';
-    el.style.top  = Math.max(0, Math.min(st + p.y - sy, maxT)) + 'px';
-  }
-  function onDragEnd() {
-    dragging = false;
-    document.removeEventListener('mousemove', onDragMove);
-    document.removeEventListener('touchmove', onDragMove);
-    document.removeEventListener('mouseup', onDragEnd);
-    document.removeEventListener('touchend', onDragEnd);
-  }
-
-  // Resize
-  resizeHandle.addEventListener('mousedown', onResizeStart);
-  resizeHandle.addEventListener('touchstart', onResizeStart, { passive: false });
-
-  function onResizeStart(e) {
-    e.stopPropagation();
-    const p = gpos(e);
-    sx = p.x; sy = p.y;
-    sw = el.offsetWidth; sh = el.offsetHeight;
-    resizing = true;
-    document.addEventListener('mousemove', onResizeMove);
-    document.addEventListener('touchmove', onResizeMove, { passive: false });
-    document.addEventListener('mouseup', onResizeEnd);
-    document.addEventListener('touchend', onResizeEnd);
-  }
-  function onResizeMove(e) {
-    if (!resizing) return;
-    if (e.cancelable) e.preventDefault();
-    const p = gpos(e);
-    const nw = Math.max(40, sw + (sx - p.x));
-    el.style.width = nw + 'px';
-    const img = el.querySelector('img');
-    if (img) { img.style.maxWidth = nw + 'px'; img.style.width = nw + 'px'; }
-    const txt = el.querySelector('.canvas-text');
-    if (txt) { txt.style.maxWidth = nw + 'px'; }
-  }
-  function onResizeEnd() {
-    resizing = false;
-    document.removeEventListener('mousemove', onResizeMove);
-    document.removeEventListener('touchmove', onResizeMove);
-    document.removeEventListener('mouseup', onResizeEnd);
-    document.removeEventListener('touchend', onResizeEnd);
-  }
-}
-
-function selectEl(el) {
-  deselectAll();
-  selectedEl = el;
-  el.classList.add('selected');
-  syncFmtPanel(el);
-}
-
-function deselectAll() {
-  document.querySelectorAll('.el-wrap').forEach(e => e.classList.remove('selected'));
-  selectedEl = null;
-}
-
-function syncFmtPanel(el) {
-  const txt = el.querySelector('.canvas-text');
-  if (txt) {
-    document.getElementById('fmt-size').value = parseInt(txt.style.fontSize) || 24;
-    document.getElementById('fmt-size-v').textContent = parseInt(txt.style.fontSize) || 24;
-  }
-  document.getElementById('fmt-opacity').value = Math.round((parseFloat(el.style.opacity) || 1) * 100);
-  document.getElementById('fmt-op-v').textContent = document.getElementById('fmt-opacity').value + '%';
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// ADD ELEMENTS
-// ═══════════════════════════════════════════════════════════════════
-function addTextEl(text, size, color, x, y) {
-  const w = makeWrap('text', x, y);
-  const d = document.createElement('div');
-  d.className = 'canvas-text';
-  d.style.fontSize = size + 'px';
-  d.style.color = color;
-  d.style.textAlign = 'right';
-  d.textContent = text;
-  w.insertBefore(d, w.firstChild);
-  selectEl(w);
-  return w;
-}
-
-function addMainText() {
-  const v = document.getElementById('main-txt').value.trim();
-  if (!v) { showNotif('اكتب نصاً أولاً!'); return; }
-  addTextEl(v, mainSize, '#FFD700', 30, 30);
-  showNotif('تمت إضافة النص ✓');
-}
-
-function addSubText() {
-  const v = document.getElementById('sub-txt').value.trim();
-  if (!v) { showNotif('اكتب نصاً أولاً!'); return; }
-  addTextEl(v, subSize, '#ffffff', 30, 80);
-  showNotif('تمت إضافة النص ✓');
-}
-
-function addQuickText(txt) {
-  addTextEl(txt, 22, '#FFD700', 30, 50);
-  showNotif('تمت إضافة النص ✓');
-  switchTab('format');
-}
-
-function addCalligEl(src, name) {
-  const sz = parseInt(document.getElementById('callig-sz').value) || 180;
-  const x = Math.max(0, (canvasWrap.offsetWidth / 2) - (sz / 2));
-  const y = Math.max(0, (canvasWrap.offsetHeight / 2) - 80);
-  const w = makeWrap('img', x, y);
-  const img = document.createElement('img');
-  img.src = src; img.alt = name;
-  img.style.cssText = `display:block;width:${sz}px;max-width:${sz}px;height:auto;`;
-  img.onerror = () => { showNotif('الصورة غير متاحة'); w.remove(); };
-  w.insertBefore(img, w.firstChild);
-  selectEl(w);
-  showNotif(`تمت إضافة المخطوطة ✓`);
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// FORMAT APPLY
-// ═══════════════════════════════════════════════════════════════════
-function fmt(prop, val, el) {
-  if (prop === 'weight') {
-    document.querySelectorAll('.weight-btn').forEach(b => b.classList.remove('active'));
-    if (el) el.classList.add('active');
-  }
-  if (prop === 'align') {
-    document.querySelectorAll('.align-btn').forEach(b => b.classList.remove('active'));
-    if (el) el.classList.add('active');
-  }
-  if (prop === 'color') {
-    document.querySelectorAll('#cr-text .color-dot').forEach(d => d.classList.remove('sel'));
-    if (el) el.classList.add('sel');
-  }
-
-  if (!selectedEl) {
-    if (prop === 'size' || prop === 'color' || prop === 'font' || prop === 'weight' || prop === 'align' || prop === 'shadow') {
-      showNotif('اختر عنصراً أولاً');
-    }
-    return;
-  }
-
-  const txt = selectedEl.querySelector('.canvas-text');
-  switch (prop) {
-    case 'size':
-      if (txt) txt.style.fontSize = val + 'px';
-      else {
-        const img = selectedEl.querySelector('img');
-        if (img) { img.style.width = val*3 + 'px'; img.style.maxWidth = val*3 + 'px'; }
-      }
-      break;
-    case 'opacity':
-      selectedEl.style.opacity = val / 100;
-      break;
-    case 'shadow':
-      if (txt) txt.style.textShadow = val > 0 ? `0 ${Math.ceil(val/4)}px ${val}px rgba(0,0,0,0.55)` : 'none';
-      break;
-    case 'font':
-      if (txt) txt.style.fontFamily = val;
-      break;
-    case 'weight':
-      if (txt) txt.style.fontWeight = val;
-      break;
-    case 'align':
-      if (txt) txt.style.textAlign = val;
-      break;
-    case 'color':
-      if (txt) txt.style.color = val;
-      break;
-  }
-}
-
-function addQuickTextFromInput() {
-  const v = document.getElementById('quick-text').value.trim();
-  if (!v) { showNotif('اكتب نصاً أولاً!'); return; }
-  addTextEl(v, 22, '#ffffff', 30, 50);
-  document.getElementById('quick-text').value = '';
-  showNotif('تمت الإضافة ✓');
-}
-
-function addQuickText(txt) {
-  addTextEl(txt, 22, '#FFD700', 30, canvasWrap.offsetHeight/2 - 20);
-  showNotif('تمت إضافة النص ✓');
-  switchTab('format');
-}
-
-function deleteSelected() {
-  if (!selectedEl) { showNotif('اختر عنصراً أولاً'); return; }
-  selectedEl.remove(); selectedEl = null;
-  showNotif('تم الحذف ✓');
-}
-
-function clearCanvas() {
-  if (!confirm('مسح كل العناصر من البطاقة؟')) return;
-  document.querySelectorAll('.el-wrap').forEach(e => e.remove());
-  selectedEl = null;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// PERSONAL PHOTO
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════
+// PHOTO
+// ══════════════════════════
 function uploadPhoto(e) {
   const f = e.target.files[0]; if (!f) return;
   const r = new FileReader();
   r.onload = ev => {
-    // Remove old photo if any
-    if (activePhotoEl) { activePhotoEl.remove(); activePhotoEl = null; }
-    const w = makeWrap('photo', 160, 160);
+    if (photoEl) { photoEl.remove(); photoEl = null; }
+    const w = makeWrap(160, 150);
     const img = document.createElement('img');
     img.src = ev.target.result;
-    img.className = 'canvas-photo';
-    img.style.cssText = 'width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 4px 16px rgba(0,0,0,0.3);';
+    img.style.cssText = 'width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 4px 16px rgba(0,0,0,.3);';
     w.insertBefore(img, w.firstChild);
-    activePhotoEl = w;
-    selectEl(w);
-    document.getElementById('photo-controls').style.display = 'flex';
-    showNotif('تم إضافة صورتك ✓');
+    photoEl = w; select(w);
+    document.getElementById('pho-ctrl').style.display = 'flex';
+    notify('تم إضافة صورتك ✓');
   };
   r.readAsDataURL(f);
 }
-
-function resizeSelectedPhoto(v) {
-  document.getElementById('photo-sz-v').textContent = v + 'px';
-  if (!activePhotoEl) return;
-  const img = activePhotoEl.querySelector('img');
-  if (img) { img.style.width = v + 'px'; img.style.height = v + 'px'; }
+function resizePhoto(v) {
+  document.getElementById('vl-phsz').textContent = v;
+  if (!photoEl) return;
+  const img = photoEl.querySelector('img');
+  if (img) { img.style.width = v+'px'; img.style.height = v+'px'; }
+}
+function setPhotoShape(val) {
+  if (!photoEl) return;
+  const img = photoEl.querySelector('img'); if (!img) return;
+  img.style.borderRadius = val==='circle' ? '50%' : val==='rounded' ? '16px' : '4px';
 }
 
-function setPhotoShape(shape, btn) {
-  document.querySelectorAll('#panel-photo .weight-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (!activePhotoEl) return;
-  const img = activePhotoEl.querySelector('img');
-  if (!img) return;
-  img.style.borderRadius = shape === 'circle' ? '50%' : shape === 'rounded' ? '16px' : '4px';
-}
-
-function setPhotoBorder(color, dot) {
-  document.querySelectorAll('#panel-photo .color-row .color-dot').forEach(d => d.classList.remove('sel'));
-  dot.classList.add('sel');
-  if (!activePhotoEl) return;
-  const img = activePhotoEl.querySelector('img');
-  if (img) img.style.borderColor = color;
-}
-
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════
 // LOGO
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════
 function uploadLogo(e) {
   const f = e.target.files[0]; if (!f) return;
   const r = new FileReader();
   r.onload = ev => {
-    const prev = document.getElementById('logo-preview');
-    prev.innerHTML = `<img src="${ev.target.result}" style="max-height:60px;max-width:100%;object-fit:contain">`;
-
-    if (activeLogoEl) { activeLogoEl.remove(); activeLogoEl = null; }
-    const w = makeWrap('logo', 10, 10);
+    document.getElementById('lgp-preview').innerHTML =
+      `<img src="${ev.target.result}" style="max-height:60px;max-width:100%;object-fit:contain">`;
+    if (logoEl) { logoEl.remove(); logoEl = null; }
+    const w = makeWrap(10, 10);
     const img = document.createElement('img');
     img.src = ev.target.result;
     img.style.cssText = 'display:block;width:100px;height:auto;max-width:100px;';
     w.insertBefore(img, w.firstChild);
-    activeLogoEl = w;
-    selectEl(w);
-    document.getElementById('logo-controls').style.display = 'flex';
-    showNotif('تم إضافة الشعار ✓');
+    logoEl = w; select(w);
+    document.getElementById('lgp-ctrl').style.display = 'flex';
+    notify('تم إضافة الشعار ✓');
   };
   r.readAsDataURL(f);
 }
-
-function resizeSelectedLogo(v) {
-  if (!activeLogoEl) return;
-  const img = activeLogoEl.querySelector('img');
-  if (img) { img.style.width = v + 'px'; img.style.maxWidth = v + 'px'; }
+function resizeLogo(v) {
+  if (!logoEl) return;
+  const img = logoEl.querySelector('img');
+  if (img) { img.style.width = v+'px'; img.style.maxWidth = v+'px'; }
+}
+function setLogoPos(val) {
+  if (!logoEl) return;
+  const cw=CV.offsetWidth, ch=CV.offsetHeight, lw=logoEl.offsetWidth, lh=logoEl.offsetHeight, pad=10;
+  const P = { tr:{top:pad,left:cw-lw-pad}, tl:{top:pad,left:pad}, br:{top:ch-lh-pad,left:cw-lw-pad}, bl:{top:ch-lh-pad,left:pad} };
+  if (P[val]) { logoEl.style.top=P[val].top+'px'; logoEl.style.left=P[val].left+'px'; }
 }
 
-function moveLogoTo(pos, btn) {
-  document.querySelectorAll('#logo-controls .weight-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (!activeLogoEl) return;
-  const cw = canvasWrap.offsetWidth, ch = canvasWrap.offsetHeight;
-  const lw = activeLogoEl.offsetWidth, lh = activeLogoEl.offsetHeight;
-  const pad = 10;
-  const positions = {
-    'top-right':    { top: pad, left: cw - lw - pad },
-    'top-left':     { top: pad, left: pad },
-    'bottom-right': { top: ch - lh - pad, left: cw - lw - pad },
-    'bottom-left':  { top: ch - lh - pad, left: pad },
-  };
-  const p = positions[pos];
-  if (p) { activeLogoEl.style.top = p.top + 'px'; activeLogoEl.style.left = p.left + 'px'; }
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// QUICK TEXT (format panel button)
-// ═══════════════════════════════════════════════════════════════════
-function addQuickText(txt) {
-  addTextEl(txt, 22, '#FFD700', 30, canvasWrap.offsetHeight / 2 - 15);
-  showNotif('تمت إضافة النص ✓');
-  switchTab('format');
-}
-
-// Bind the format panel's quick add button
-document.addEventListener('DOMContentLoaded', () => {});
-function addQuickTextBtn() {
-  const v = document.getElementById('quick-text').value.trim();
-  if (!v) { showNotif('اكتب نصاً!'); return; }
-  addTextEl(v, 22, '#fff', 30, 50);
-  document.getElementById('quick-text').value = '';
-  showNotif('تمت الإضافة ✓');
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// EXPORT
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════
+// EXPORT (Design Mode)
+// ══════════════════════════
 async function capture() {
-  deselectAll();
-  await new Promise(r => setTimeout(r, 100));
-  return html2canvas(canvasWrap, { useCORS: true, scale: 2, allowTaint: true });
+  deselect();
+  await new Promise(r => setTimeout(r, 150));
+  return html2canvas(CV, { useCORS:true, scale:3, allowTaint:true, backgroundColor:null });
 }
-
-async function downloadPNG() {
-  showNotif('⏳ جاري التحميل...');
-  const c = await capture();
-  const a = document.createElement('a');
-  a.download = 'sallim-card.png';
-  a.href = c.toDataURL('image/png');
-  a.click();
-  showNotif('تم التحميل ✓');
+async function dlPNG() {
+  notify('⏳ جاري التحميل...');
+  try {
+    const c = await capture();
+    const a = document.createElement('a');
+    a.download = 'sallim-card.png'; a.href = c.toDataURL('image/png'); a.click();
+    notify('تم التحميل ✓');
+  } catch(e) { notify('خطأ في التحميل'); }
 }
-
-async function downloadPDF() {
-  showNotif('⏳ جاري إنشاء PDF...');
-  const c = await capture();
-  const img = c.toDataURL('image/png');
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF({ orientation:'p', unit:'px', format:[c.width, c.height] });
-  pdf.addImage(img, 'PNG', 0, 0, c.width, c.height);
-  pdf.save('sallim-card.pdf');
-  showNotif('تم إنشاء PDF ✓');
+async function dlPDF() {
+  notify('⏳ جاري إنشاء PDF...');
+  try {
+    const c = await capture();
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation:'p', unit:'px', format:[c.width, c.height] });
+    pdf.addImage(c.toDataURL('image/png'), 'PNG', 0, 0, c.width, c.height);
+    pdf.save('sallim-card.pdf');
+    notify('تم إنشاء PDF ✓');
+  } catch(e) { notify('خطأ في إنشاء PDF'); }
 }
-
-async function copyImage() {
+async function copyImg() {
   try {
     const c = await capture();
     c.toBlob(async blob => {
-      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-      showNotif('تم النسخ! 🎉');
+      await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
+      notify('تم النسخ 🎉');
     });
-  } catch { showNotif('متصفحك لا يدعم النسخ المباشر'); }
+  } catch { notify('متصفحك لا يدعم النسخ المباشر'); }
 }
-
-async function shareGeneral() {
+async function shareNative() {
   const c = await capture();
   c.toBlob(async blob => {
-    const file = new File([blob], 'sallim.png', { type: 'image/png' });
-    if (navigator.share) {
-      try { await navigator.share({ title: 'بطاقة تهنئة', files: [file] }); }
-      catch {}
-    } else showNotif('المشاركة غير مدعومة في هذا المتصفح');
+    const file = new File([blob],'sallim.png',{type:'image/png'});
+    if (navigator.share) { try { await navigator.share({title:'بطاقة تهنئة',files:[file]}); } catch {} }
+    else notify('المشاركة غير مدعومة في هذا المتصفح');
+  });
+}
+async function shareWA() {
+  window.open(`https://wa.me/?text=${encodeURIComponent('كل عام وأنتم بخير 🌙✨')}`, '_blank');
+  await dlPNG();
+}
+
+// ══════════════════════════
+// ALT BACKGROUNDS (Ready/Group)
+// ══════════════════════════
+let readyBgSrc = BG_ITEMS[0].src;
+let batchBgSrc = BG_ITEMS[0].src;
+
+function fillAltBgs() {
+  const html = (gridId, type) => BG_ITEMS.map((bg,i) =>
+    `<div class="bgthumb" data-type="${type}" onclick="setAltBg(this,'${bg.src}','${type}')">
+      <img src="${bg.src}" loading="lazy">
+    </div>`).join('');
+
+  if (!document.getElementById('ready-bg-grid').dataset.filled) {
+    document.getElementById('ready-bg-grid').innerHTML = html('ready-bg-grid','ready');
+    document.getElementById('ready-bg-grid').dataset.filled = '1';
+  }
+  if (!document.getElementById('batch-bg-grid').dataset.filled) {
+    document.getElementById('batch-bg-grid').innerHTML = html('batch-bg-grid','batch');
+    document.getElementById('batch-bg-grid').dataset.filled = '1';
+  }
+}
+function setAltBg(el, src, type) {
+  const gridId = type === 'ready' ? 'ready-bg-grid' : 'batch-bg-grid';
+  const canvasId = type === 'ready' ? 'ready-canvas' : 'batch-canvas';
+  document.querySelectorAll('#'+gridId+' .bgthumb').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById(canvasId).style.backgroundImage = `url('${src}')`;
+  if (type === 'ready') readyBgSrc = src;
+  else batchBgSrc = src;
+}
+
+// ══════════════════════════
+// READY MODE
+// ══════════════════════════
+function updateReady() {
+  const main  = document.getElementById('r-text-main');
+  const sub   = document.getElementById('r-text-sub');
+  const msize = document.getElementById('r-msize').value;
+  const mpos  = document.getElementById('r-mpos').value;
+  const ssize = document.getElementById('r-ssize').value;
+  const spos  = document.getElementById('r-spos').value;
+  const font  = document.getElementById('r-font').value;
+  const color = document.getElementById('r-color').value;
+
+  main.textContent = document.getElementById('r-main').value || ' ';
+  sub.textContent  = document.getElementById('r-sub').value  || ' ';
+
+  main.style.fontSize  = msize+'px'; main.style.top = mpos+'%';
+  sub.style.fontSize   = ssize+'px'; sub.style.top  = spos+'%';
+  main.style.fontFamily = sub.style.fontFamily = font;
+  main.style.color = sub.style.color = color;
+
+  document.getElementById('vl-rms').textContent = msize;
+  document.getElementById('vl-rmp').textContent = mpos+'%';
+  document.getElementById('vl-rss').textContent = ssize;
+  document.getElementById('vl-rsp').textContent = spos+'%';
+}
+
+async function dlReady() {
+  notify('⏳ جاري التحميل...');
+  try {
+    const box = document.getElementById('ready-canvas');
+    const c = await html2canvas(box, { scale:3, useCORS:true, backgroundColor:null });
+    const a = document.createElement('a');
+    a.download = 'Sallim-Ready.png'; a.href = c.toDataURL('image/png'); a.click();
+    notify('تم التحميل ✓');
+  } catch(e) { notify('خطأ في التحميل'); }
+}
+async function shareReadyWA() {
+  window.open(`https://wa.me/?text=${encodeURIComponent(document.getElementById('r-main').value + ' — كل عام وأنتم بخير 🌙')}`, '_blank');
+  await dlReady();
+}
+
+// ══════════════════════════
+// BATCH MODE (جماعي)
+// ══════════════════════════
+function updateBatch() {
+  const names = document.getElementById('b-names').value.split('\n').map(n=>n.trim()).filter(n=>n);
+  document.getElementById('b-count').textContent = names.length + ' أسماء';
+
+  const nameEl = document.getElementById('b-text-name');
+  nameEl.textContent = names[0] || 'الاسم يظهر هنا';
+
+  const size  = document.getElementById('b-size').value;
+  const pos   = document.getElementById('b-pos').value;
+  const font  = document.getElementById('b-font').value;
+  const color = document.getElementById('b-color').value;
+
+  nameEl.style.fontSize   = size+'px';
+  nameEl.style.top        = pos+'%';
+  nameEl.style.fontFamily = font;
+  nameEl.style.color      = color;
+
+  document.getElementById('vl-bs').textContent = size;
+  document.getElementById('vl-bp').textContent = pos+'%';
+}
+
+async function dlBatchZip() {
+  const names = document.getElementById('b-names').value.split('\n').map(n=>n.trim()).filter(n=>n);
+  if (!names.length) { notify('أدخل اسماً واحداً على الأقل!'); return; }
+
+  const btn = document.getElementById('btn-batch');
+  btn.innerHTML = '⏳ جاري الإنشاء... ' + names.length + ' بطاقة';
+  btn.disabled = true;
+
+  const zip     = new JSZip();
+  const box     = document.getElementById('batch-canvas');
+  const nameEl  = document.getElementById('b-text-name');
+  const origTxt = nameEl.textContent;
+  const size    = document.getElementById('b-size').value;
+  const pos     = document.getElementById('b-pos').value;
+  const font    = document.getElementById('b-font').value;
+  const color   = document.getElementById('b-color').value;
+
+  for (let i = 0; i < names.length; i++) {
+    nameEl.textContent        = names[i];
+    nameEl.style.fontSize     = size+'px';
+    nameEl.style.top          = pos+'%';
+    nameEl.style.fontFamily   = font;
+    nameEl.style.color        = color;
+    btn.innerHTML = `⏳ ${i+1} / ${names.length}`;
+    await new Promise(r => setTimeout(r, 80));
+    try {
+      const c = await html2canvas(box, { scale:2, useCORS:true, backgroundColor:null });
+      const imgData = c.toDataURL('image/png').split(',')[1];
+      const safeName = names[i].replace(/[\\/:*?"<>|]/g,'_');
+      zip.file(`${i+1}_${safeName}.png`, imgData, {base64:true});
+    } catch(e) { console.error(e); }
+  }
+
+  zip.generateAsync({type:'blob'}).then(content => {
+    saveAs(content, 'Sallim_Batch.zip');
+    nameEl.textContent = origTxt;
+    btn.innerHTML = '📦 إنشاء وتحميل ملف ZIP';
+    btn.disabled = false;
+    notify(`تم إنشاء ${names.length} بطاقة ✓`);
   });
 }
 
-async function shareWhatsApp() {
-  const text = encodeURIComponent('كل عام وأنتم بخير! 🌙✨');
-  window.open(`https://wa.me/?text=${text}`, '_blank');
-  downloadPNG();
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// NOTIFICATION
-// ═══════════════════════════════════════════════════════════════════
-function showNotif(msg) {
+// ══════════════════════════
+// NOTIFY
+// ══════════════════════════
+function notify(msg) {
   const n = document.getElementById('notif');
-  n.textContent = msg; n.classList.add('show');
-  clearTimeout(n._t);
-  n._t = setTimeout(() => n.classList.remove('show'), 2300);
+  n.textContent = msg; n.classList.add('vis');
+  clearTimeout(n._t); n._t = setTimeout(() => n.classList.remove('vis'), 2600);
 }
-
-// BOOT
-init();
 </script>
 <script>
 
