@@ -1,48 +1,87 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>محرر البطاقات - سَلِّم</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>محرر البطاقات - سَلِّم</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&display=swap"
+      rel="stylesheet"
+    />
 
+    <link rel="shortcut icon" href="images/logo.webp" type="image/x-icon" />
 
-<link rel="stylesheet" href="css/editor.css">
-</head>
-<body>
+    <link rel="stylesheet" href="css/editor.css" />
+  </head>
+  <body>
+    <!-- ══ TOPBAR ══ -->
+    <div id="topbar">
+      <a href="/index.html" class="logo"
+        ><img src="images/logo.webp" alt=""
+      /></a>
+      <div class="top-btns">
+        <button class="btn btn-gray" onclick="clearAll()">مسح الكل</button>
+        <button class="btn btn-black" onclick="dlPNG()">⬇ تحميل</button>
+      </div>
+    </div>
 
-<!-- ══ TOPBAR ══ -->
-<div id="topbar">
-  <a href="/index.html" class="logo"><img src="images/logo.webp" alt=""></a>
-  <div class="top-btns">
-    <button class="btn btn-gray" onclick="clearAll()">مسح الكل</button>
-    <button class="btn btn-black" onclick="dlPNG()">⬇ تحميل</button>
-  </div>
-</div>
+    <!-- ══ MODE BAR ══ -->
+    <div id="modebar">
+      <button class="mode-btn" id="btn-ready" onclick="switchMode('ready')">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <path d="M5 13l4 4L19 7" />
+        </svg>
+        جاهز
+      </button>
+      <button
+        class="mode-btn active"
+        id="btn-design"
+        onclick="switchMode('design')"
+      >
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4z" />
+        </svg>
+        صمّم
+      </button>
+      <button class="mode-btn" id="btn-group" onclick="switchMode('group')">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+        >
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 00-3-3.87" />
+          <path d="M16 3.13a4 4 0 010 7.75" />
+        </svg>
+        جماعي
+      </button>
+    </div>
 
-<!-- ══ MODE BAR ══ -->
-<div id="modebar">
-  <button class="mode-btn" id="btn-ready" onclick="switchMode('ready')">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
-    جاهز
-  </button>
-  <button class="mode-btn active" id="btn-design" onclick="switchMode('design')">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4z"/></svg>
-    صمّم
-  </button>
-  <button class="mode-btn" id="btn-group" onclick="switchMode('group')">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-    جماعي
-  </button>
-</div>
-
-<!-- ══════════════════════════════════
+    <!-- ══════════════════════════════════
      VIEW: DESIGN (صمّم)
 ══════════════════════════════════ -->
-<div id="view-design">
-
-  <!-- FILTER BAR -->
-  <!-- <div id="filterbar">
+    <div id="view-design">
+      <!-- FILTER BAR -->
+      <!-- <div id="filterbar">
     <button class="fpill on" data-filter="all" onclick="setFilter(this)"><span class="fdot" style="background:#888"></span>الكل</button>
     <button class="fpill" data-filter="eid-fitr" onclick="setFilter(this)"><span class="fdot" style="background:#10b981"></span>عيد الفطر</button>
     <button class="fpill" data-filter="eid-adha" onclick="setFilter(this)"><span class="fdot" style="background:#3b82f6"></span>عيد الأضحى</button>
@@ -52,400 +91,944 @@
     <button class="fpill" data-filter="national" onclick="setFilter(this)"><span class="fdot" style="background:#ef4444"></span>وطنية</button>
   </div> -->
 
-  <!-- LAYOUT: CANVAS + SIDEBAR -->
-  <div style="position:fixed;top:140px;left:0;right:0;bottom:0;display:flex;">
+      <!-- LAYOUT: CANVAS + SIDEBAR -->
+      <div
+        style="
+          position: fixed;
+          top: 140px;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          display: flex;
+        "
+      >
+        <!-- CANVAS AREA -->
+        <div id="canvas-area">
+          <div id="canvas"></div>
+          <div id="export-bar">
+            <div id="export-row1">
+              <button class="btn btn-green" onclick="shareWA()">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.144.566 4.148 1.554 5.887L0 24l6.305-1.539A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.96 0-3.793-.518-5.375-1.42L2.2 21.8l1.24-4.308A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"
+                  />
+                </svg>
+                واتساب
+              </button>
+              <button class="btn btn-black" onclick="dlPNG()">⬇ PNG</button>
+            </div>
+            <div id="export-row2">
+              <button class="btn btn-gray" onclick="dlPDF()">📄 PDF</button>
+              <button class="btn btn-gray" onclick="copyImg()">📋 نسخ</button>
+              <button class="btn btn-gray" onclick="shareNative()">
+                ↗ مشاركة
+              </button>
+            </div>
+          </div>
+        </div>
 
-    <!-- CANVAS AREA -->
-    <div id="canvas-area">
-      <div id="canvas"></div>
-      <div id="export-bar">
-        <div id="export-row1">
-          <button class="btn btn-green" onclick="shareWA()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.144.566 4.148 1.554 5.887L0 24l6.305-1.539A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.96 0-3.793-.518-5.375-1.42L2.2 21.8l1.24-4.308A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-            واتساب
-          </button>
-          <button class="btn btn-black" onclick="dlPNG()">⬇ PNG</button>
+        <!-- SIDEBAR -->
+        <div id="sidebar">
+          <div id="stabs">
+            <button class="stab on" data-tab="fmt" onclick="switchTab(this)">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4z" /></svg
+              >تنسيق
+            </button>
+            <button class="stab" data-tab="txt" onclick="switchTab(this)">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <path d="M4 7V4h16v3M9 20h6M12 4v16" /></svg
+              >نصوص
+            </button>
+            <button class="stab" data-tab="cal" onclick="switchTab(this)">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <path d="M12 19l7-7 3 3-7 7-3-3z" />
+                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z" /></svg
+              >مخطوطات
+            </button>
+            <button class="stab" data-tab="pho" onclick="switchTab(this)">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" /></svg
+              >صورة
+            </button>
+            <button class="stab" data-tab="lgp" onclick="switchTab(this)">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="3" />
+                <path d="M9 12l2 2 4-4" /></svg
+              >شعار
+            </button>
+            <button class="stab" data-tab="bg" onclick="switchTab(this)">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21,15 16,10 5,21" /></svg
+              >خلفية
+            </button>
+          </div>
+
+          <!-- PANEL: FORMAT -->
+          <div class="spanel on" id="panel-fmt">
+            <div class="sec">تنسيق العنصر — دبل كليك لتعديل النص</div>
+            <div class="box">
+              <div class="lbl">الخط</div>
+              <select class="sinp" id="p-font" onchange="A('font', this.value)">
+                <option value="Tajawal">Tajawal</option>
+                <option value="Amiri">Amiri</option>
+                <option value="Cairo">Cairo</option>
+              </select>
+              <div class="lbl">سُمك</div>
+              <div class="bgrp" data-grp="fw">
+                <button class="gbtn" data-val="400">عادي</button>
+                <button class="gbtn" data-val="600">متوسط</button>
+                <button class="gbtn on" data-val="700">بولد</button>
+                <button class="gbtn" data-val="900">أسود</button>
+              </div>
+              <div class="lbl">محاذاة</div>
+              <div class="bgrp" data-grp="ta">
+                <button class="gbtn on" data-val="right">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <rect x="3" y="4" width="18" height="2" />
+                    <rect x="7" y="9" width="14" height="2" />
+                    <rect x="3" y="14" width="18" height="2" />
+                    <rect x="7" y="19" width="14" height="2" />
+                  </svg>
+                </button>
+                <button class="gbtn" data-val="center">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <rect x="3" y="4" width="18" height="2" />
+                    <rect x="6" y="9" width="12" height="2" />
+                    <rect x="3" y="14" width="18" height="2" />
+                    <rect x="6" y="19" width="12" height="2" />
+                  </svg>
+                </button>
+                <button class="gbtn" data-val="left">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <rect x="3" y="4" width="18" height="2" />
+                    <rect x="3" y="9" width="14" height="2" />
+                    <rect x="3" y="14" width="18" height="2" />
+                    <rect x="3" y="19" width="14" height="2" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="box">
+              <div class="lbl">الحجم</div>
+              <div class="slrow">
+                <input
+                  type="range"
+                  min="10"
+                  max="90"
+                  value="26"
+                  id="sl-size"
+                  oninput="
+                    A('size', this.value);
+                    document.getElementById('vl-size').textContent = this.value;
+                  "
+                />
+                <span class="slval" id="vl-size">26</span>
+              </div>
+              <div class="lbl">الشفافية</div>
+              <div class="slrow">
+                <input
+                  type="range"
+                  min="10"
+                  max="100"
+                  value="100"
+                  id="sl-op"
+                  oninput="
+                    A('opacity', this.value);
+                    document.getElementById('vl-op').textContent =
+                      this.value + '%';
+                  "
+                />
+                <span class="slval" id="vl-op">100%</span>
+              </div>
+              <div class="lbl">ظل النص</div>
+              <div class="slrow">
+                <input
+                  type="range"
+                  min="0"
+                  max="25"
+                  value="5"
+                  id="sl-sh"
+                  oninput="
+                    A('shadow', this.value);
+                    document.getElementById('vl-sh').textContent = this.value;
+                  "
+                />
+                <span class="slval" id="vl-sh">5</span>
+              </div>
+            </div>
+            <div class="box">
+              <div class="lbl">لون النص</div>
+              <div class="cdots" id="cdots-text">
+                <div
+                  class="cdot on"
+                  style="background: #fff; border: 1px solid #ddd"
+                  data-color="#ffffff"
+                ></div>
+                <div
+                  class="cdot"
+                  style="background: #111"
+                  data-color="#111111"
+                ></div>
+                <div
+                  class="cdot"
+                  style="background: #ffd700"
+                  data-color="#FFD700"
+                ></div>
+                <div
+                  class="cdot"
+                  style="background: #c9a227"
+                  data-color="#c9a227"
+                ></div>
+                <div
+                  class="cdot"
+                  style="background: #3b82f6"
+                  data-color="#3b82f6"
+                ></div>
+                <div
+                  class="cdot"
+                  style="background: #10b981"
+                  data-color="#10b981"
+                ></div>
+                <div
+                  class="cdot"
+                  style="background: #ef4444"
+                  data-color="#ef4444"
+                ></div>
+                <div
+                  class="cdot"
+                  style="background: #f97316"
+                  data-color="#f97316"
+                ></div>
+                <div
+                  class="cdot"
+                  style="background: #8b5cf6"
+                  data-color="#8b5cf6"
+                ></div>
+                <div
+                  class="cdot"
+                  style="background: #ec4899"
+                  data-color="#ec4899"
+                ></div>
+                <input
+                  type="color"
+                  value="#ffffff"
+                  id="custom-color"
+                  style="
+                    width: 21px;
+                    height: 21px;
+                    border-radius: 50%;
+                    border: none;
+                    cursor: pointer;
+                    padding: 0;
+                  "
+                  oninput="A('color', this.value)"
+                />
+              </div>
+            </div>
+            <div class="box">
+              <div class="lbl">نص سريع</div>
+              <textarea
+                class="tinp"
+                id="fmt-quick"
+                rows="2"
+                placeholder="اكتب نصاً وأضفه..."
+              ></textarea>
+              <button class="btn btn-black bfull" onclick="addQuick()">
+                + إضافة للبطاقة
+              </button>
+            </div>
+            <button class="btn btn-red bfull" onclick="delSelected()">
+              🗑 حذف العنصر المحدد
+            </button>
+          </div>
+
+          <!-- PANEL: TEXTS -->
+          <div class="spanel" id="panel-txt">
+            <div class="sec">النصوص</div>
+            <div class="box">
+              <div class="lbl">النص الرئيسي</div>
+              <textarea
+                class="tinp"
+                id="main-txt"
+                rows="3"
+                placeholder="اكتب نصك الرئيسي..."
+              ></textarea>
+              <div class="slrow">
+                <span>الحجم</span>
+                <input
+                  type="range"
+                  min="14"
+                  max="70"
+                  value="26"
+                  oninput="
+                    mainSz = +this.value;
+                    document.getElementById('vl-ms').textContent = this.value;
+                  "
+                />
+                <span class="slval" id="vl-ms">26</span>
+              </div>
+              <button class="btn btn-black bfull" onclick="addMain()">
+                + أضف للبطاقة
+              </button>
+            </div>
+            <div class="box">
+              <div class="lbl">النص الفرعي</div>
+              <textarea
+                class="tinp"
+                id="sub-txt"
+                rows="3"
+                placeholder="اكتب نصاً فرعياً..."
+              ></textarea>
+              <div class="slrow">
+                <span>الحجم</span>
+                <input
+                  type="range"
+                  min="10"
+                  max="40"
+                  value="16"
+                  oninput="
+                    subSz = +this.value;
+                    document.getElementById('vl-ss').textContent = this.value;
+                  "
+                />
+                <span class="slval" id="vl-ss">16</span>
+              </div>
+              <button class="btn btn-gray bfull" onclick="addSub()">
+                + أضف للبطاقة
+              </button>
+            </div>
+            <div class="box">
+              <div class="lbl">نصوص جاهزة — اضغط لإضافة</div>
+              <div class="rlist" id="rlist"></div>
+            </div>
+          </div>
+
+          <!-- PANEL: CALLIGRAPHY -->
+          <div class="spanel" id="panel-cal">
+            <div class="sec">المخطوطات</div>
+            <div class="cattabs">
+              <button
+                class="catbtn on"
+                data-cat="black"
+                onclick="switchCat(this)"
+              >
+                سوداء
+              </button>
+              <button class="catbtn" data-cat="3d" onclick="switchCat(this)">
+                ثلاثية أبعاد
+              </button>
+              <button class="catbtn" data-cat="white" onclick="switchCat(this)">
+                بيضاء
+              </button>
+            </div>
+            <div class="box">
+              <div class="slrow">
+                <span>الحجم</span>
+                <input
+                  type="range"
+                  min="60"
+                  max="380"
+                  value="180"
+                  id="sl-csz"
+                  oninput="
+                    document.getElementById('vl-csz').textContent =
+                      this.value + 'px'
+                  "
+                />
+                <span class="slval" id="vl-csz">180px</span>
+              </div>
+            </div>
+            <div id="cat-black">
+              <div class="cgrid" id="cg-black"></div>
+              <button
+                class="showmore"
+                id="sm-black"
+                onclick="moreCallig('black')"
+              >
+                ▼ عرض المزيد
+              </button>
+            </div>
+            <div id="cat-3d" style="display: none">
+              <div class="cgrid" id="cg-3d"></div>
+              <button class="showmore" id="sm-3d" onclick="moreCallig('3d')">
+                ▼ عرض المزيد
+              </button>
+            </div>
+            <div id="cat-white" style="display: none">
+              <div class="cgrid" id="cg-white"></div>
+              <button
+                class="showmore"
+                id="sm-white"
+                onclick="moreCallig('white')"
+              >
+                ▼ عرض المزيد
+              </button>
+            </div>
+          </div>
+
+          <!-- PANEL: PHOTO -->
+          <div class="spanel" id="panel-pho">
+            <div class="sec">الصورة الشخصية</div>
+            <label class="uarea" for="pho-inp">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" />
+              </svg>
+              <span>اضغط لرفع صورتك الشخصية</span>
+              <small>PNG · JPG · WEBP</small>
+            </label>
+            <input
+              type="file"
+              id="pho-inp"
+              accept="image/*"
+              style="display: none"
+              onchange="uploadPhoto(event)"
+            />
+            <div class="box" id="pho-ctrl" style="display: none">
+              <div class="lbl">الحجم</div>
+              <div class="slrow">
+                <input
+                  type="range"
+                  min="40"
+                  max="250"
+                  value="100"
+                  id="sl-phsz"
+                  oninput="
+                    resizePhoto(this.value);
+                    document.getElementById('vl-phsz').textContent = this.value;
+                  "
+                />
+                <span class="slval" id="vl-phsz">100</span>
+              </div>
+              <div class="lbl">الشكل</div>
+              <div class="bgrp" data-grp="phshape">
+                <button class="gbtn on" data-val="circle">دائري</button>
+                <button class="gbtn" data-val="rounded">مستدير</button>
+                <button class="gbtn" data-val="square">مربع</button>
+              </div>
+              <div class="lbl">إطار</div>
+              <div class="cdots" id="cdots-photo">
+                <div
+                  class="cdot on"
+                  style="background: #fff; border: 1px solid #ddd"
+                  data-color="#fff"
+                ></div>
+                <div
+                  class="cdot"
+                  style="background: #ffd700"
+                  data-color="#FFD700"
+                ></div>
+                <div
+                  class="cdot"
+                  style="background: #3b82f6"
+                  data-color="#3b82f6"
+                ></div>
+                <div
+                  class="cdot"
+                  style="background: #10b981"
+                  data-color="#10b981"
+                ></div>
+                <div
+                  class="cdot"
+                  style="background: transparent; border: 1px dashed #aaa"
+                  data-color="transparent"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL: LOGO -->
+          <div class="spanel" id="panel-lgp">
+            <div class="sec">شعار الشركة / العلامة التجارية</div>
+            <label class="uarea" for="lgp-inp">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="3" />
+                <path d="M9 12l2 2 4-4" />
+              </svg>
+              <span>ارفع شعارك هنا</span>
+              <small>PNG · SVG · JPG</small>
+            </label>
+            <input
+              type="file"
+              id="lgp-inp"
+              accept="image/*"
+              style="display: none"
+              onchange="uploadLogo(event)"
+            />
+            <div
+              id="lgp-preview"
+              style="
+                background: #f7f7fa;
+                border-radius: 9px;
+                padding: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 70px;
+              "
+            >
+              <span style="font-size: 12px; color: #aaa"
+                >لم يُرفع شعار بعد</span
+              >
+            </div>
+            <div class="box" id="lgp-ctrl" style="display: none">
+              <div class="lbl">الحجم</div>
+              <div class="slrow">
+                <input
+                  type="range"
+                  min="30"
+                  max="250"
+                  value="100"
+                  id="sl-lgsz"
+                  oninput="
+                    resizeLogo(this.value);
+                    document.getElementById('vl-lgsz').textContent =
+                      this.value + 'px';
+                  "
+                />
+                <span class="slval" id="vl-lgsz">100px</span>
+              </div>
+              <div class="lbl">الموضع</div>
+              <div class="bgrp" data-grp="lgpos">
+                <button class="gbtn" data-val="tr">↗ أعلى يمين</button>
+                <button class="gbtn" data-val="tl">↖ أعلى يسار</button>
+              </div>
+              <div class="bgrp" data-grp="lgpos" style="margin-top: 4px">
+                <button class="gbtn" data-val="br">↘ أسفل يمين</button>
+                <button class="gbtn" data-val="bl">↙ أسفل يسار</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL: BG -->
+          <div class="spanel" id="panel-bg">
+            <div class="sec">الخلفية</div>
+            <label class="uarea" for="bg-inp">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                <polyline points="17,8 12,3 7,8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              <span>ارفع صورة خاصة كخلفية</span>
+            </label>
+            <input
+              type="file"
+              id="bg-inp"
+              accept="image/*"
+              style="display: none"
+              onchange="uploadBg(event)"
+            />
+            <div class="sec" style="margin-top: 4px">خلفيات جاهزة</div>
+            <div class="bggrid" id="bggrid"></div>
+          </div>
         </div>
-        <div id="export-row2">
-          <button class="btn btn-gray" onclick="dlPDF()">📄 PDF</button>
-          <button class="btn btn-gray" onclick="copyImg()">📋 نسخ</button>
-          <button class="btn btn-gray" onclick="shareNative()">↗ مشاركة</button>
-        </div>
+        <!-- /sidebar -->
       </div>
     </div>
 
-    <!-- SIDEBAR -->
-    <div id="sidebar">
-      <div id="stabs">
-        <button class="stab on" data-tab="fmt" onclick="switchTab(this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4z"/></svg>تنسيق
-        </button>
-        <button class="stab" data-tab="txt" onclick="switchTab(this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>نصوص
-        </button>
-        <button class="stab" data-tab="cal" onclick="switchTab(this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/></svg>مخطوطات
-        </button>
-        <button class="stab" data-tab="pho" onclick="switchTab(this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.582-7 8-7s8 3 8 7"/></svg>صورة
-        </button>
-        <button class="stab" data-tab="lgp" onclick="switchTab(this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/></svg>شعار
-        </button>
-        <button class="stab" data-tab="bg" onclick="switchTab(this)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>خلفية
-        </button>
-      </div>
-
-      <!-- PANEL: FORMAT -->
-      <div class="spanel on" id="panel-fmt">
-        <div class="sec">تنسيق العنصر — دبل كليك لتعديل النص</div>
-        <div class="box">
-          <div class="lbl">الخط</div>
-          <select class="sinp" id="p-font" onchange="A('font', this.value)">
-            <option value="Tajawal">Tajawal</option>
-            <option value="Amiri">Amiri</option>
-            <option value="Cairo">Cairo</option>
-          </select>
-          <div class="lbl">سُمك</div>
-          <div class="bgrp" data-grp="fw">
-            <button class="gbtn" data-val="400">عادي</button>
-            <button class="gbtn" data-val="600">متوسط</button>
-            <button class="gbtn on" data-val="700">بولد</button>
-            <button class="gbtn" data-val="900">أسود</button>
-          </div>
-          <div class="lbl">محاذاة</div>
-          <div class="bgrp" data-grp="ta">
-            <button class="gbtn on" data-val="right">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="2"/><rect x="7" y="9" width="14" height="2"/><rect x="3" y="14" width="18" height="2"/><rect x="7" y="19" width="14" height="2"/></svg>
-            </button>
-            <button class="gbtn" data-val="center">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="2"/><rect x="6" y="9" width="12" height="2"/><rect x="3" y="14" width="18" height="2"/><rect x="6" y="19" width="12" height="2"/></svg>
-            </button>
-            <button class="gbtn" data-val="left">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="2"/><rect x="3" y="9" width="14" height="2"/><rect x="3" y="14" width="18" height="2"/><rect x="3" y="19" width="14" height="2"/></svg>
-            </button>
-          </div>
-        </div>
-        <div class="box">
-          <div class="lbl">الحجم</div>
-          <div class="slrow">
-            <input type="range" min="10" max="90" value="26" id="sl-size"
-              oninput="A('size',this.value); document.getElementById('vl-size').textContent=this.value">
-            <span class="slval" id="vl-size">26</span>
-          </div>
-          <div class="lbl">الشفافية</div>
-          <div class="slrow">
-            <input type="range" min="10" max="100" value="100" id="sl-op"
-              oninput="A('opacity',this.value); document.getElementById('vl-op').textContent=this.value+'%'">
-            <span class="slval" id="vl-op">100%</span>
-          </div>
-          <div class="lbl">ظل النص</div>
-          <div class="slrow">
-            <input type="range" min="0" max="25" value="5" id="sl-sh"
-              oninput="A('shadow',this.value); document.getElementById('vl-sh').textContent=this.value">
-            <span class="slval" id="vl-sh">5</span>
-          </div>
-        </div>
-        <div class="box">
-          <div class="lbl">لون النص</div>
-          <div class="cdots" id="cdots-text">
-            <div class="cdot on" style="background:#fff;border:1px solid #ddd" data-color="#ffffff"></div>
-            <div class="cdot" style="background:#111" data-color="#111111"></div>
-            <div class="cdot" style="background:#FFD700" data-color="#FFD700"></div>
-            <div class="cdot" style="background:#c9a227" data-color="#c9a227"></div>
-            <div class="cdot" style="background:#3b82f6" data-color="#3b82f6"></div>
-            <div class="cdot" style="background:#10b981" data-color="#10b981"></div>
-            <div class="cdot" style="background:#ef4444" data-color="#ef4444"></div>
-            <div class="cdot" style="background:#f97316" data-color="#f97316"></div>
-            <div class="cdot" style="background:#8b5cf6" data-color="#8b5cf6"></div>
-            <div class="cdot" style="background:#ec4899" data-color="#ec4899"></div>
-            <input type="color" value="#ffffff" id="custom-color"
-              style="width:21px;height:21px;border-radius:50%;border:none;cursor:pointer;padding:0"
-              oninput="A('color',this.value)">
-          </div>
-        </div>
-        <div class="box">
-          <div class="lbl">نص سريع</div>
-          <textarea class="tinp" id="fmt-quick" rows="2" placeholder="اكتب نصاً وأضفه..."></textarea>
-          <button class="btn btn-black bfull" onclick="addQuick()">+ إضافة للبطاقة</button>
-        </div>
-        <button class="btn btn-red bfull" onclick="delSelected()">🗑 حذف العنصر المحدد</button>
-      </div>
-
-      <!-- PANEL: TEXTS -->
-      <div class="spanel" id="panel-txt">
-        <div class="sec">النصوص</div>
-        <div class="box">
-          <div class="lbl">النص الرئيسي</div>
-          <textarea class="tinp" id="main-txt" rows="3" placeholder="اكتب نصك الرئيسي..."></textarea>
-          <div class="slrow">
-            <span>الحجم</span>
-            <input type="range" min="14" max="70" value="26"
-              oninput="mainSz=+this.value; document.getElementById('vl-ms').textContent=this.value">
-            <span class="slval" id="vl-ms">26</span>
-          </div>
-          <button class="btn btn-black bfull" onclick="addMain()">+ أضف للبطاقة</button>
-        </div>
-        <div class="box">
-          <div class="lbl">النص الفرعي</div>
-          <textarea class="tinp" id="sub-txt" rows="3" placeholder="اكتب نصاً فرعياً..."></textarea>
-          <div class="slrow">
-            <span>الحجم</span>
-            <input type="range" min="10" max="40" value="16"
-              oninput="subSz=+this.value; document.getElementById('vl-ss').textContent=this.value">
-            <span class="slval" id="vl-ss">16</span>
-          </div>
-          <button class="btn btn-gray bfull" onclick="addSub()">+ أضف للبطاقة</button>
-        </div>
-        <div class="box">
-          <div class="lbl">نصوص جاهزة — اضغط لإضافة</div>
-          <div class="rlist" id="rlist"></div>
-        </div>
-      </div>
-
-      <!-- PANEL: CALLIGRAPHY -->
-      <div class="spanel" id="panel-cal">
-        <div class="sec">المخطوطات</div>
-        <div class="cattabs">
-          <button class="catbtn on" data-cat="black" onclick="switchCat(this)">سوداء</button>
-          <button class="catbtn" data-cat="3d" onclick="switchCat(this)">ثلاثية أبعاد</button>
-          <button class="catbtn" data-cat="white" onclick="switchCat(this)">بيضاء</button>
-        </div>
-        <div class="box">
-          <div class="slrow">
-            <span>الحجم</span>
-            <input type="range" min="60" max="380" value="180" id="sl-csz"
-              oninput="document.getElementById('vl-csz').textContent=this.value+'px'">
-            <span class="slval" id="vl-csz">180px</span>
-          </div>
-        </div>
-        <div id="cat-black"><div class="cgrid" id="cg-black"></div><button class="showmore" id="sm-black" onclick="moreCallig('black')">▼ عرض المزيد</button></div>
-        <div id="cat-3d" style="display:none"><div class="cgrid" id="cg-3d"></div><button class="showmore" id="sm-3d" onclick="moreCallig('3d')">▼ عرض المزيد</button></div>
-        <div id="cat-white" style="display:none"><div class="cgrid" id="cg-white"></div><button class="showmore" id="sm-white" onclick="moreCallig('white')">▼ عرض المزيد</button></div>
-      </div>
-
-      <!-- PANEL: PHOTO -->
-      <div class="spanel" id="panel-pho">
-        <div class="sec">الصورة الشخصية</div>
-        <label class="uarea" for="pho-inp">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.582-7 8-7s8 3 8 7"/></svg>
-          <span>اضغط لرفع صورتك الشخصية</span>
-          <small>PNG · JPG · WEBP</small>
-        </label>
-        <input type="file" id="pho-inp" accept="image/*" style="display:none" onchange="uploadPhoto(event)">
-        <div class="box" id="pho-ctrl" style="display:none">
-          <div class="lbl">الحجم</div>
-          <div class="slrow">
-            <input type="range" min="40" max="250" value="100" id="sl-phsz"
-              oninput="resizePhoto(this.value); document.getElementById('vl-phsz').textContent=this.value">
-            <span class="slval" id="vl-phsz">100</span>
-          </div>
-          <div class="lbl">الشكل</div>
-          <div class="bgrp" data-grp="phshape">
-            <button class="gbtn on" data-val="circle">دائري</button>
-            <button class="gbtn" data-val="rounded">مستدير</button>
-            <button class="gbtn" data-val="square">مربع</button>
-          </div>
-          <div class="lbl">إطار</div>
-          <div class="cdots" id="cdots-photo">
-            <div class="cdot on" style="background:#fff;border:1px solid #ddd" data-color="#fff"></div>
-            <div class="cdot" style="background:#FFD700" data-color="#FFD700"></div>
-            <div class="cdot" style="background:#3b82f6" data-color="#3b82f6"></div>
-            <div class="cdot" style="background:#10b981" data-color="#10b981"></div>
-            <div class="cdot" style="background:transparent;border:1px dashed #aaa" data-color="transparent"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PANEL: LOGO -->
-      <div class="spanel" id="panel-lgp">
-        <div class="sec">شعار الشركة / العلامة التجارية</div>
-        <label class="uarea" for="lgp-inp">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/></svg>
-          <span>ارفع شعارك هنا</span>
-          <small>PNG · SVG · JPG</small>
-        </label>
-        <input type="file" id="lgp-inp" accept="image/*" style="display:none" onchange="uploadLogo(event)">
-        <div id="lgp-preview" style="background:#f7f7fa;border-radius:9px;padding:14px;display:flex;align-items:center;justify-content:center;min-height:70px">
-          <span style="font-size:12px;color:#aaa">لم يُرفع شعار بعد</span>
-        </div>
-        <div class="box" id="lgp-ctrl" style="display:none">
-          <div class="lbl">الحجم</div>
-          <div class="slrow">
-            <input type="range" min="30" max="250" value="100" id="sl-lgsz"
-              oninput="resizeLogo(this.value); document.getElementById('vl-lgsz').textContent=this.value+'px'">
-            <span class="slval" id="vl-lgsz">100px</span>
-          </div>
-          <div class="lbl">الموضع</div>
-          <div class="bgrp" data-grp="lgpos">
-            <button class="gbtn" data-val="tr">↗ أعلى يمين</button>
-            <button class="gbtn" data-val="tl">↖ أعلى يسار</button>
-          </div>
-          <div class="bgrp" data-grp="lgpos" style="margin-top:4px">
-            <button class="gbtn" data-val="br">↘ أسفل يمين</button>
-            <button class="gbtn" data-val="bl">↙ أسفل يسار</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- PANEL: BG -->
-      <div class="spanel" id="panel-bg">
-        <div class="sec">الخلفية</div>
-        <label class="uarea" for="bg-inp">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <span>ارفع صورة خاصة كخلفية</span>
-        </label>
-        <input type="file" id="bg-inp" accept="image/*" style="display:none" onchange="uploadBg(event)">
-        <div class="sec" style="margin-top:4px">خلفيات جاهزة</div>
-        <div class="bggrid" id="bggrid"></div>
-      </div>
-
-    </div><!-- /sidebar -->
-  </div>
-</div>
-
-<!-- ══════════════════════════════════
+    <!-- ══════════════════════════════════
      VIEW: READY (جاهز)
 ══════════════════════════════════ -->
-<div id="view-ready" class="alt-view">
-  <div class="alt-container">
-    <div class="alt-box">
-      <div class="alt-box-title">تخصيص البطاقة السريعة</div>
+    <div id="view-ready" class="alt-view">
+      <div class="alt-container">
+        <div class="alt-box">
+          <div class="alt-box-title">تخصيص البطاقة السريعة</div>
 
-      <div class="box" style="margin-bottom:12px">
-        <div class="lbl">اختر الخلفية</div>
-        <div class="bggrid" id="ready-bg-grid"></div>
-      </div>
+          <div class="box" style="margin-bottom: 12px">
+            <div class="lbl">اختر الخلفية</div>
+            <div class="bggrid" id="ready-bg-grid"></div>
+          </div>
 
-      <div class="box" style="margin-bottom:12px">
-        <div class="lbl">الاسم (النص الرئيسي)</div>
-        <input type="text" id="r-main" class="tinp" value="عائلة محمد" oninput="updateReady()">
-        <div class="slrow" style="margin-top:8px">
-          <span>حجم</span>
-          <input type="range" id="r-msize" min="20" max="80" value="48" oninput="updateReady()">
-          <span class="slval" id="vl-rms">48</span>
-        </div>
-        <div class="slrow">
-          <span>موضع</span>
-          <input type="range" id="r-mpos" min="10" max="90" value="40" oninput="updateReady()">
-          <span class="slval" id="vl-rmp">40%</span>
-        </div>
-      </div>
+          <div class="box" style="margin-bottom: 12px">
+            <div class="lbl">الاسم (النص الرئيسي)</div>
+            <input
+              type="text"
+              id="r-main"
+              class="tinp"
+              value="عائلة محمد"
+              oninput="updateReady()"
+            />
+            <div class="slrow" style="margin-top: 8px">
+              <span>حجم</span>
+              <input
+                type="range"
+                id="r-msize"
+                min="20"
+                max="80"
+                value="48"
+                oninput="updateReady()"
+              />
+              <span class="slval" id="vl-rms">48</span>
+            </div>
+            <div class="slrow">
+              <span>موضع</span>
+              <input
+                type="range"
+                id="r-mpos"
+                min="10"
+                max="90"
+                value="40"
+                oninput="updateReady()"
+              />
+              <span class="slval" id="vl-rmp">40%</span>
+            </div>
+          </div>
 
-      <div class="box" style="margin-bottom:12px">
-        <div class="lbl">المرسل (النص الفرعي)</div>
-        <input type="text" id="r-sub" class="tinp" value="محبكم أحمد" oninput="updateReady()">
-        <div class="slrow" style="margin-top:8px">
-          <span>حجم</span>
-          <input type="range" id="r-ssize" min="14" max="50" value="24" oninput="updateReady()">
-          <span class="slval" id="vl-rss">24</span>
-        </div>
-        <div class="slrow">
-          <span>موضع</span>
-          <input type="range" id="r-spos" min="10" max="90" value="78" oninput="updateReady()">
-          <span class="slval" id="vl-rsp">78%</span>
-        </div>
-      </div>
+          <div class="box" style="margin-bottom: 12px">
+            <div class="lbl">المرسل (النص الفرعي)</div>
+            <input
+              type="text"
+              id="r-sub"
+              class="tinp"
+              value="محبكم أحمد"
+              oninput="updateReady()"
+            />
+            <div class="slrow" style="margin-top: 8px">
+              <span>حجم</span>
+              <input
+                type="range"
+                id="r-ssize"
+                min="14"
+                max="50"
+                value="24"
+                oninput="updateReady()"
+              />
+              <span class="slval" id="vl-rss">24</span>
+            </div>
+            <div class="slrow">
+              <span>موضع</span>
+              <input
+                type="range"
+                id="r-spos"
+                min="10"
+                max="90"
+                value="78"
+                oninput="updateReady()"
+              />
+              <span class="slval" id="vl-rsp">78%</span>
+            </div>
+          </div>
 
-      <div class="box">
-        <div class="lbl">الخط واللون</div>
-        <div style="display:flex;gap:10px;align-items:center;margin-top:5px">
-          <select class="sinp" id="r-font" onchange="updateReady()" style="flex:1">
-            <option value="Tajawal">Tajawal</option>
-            <option value="Cairo">Cairo</option>
-            <option value="Amiri">Amiri</option>
-          </select>
-          <input type="color" id="r-color" value="#ffffff" oninput="updateReady()"
-            style="width:34px;height:34px;border-radius:7px;border:1px solid #e0e0e0;cursor:pointer;padding:2px">
+          <div class="box">
+            <div class="lbl">الخط واللون</div>
+            <div
+              style="
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                margin-top: 5px;
+              "
+            >
+              <select
+                class="sinp"
+                id="r-font"
+                onchange="updateReady()"
+                style="flex: 1"
+              >
+                <option value="Tajawal">Tajawal</option>
+                <option value="Cairo">Cairo</option>
+                <option value="Amiri">Amiri</option>
+              </select>
+              <input
+                type="color"
+                id="r-color"
+                value="#ffffff"
+                oninput="updateReady()"
+                style="
+                  width: 34px;
+                  height: 34px;
+                  border-radius: 7px;
+                  border: 1px solid #e0e0e0;
+                  cursor: pointer;
+                  padding: 2px;
+                "
+              />
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="alt-box"
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+          "
+        >
+          <div class="alt-box-title" style="width: 100%">المعاينة المباشرة</div>
+          <div
+            id="ready-canvas"
+            class="preview-window"
+            style="background-image: url(&quot;images/10.png&quot;)"
+          >
+            <div
+              id="r-text-main"
+              class="preview-text"
+              style="
+                top: 40%;
+                font-size: 48px;
+                color: #ffffff;
+                font-family: Tajawal;
+              "
+            >
+              عائلة محمد
+            </div>
+            <div
+              id="r-text-sub"
+              class="preview-text"
+              style="
+                top: 78%;
+                font-size: 24px;
+                color: #ffffff;
+                font-family: Tajawal;
+              "
+            >
+              محبكم أحمد
+            </div>
+          </div>
+          <button
+            class="btn btn-green bfull"
+            style="padding: 13px; font-size: 15px"
+            onclick="dlReady()"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+              <polyline points="7,10 12,15 17,10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            تحميل البطاقة
+          </button>
+          <button class="btn btn-gray bfull" onclick="shareReadyWA()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.144.566 4.148 1.554 5.887L0 24l6.305-1.539A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.96 0-3.793-.518-5.375-1.42L2.2 21.8l1.24-4.308A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"
+              />
+            </svg>
+            مشاركة عبر واتساب
+          </button>
         </div>
       </div>
     </div>
 
-    <div class="alt-box" style="display:flex;flex-direction:column;align-items:center;gap:16px">
-      <div class="alt-box-title" style="width:100%">المعاينة المباشرة</div>
-      <div id="ready-canvas" class="preview-window"
-        style="background-image:url('images/10.png')">
-        <div id="r-text-main" class="preview-text" style="top:40%;font-size:48px;color:#ffffff;font-family:Tajawal">عائلة محمد</div>
-        <div id="r-text-sub"  class="preview-text" style="top:78%;font-size:24px;color:#ffffff;font-family:Tajawal">محبكم أحمد</div>
-      </div>
-      <button class="btn btn-green bfull" style="padding:13px;font-size:15px" onclick="dlReady()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        تحميل البطاقة
-      </button>
-      <button class="btn btn-gray bfull" onclick="shareReadyWA()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.144.566 4.148 1.554 5.887L0 24l6.305-1.539A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.96 0-3.793-.518-5.375-1.42L2.2 21.8l1.24-4.308A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-        مشاركة عبر واتساب
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════
+    <!-- ══════════════════════════════════
      VIEW: GROUP (جماعي)
 ══════════════════════════════════ -->
-<div id="view-group" class="alt-view">
-  <div class="alt-container">
-    <div class="alt-box">
-      <div class="alt-box-title">نظام التهنئة الجماعية</div>
+    <div id="view-group" class="alt-view">
+      <div class="alt-container">
+        <div class="alt-box">
+          <div class="alt-box-title">نظام التهنئة الجماعية</div>
 
-      <div class="box" style="margin-bottom:12px">
-        <div class="lbl">اختر الخلفية</div>
-        <div class="bggrid" id="batch-bg-grid"></div>
-      </div>
+          <div class="box" style="margin-bottom: 12px">
+            <div class="lbl">اختر الخلفية</div>
+            <div class="bggrid" id="batch-bg-grid"></div>
+          </div>
 
-      <div class="box" style="margin-bottom:12px">
-        <div class="lbl">قائمة الأسماء (اسم في كل سطر)</div>
-        <textarea id="b-names" class="tinp" rows="7"
-          placeholder="محمد علي&#10;عائلة السعيد&#10;أحمد خالد&#10;سارة محمود"
-          oninput="updateBatch()"></textarea>
-        <div style="font-size:11px;color:#aaa;text-align:right" id="b-count">0 أسماء</div>
-      </div>
+          <div class="box" style="margin-bottom: 12px">
+            <div class="lbl">قائمة الأسماء (اسم في كل سطر)</div>
+            <textarea
+              id="b-names"
+              class="tinp"
+              rows="7"
+              placeholder="محمد علي&#10;عائلة السعيد&#10;أحمد خالد&#10;سارة محمود"
+              oninput="updateBatch()"
+            ></textarea>
+            <div
+              style="font-size: 11px; color: #aaa; text-align: right"
+              id="b-count"
+            >
+              0 أسماء
+            </div>
+          </div>
 
-      <div class="box">
-        <div class="lbl">تنسيق الأسماء</div>
-        <div class="slrow" style="margin-top:5px">
-          <span>حجم</span>
-          <input type="range" id="b-size" min="20" max="80" value="44" oninput="updateBatch()">
-          <span class="slval" id="vl-bs">44</span>
+          <div class="box">
+            <div class="lbl">تنسيق الأسماء</div>
+            <div class="slrow" style="margin-top: 5px">
+              <span>حجم</span>
+              <input
+                type="range"
+                id="b-size"
+                min="20"
+                max="80"
+                value="44"
+                oninput="updateBatch()"
+              />
+              <span class="slval" id="vl-bs">44</span>
+            </div>
+            <div class="slrow">
+              <span>موضع</span>
+              <input
+                type="range"
+                id="b-pos"
+                min="10"
+                max="90"
+                value="50"
+                oninput="updateBatch()"
+              />
+              <span class="slval" id="vl-bp">50%</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                margin-top: 8px;
+              "
+            >
+              <select
+                class="sinp"
+                id="b-font"
+                onchange="updateBatch()"
+                style="flex: 1"
+              >
+                <option value="Tajawal">Tajawal</option>
+                <option value="Cairo">Cairo</option>
+                <option value="Amiri">Amiri</option>
+              </select>
+              <input
+                type="color"
+                id="b-color"
+                value="#FFD700"
+                oninput="updateBatch()"
+                style="
+                  width: 34px;
+                  height: 34px;
+                  border-radius: 7px;
+                  border: 1px solid #e0e0e0;
+                  cursor: pointer;
+                  padding: 2px;
+                "
+              />
+            </div>
+          </div>
         </div>
-        <div class="slrow">
-          <span>موضع</span>
-          <input type="range" id="b-pos" min="10" max="90" value="50" oninput="updateBatch()">
-          <span class="slval" id="vl-bp">50%</span>
-        </div>
-        <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
-          <select class="sinp" id="b-font" onchange="updateBatch()" style="flex:1">
-            <option value="Tajawal">Tajawal</option>
-            <option value="Cairo">Cairo</option>
-            <option value="Amiri">Amiri</option>
-          </select>
-          <input type="color" id="b-color" value="#FFD700" oninput="updateBatch()"
-            style="width:34px;height:34px;border-radius:7px;border:1px solid #e0e0e0;cursor:pointer;padding:2px">
+
+        <div
+          class="alt-box"
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+          "
+        >
+          <div class="alt-box-title" style="width: 100%">معاينة + تحميل</div>
+          <div
+            id="batch-canvas"
+            class="preview-window"
+            style="background-image: url(&quot;images/1.png&quot;)"
+          >
+            <div
+              id="b-text-name"
+              class="preview-text"
+              style="
+                top: 50%;
+                font-size: 44px;
+                color: #ffd700;
+                font-family: Tajawal;
+              "
+            >
+              الاسم يظهر هنا
+            </div>
+          </div>
+          <button
+            class="btn btn-black bfull"
+            style="padding: 13px; font-size: 15px"
+            id="btn-batch"
+            onclick="dlBatchZip()"
+          >
+            📦 إنشاء وتحميل ملف ZIP
+          </button>
+          <p style="font-size: 11px; color: #888; text-align: center">
+            سيتم إنشاء بطاقة منفصلة لكل اسم
+          </p>
         </div>
       </div>
     </div>
 
-    <div class="alt-box" style="display:flex;flex-direction:column;align-items:center;gap:16px">
-      <div class="alt-box-title" style="width:100%">معاينة + تحميل</div>
-      <div id="batch-canvas" class="preview-window"
-        style="background-image:url('images/1.png')">
-        <div id="b-text-name" class="preview-text" style="top:50%;font-size:44px;color:#FFD700;font-family:Tajawal">الاسم يظهر هنا</div>
-      </div>
-      <button class="btn btn-black bfull" style="padding:13px;font-size:15px" id="btn-batch" onclick="dlBatchZip()">
-        📦 إنشاء وتحميل ملف ZIP
-      </button>
-      <p style="font-size:11px;color:#888;text-align:center">سيتم إنشاء بطاقة منفصلة لكل اسم</p>
-    </div>
-  </div>
-</div>
+    <div id="notif"></div>
 
-<div id="notif"></div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-<script src="js/editor.js"></script>
-</body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="js/editor.js"></script>
+  </body>
 </html>
