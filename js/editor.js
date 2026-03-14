@@ -108,12 +108,20 @@ const CV = document.getElementById('canvas');
 // ══════════════════════════
 function switchMode(mode) {
   ['ready','design','group'].forEach(m => {
-    document.getElementById('btn-' + m).classList.toggle('active', m === mode);
+    // 1. حماية لزرار تبديل المود
+    const btn = document.getElementById('btn-' + m);
+    if (btn) btn.classList.toggle('active', m === mode);
+    
+    // 2. حماية لعرض القسم (view)
     const v = document.getElementById('view-' + m);
     if (v) v.style.display = m === mode ? (m === 'design' ? 'flex' : 'block') : 'none';
   });
-  if (mode === 'design') document.getElementById('filterbar').style.display = 'flex';
-  else document.getElementById('filterbar').style.display = 'none';
+
+  // 3. حماية لشريط الفلاتر (filterbar) - وده اللي كان عامل المشكلة الأكبر
+  const filterbar = document.getElementById('filterbar');
+  if (filterbar) {
+    filterbar.style.display = mode === 'design' ? 'flex' : 'none';
+  }
 
   if (mode !== 'design') {
     fillAltBgs();
