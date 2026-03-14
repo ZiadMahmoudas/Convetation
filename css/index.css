@@ -1,0 +1,122 @@
+html {
+    scroll-behavior: smooth;
+}
+body {
+    font-family: "Tajawal", sans-serif;
+    scroll-behavior: smooth;
+}
+.logo {
+  width: 150px;
+}
+
+.logo img {
+  width: 100%;
+  height: auto;
+}
+/* أنيميشن النقطة الخضراء في الهيرو */
+@keyframes pulse-custom {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+}
+.animate-pulse-custom {
+    animation: pulse-custom 2s ease infinite normal none running;
+}
+
+/* الشريط الإخباري المتحرك */
+@keyframes scroll-ticker {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(50%);
+    }
+}
+.ticker-container {
+    display: flex;
+    width: max-content;
+    animation: scroll-ticker 40s linear infinite;
+}
+.ticker-container:hover {
+    animation-play-state: paused;
+}
+.ticker-item {
+    display: flex;
+    align-items: center;
+    padding-left: 32px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.ticker-item-separator {
+    margin-right: 32px;
+    color: rgba(255, 215, 0, 0.6);
+    font-size: 18px;
+    user-select: none;
+}
+@media (max-width: 768px) {
+    .ticker-item {
+        padding-left: 20px;
+        font-size: 14px;
+    }
+    .ticker-item-separator {
+        margin-right: 20px;
+        font-size: 14px;
+    }
+    .ticker-container {
+        animation-duration: 25s;
+    }
+    .slider-arrow {
+        display: none !important;
+    }
+}
+
+/* إخفاء السكرول بار للقوائم الأفقية */
+.hide-scrollbar::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.hide-scrollbar,
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* تأثيرات كروت المناسبات */
+.occasion-card-link:hover {
+    transform: scale(1.05);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+    border-color: #e5e5e5;
+}
+.occasion-card-link:hover .icon-container {
+    transform: translateY(-8px);
+}
+.occasion-card-link:hover .browse-btn {
+    background: #171717;
+    color: #fff;
+}
+.slider-arrow:hover {
+    background: #171717 !important;
+    border-color: #171717 !important;
+}
+.slider-arrow:hover svg {
+    color: #fff !important;
+}
+
+/* إعدادات الناف بار الزجاجي */
+.glass-nav {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
