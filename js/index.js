@@ -1,93 +1,71 @@
-        // 4. نظام السلايدر (أزرار وسحب بالماوس)
-const slider = document.getElementById('occasions-slider');
-const slideLeftBtn = document.getElementById('slide-left');
-const slideRightBtn = document.getElementById('slide-right');
-
-if (slider && slideRightBtn && slideLeftBtn) {
-    const scrollAmount = 324; // عرض الكارت + المسافة
-
-    // التحكم بالأزرار (عشان الموقع RTL، الاتجاهات معكوسة برمجياً)
-    slideRightBtn.addEventListener('click', () => {
-        slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    });
-
-    slideLeftBtn.addEventListener('click', () => {
-        slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    });
-
-    // التحكم بالسحب (Drag to scroll) للكمبيوتر
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-
-    slider.addEventListener('mousedown', (e) => {
-        isDown = true;
-        slider.style.cursor = 'grabbing';
-        startX = e.pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
-        // إيقاف الـ snap مؤقتاً أثناء السحب لسهولة الحركة
-        slider.style.scrollSnapType = 'none'; 
-    });
-
-    slider.addEventListener('mouseleave', () => {
-        isDown = false;
-        slider.style.cursor = 'grab';
-        slider.style.scrollSnapType = 'x mandatory';
-    });
-
-    slider.addEventListener('mouseup', () => {
-        isDown = false;
-        slider.style.cursor = 'grab';
-        slider.style.scrollSnapType = 'x mandatory';
-    });
-
-    slider.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - slider.offsetLeft;
-        const walk = (x - startX) * 2; // سرعة السحب
-        slider.scrollLeft = scrollLeft - walk;
-    });
+/* ── Ornament Canvas (Islamic geometric) ── */
+const canvas = document.getElementById('ornaCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
 }
-        // 1. التحكم في القائمة الجانبية للموبايل
-        const btn = document.getElementById('mobile-menu-btn');
-        const menu = document.getElementById('mobile-menu');
+resize();
+window.addEventListener('resize', resize);
 
-        // btn.addEventListener('click', () => {
-        //     menu.classList.toggle('hidden');
-        // });
+function drawStar(cx, cy, r, points, color, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = .5;
+  const outer = r, inner = r * .42;
+  ctx.beginPath();
+  for (let i = 0; i < points * 2; i++) {
+    const angle = (i * Math.PI) / points - Math.PI / 2;
+    const rad = i % 2 === 0 ? outer : inner;
+    const x = cx + rad * Math.cos(angle);
+    const y = cy + rad * Math.sin(angle);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+  ctx.restore();
+}
 
-        // 2. إضافة تأثير Blur للناف بار عند النزول
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if (window.scrollY > 20) {
-                nav.classList.add('shadow-sm');
-            } else {
-                nav.classList.remove('shadow-sm');
-            }
-        });
+function drawOrnaments() {
+  ctx.clearRect(0, 0, W, H);
+  const spacing = 140;
+  for (let x = spacing / 2; x < W; x += spacing) {
+    for (let y = spacing / 2; y < H; y += spacing) {
+      drawStar(x, y, 22, 8, '#D4A843', .18);
+      drawStar(x, y, 10, 6, '#D4A843', .1);
+    }
+  }
+}
 
-        // 3. نظام الأسئلة الشائعة (FAQ Accordion)
-        document.querySelectorAll('.faq-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const answer = item.querySelector('.faq-answer');
-                const icon = item.querySelector('.faq-icon');
-                
-                // لو هو مفتوح، اقفله
-                if (!answer.classList.contains('hidden')) {
-                    answer.classList.add('hidden');
-                    icon.style.transform = 'rotate(0deg)';
-                } else {
-                    // اقفل كل الباقيين الأول
-                    document.querySelectorAll('.faq-answer').forEach(ans => ans.classList.add('hidden'));
-                    document.querySelectorAll('.faq-icon').forEach(ic => ic.style.transform = 'rotate(0deg)');
-                    
-                    // افتح اللي ضغطت عليه
-                    answer.classList.remove('hidden');
-                    icon.style.transform = 'rotate(180deg)';
-                }
-            });
-        });
+drawOrnaments();
+window.addEventListener('resize', drawOrnaments);
+
+/* ── Nav hamburger ── */
+document.getElementById('hamBtn').addEventListener('click', () => {
+  document.getElementById('mob').classList.toggle('show');
+});
+document.querySelectorAll('#mob a').forEach(a => a.addEventListener('click', () => {
+  document.getElementById('mob').classList.remove('show');
+}));
+
+/* ── Scroll reveal ── */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+}, { threshold: .08 });
+document.querySelectorAll('.ai').forEach(el => io.observe(el));
+
+/* ── Trigger hero items (already in view) ── */
+document.querySelectorAll('#hero .ai').forEach(el => {
+  setTimeout(() => el.classList.add('vis'), 80);
+});
+
+/* ── Navbar scroll effect ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').style.background =
+    window.scrollY > 30 ? 'rgba(13,17,23,.97)' : 'rgba(13,17,23,.85)';
+});
 
 (function() {
     'use strict';
