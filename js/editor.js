@@ -112,11 +112,33 @@ const CV = document.getElementById('canvas');
   addText("عيد مبارك", 38, "#FFD700", 90, 50);
   addText("كل عام وأنتم بخير", 20, "#ffffff", 70, 115);
 
+// ══════════════════════════
+  // ذكاء التحديد (تجاهل السكرول)
+  // ══════════════════════════
+  let isScrolling = false;
+
+  // لو المستخدم بيعمل سكرول، بنسجل ده عشان منلغيش التحديد
+  window.addEventListener('scroll', () => { isScrolling = true; }, { passive: true });
+  document.getElementById('canvas-area').addEventListener('scroll', () => { isScrolling = true; }, { passive: true });
+  document.getElementById('sidebar').addEventListener('scroll', () => { isScrolling = true; }, { passive: true });
+
+  // تصفير حالة السكرول لما يشيل صباعه
+  document.addEventListener('touchend', () => {
+      setTimeout(() => { isScrolling = false; }, 100);
+  });
+
   document.addEventListener('mousedown', e => {
     if (!e.target.closest('.el') && !e.target.closest('#sidebar')) deselect();
   });
+
   document.addEventListener('touchstart', e => {
-    if (!e.target.closest('.el') && !e.target.closest('#sidebar')) deselect();
+    // لو بيعمل سكرول حالياً، متلغيش التحديد!
+    if (isScrolling) return; 
+    
+    // لو داس بره العنصر والسايدبار، وبدون سكرول، سعتها بس نلغي التحديد
+    if (!e.target.closest('.el') && !e.target.closest('#sidebar')) {
+        deselect();
+    }
   }, { passive:true });
 
   document.addEventListener('click', onGrpClick);
