@@ -577,10 +577,36 @@ async function shareNative() {
   });
 }
 async function shareWA() {
-  window.open(`https://wa.me/?text=${encodeURIComponent('كل عام وأنتم بخير 🌙✨')}`, '_blank');
-  await dlPNG();
-}
+  showNotif("⏳ جاري تجهيز البطاقة للواتساب...");
+  try {
+    deselect(); // إلغاء تحديد أي عنصر عشان الحدود متظهرش في الصورة
+    await new Promise(r => setTimeout(r, 150)); // انتظار بسيط
+    
+    const canvas = await html2canvas(CV, { useCORS: true, scale: 2, allowTaint: true, backgroundColor: null });
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    const file = new File([blob], "sallim-design.png", { type: "image/png" });
 
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file]
+        });
+        showNotif("تم فتح الواتساب بنجاح ✓");
+      } catch (err) {
+        console.log("إلغاء المشاركة:", err);
+      }
+    } else {
+      showNotif("جاري التحميل... متصفحك لا يدعم المشاركة المباشرة");
+      saveAs(blob, "sallim-design.png");
+      setTimeout(() => {
+        window.open("https://wa.me/?text=" + encodeURIComponent("صممت هذه البطاقة عبر منصة سَلِّم ✨"), "_blank");
+      }, 500);
+    }
+  } catch (error) {
+    console.error("خطأ:", error);
+    showNotif("حدث خطأ أثناء التجهيز.");
+  }
+}
 // ══════════════════════════
 // ALT BACKGROUNDS (Ready/Group)
 // ══════════════════════════
@@ -651,43 +677,41 @@ async function dlReady() {
 }
 // دالة المشاركة للوضع الجاهز (Ready Mode)
 async function shareReadyWA() {
-  const canvasElement = document.getElementById('ready-canvas'); // الديف اللي فيه التصميم
+  const canvasElement = document.getElementById('ready-canvas'); 
   
-  // إظهار إشعار للمستخدم عشان ينتظر ثانية
-  showNotif("جاري تجهيز البطاقة للمشاركة...");
+  showNotif("⏳ جاري تجهيز الصورة للواتساب...");
 
   try {
     // 1. تحويل الـ HTML لـ Canvas
     const canvas = await html2canvas(canvasElement, { useCORS: true, scale: 2 });
     
-    // 2. تحويل الـ Canvas لـ Blob (ملف صورة حقيقي)
-    canvas.toBlob(async (blob) => {
-      const file = new File([blob], "greeting-card.png", { type: "image/png" });
+    // 2. تحويل الـ Canvas لـ Blob بطريقة الـ Promise السريعة
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    const file = new File([blob], "sallim-card.png", { type: "image/png" });
 
-      // 3. التحقق هل المتصفح بيدعم مشاركة الملفات (Web Share API)
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({
-            title: 'بطاقة تهنئة',
-            text: 'كل عام وأنتم بخير! صممت هذه البطاقة عبر منصة سَلِّم ✨',
-            files: [file]
-          });
-          showNotif("تم فتح المشاركة بنجاح!");
-        } catch (err) {
-          console.log("المستخدم ألغى المشاركة أو حدث خطأ:", err);
-        }
-      } else {
-        // Fallback: لو المتصفح قديم أو مش بيدعم (زي بعض متصفحات الكمبيوتر)
-        // هنحمل الصورة ونفتح الواتساب عشان يبعتها بنفسه
-        alert("متصفحك لا يدعم المشاركة المباشرة للصور. سيتم تحميل البطاقة لتتمكن من إرسالها.");
-        saveAs(blob, "greeting-card.png"); // من مكتبة FileSaver اللي أنت ضايفها
-        window.open("https://wa.me/?text=كل عام وأنتم بخير! صممت هذه البطاقة عبر منصة سَلِّم", "_blank");
+    // 3. التحقق والمشاركة
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          // شيلنا الـ text من هنا عشان واتساب ميحذفش الصورة
+          files: [file] 
+        });
+        showNotif("تم فتح الواتساب بنجاح ✓");
+      } catch (err) {
+        console.log("إلغاء المشاركة أو خطأ:", err);
       }
-    }, "image/png");
+    } else {
+      // لو المتصفح مش بيدعم
+      showNotif("جاري التحميل... متصفحك لا يدعم المشاركة المباشرة");
+      saveAs(blob, "sallim-card.png"); 
+      setTimeout(() => {
+        window.open("https://wa.me/?text=" + encodeURIComponent("صممت هذه البطاقة عبر منصة سَلِّم ✨"), "_blank");
+      }, 500);
+    }
 
   } catch (error) {
-    console.error("خطأ أثناء تحويل الصورة:", error);
-    showNotif("حدث خطأ أثناء تجهيز الصورة.");
+    console.error("خطأ:", error);
+    showNotif("حدث خطأ أثناء التجهيز.");
   }
 }
 
