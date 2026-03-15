@@ -2,58 +2,17 @@
 // DATA
 // ══════════════════════════
 const CAL_NAMED = {
-  black: [
-    "E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9", "E10", 
-    "E11", "E12", "E13", "E14", "E15", "E16", "E17", "E18", "E19", "E20", 
-    "E21", "E22", "E23", "E24", "E25", "E26", "E27", "E28", "E29", "E30", 
-    "E31", "E32", "E33", "E34", "E35", "E36", "E37", "E38", "E39", "E40",
-    "E41", "E42", "E43", "E44", "E45", "E46", "E47", "E48", "E49", "E50",
-    "E51", "E52", "E53", "E54", "E55", "E56", "E57", "E58", "E59", "E60",
-    "E61", "E62", "E63", "E64", "E65", "E66", "E67", "E68", "E69", "E70",
-    "E71", "E72", "E73", "E74", "E75", "E76", "E77", "E78", "E79", "E80",
-    "E81", "E82", "E83", "E84", "E85", "E86", "E87", "E88", "E89", "E90",
-    "E91", "E92", "E93", "E94", "E95", "E96", "E97", "E98", "E99", "E100",
-    "E101", "E102", "E103", "E104", "E105", "E106", "E107", "E108", "E109", "E110"
-  ],
-  '3d': [
-    "E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9", "E10", 
-    "E11", "E12", "E13", "E14", "E15", "E16", "E17", "E18", "E19", "E20", 
-    "E21", "E22", "E23", "E24", "E25", "E26", "E27", "E28", "E29", "E30", 
-    "E31", "E32", "E33", "E34", "E35", "E36", "E37", "E38", "E39", "E40",
-    "E41", "E42", "E43", "E44", "E45", "E46", "E47", "E48", "E49", "E50",
-    "E51", "E52", "E53", "E54", "E55", "E56", "E57", "E58", "E59", "E60",
-    "E61", "E62", "E63", "E64", "E65", "E66", "E67", "E68", "E69", "E70",
-    "E71", "E72", "E73", "E74", "E75", "E76", "E77", "E78", "E79", "E80",
-    "E81", "E82", "E83", "E84", "E85", "E86", "E87", "E88", "E89", "E90",
-    "E91", "E92", "E93", "E94", "E95", "E96", "E97", "E98", "E99", "E100",
-    "E101", "E102", "E103", "E104", "E105", "E106", "E107", "E108", "E109", "E110"
-  ],
-  white: [
-    "E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9", "E10", 
-    "E11", "E12", "E13", "E14", "E15", "E16", "E17", "E18", "E19", "E20", 
-    "E21", "E22", "E23", "E24", "E25", "E26", "E27", "E28", "E29", "E30", 
-    "E31", "E32", "E33", "E34", "E35", "E36", "E37", "E38", "E39", "E40",
-    "E41", "E42", "E43", "E44", "E45", "E46", "E47", "E48", "E49", "E50",
-    "E51", "E52", "E53", "E54", "E55", "E56", "E57", "E58", "E59", "E60",
-    "E61", "E62", "E63", "E64", "E65", "E66", "E67", "E68", "E69", "E70",
-    "E71", "E72", "E73", "E74", "E75", "E76", "E77", "E78", "E79", "E80",
-    "E81", "E82", "E83", "E84", "E85", "E86", "E87", "E88", "E89", "E90",
-    "E91", "E92", "E93", "E94", "E95", "E96", "E97", "E98", "E99", "E100",
-    "E101", "E102", "E103", "E104", "E105", "E106", "E107", "E108", "E109", "E110"
-  ]
+  black: Array.from({length:110}, (_,i)=>`E${i+1}`),
+  '3d':  Array.from({length:110}, (_,i)=>`E${i+1}`),
+  white: Array.from({length:110}, (_,i)=>`E${i+1}`)
 };
 
 const CAL_LIMIT = 30;
 const calShown = { black: CAL_LIMIT, '3d': CAL_LIMIT, white: CAL_LIMIT };
 const CAL = {
-  black: [...CAL_NAMED.black, ...Array.from({length:200},(_,i)=>`Asset ${i+1}`)],
-  '3d':  [...CAL_NAMED['3d'], ...Array.from({length:50}, (_,i)=>`Asset ${i+1}`)],
-  white: [...CAL_NAMED.white, ...Array.from({length:80}, (_,i)=>`Asset ${i+1}`)]
-};
-const CAL_COUNT = {
-  black: 37, 
-  '3d': 37, 
-  white: 37
+  black: CAL_NAMED.black,
+  '3d':  CAL_NAMED['3d'],
+  white: CAL_NAMED.white
 };
 const READY_TEXTS = {
   all: ["كل عام وأنتم بخير 💛","عيد مبارك وكل عام وأنتم بأفضل حال",
@@ -71,25 +30,12 @@ const READY_TEXTS = {
 };
 
 const BG_ITEMS = [
-  { src:"images/3.png" },
-  { src:"images/5.png" },
-  { src:"images/6.png" },
-  { src:"images/7.png" },
-  { src:"images/8.png" },
-  { src:"images/9.png" },
-  { src:"images/10.png" },
-  { src:"images/11.png" },
-  { src:"images/13.png" },
-  { src:"images/14.png" },
-  { src:"images/15.png" },
-  { src:"images/16.png" },
-  { src:"images/14.png" },
-  { src:"images/Artboard12.png" },
-  { src:"images/1.png" },
-  { src:"images/2.png" },
-  { src:"images/21.png" },
-  { src:"images/20.png" },
-  { src:"images/19.png" },
+  { src:"images/3.png" }, { src:"images/5.png" }, { src:"images/6.png" },
+  { src:"images/7.png" }, { src:"images/8.png" }, { src:"images/9.png" },
+  { src:"images/10.png" }, { src:"images/11.png" }, { src:"images/13.png" },
+  { src:"images/14.png" }, { src:"images/15.png" }, { src:"images/16.png" },
+  { src:"images/Artboard12.png" }, { src:"images/1.png" }, { src:"images/2.png" },
+  { src:"images/21.png" }, { src:"images/20.png" }, { src:"images/19.png" },
 ];
 
 // ══════════════════════════
@@ -98,10 +44,9 @@ const BG_ITEMS = [
 let selEl = null, photoEl = null, logoEl = null;
 let mainSz = 26, subSz = 16, eid = 0;
 const CV = document.getElementById('canvas');
+let isScrolling = false;
 
-// ══════════════════════════
-// BOOT
-// ══════════════════════════
+
 (function init() {
   buildBgGrid();
   buildCalGrid('black');
@@ -112,38 +57,13 @@ const CV = document.getElementById('canvas');
   addText("عيد مبارك", 38, "#FFD700", 90, 50);
   addText("كل عام وأنتم بخير", 20, "#ffffff", 70, 115);
 
-// ══════════════════════════
-  // ذكاء التحديد (تجاهل السكرول)
-  // ══════════════════════════
-  let isScrolling = false;
-
-  // لو المستخدم بيعمل سكرول، بنسجل ده عشان منلغيش التحديد
-  window.addEventListener('scroll', () => { isScrolling = true; }, { passive: true });
-  document.getElementById('canvas-area').addEventListener('scroll', () => { isScrolling = true; }, { passive: true });
-  document.getElementById('sidebar').addEventListener('scroll', () => { isScrolling = true; }, { passive: true });
-
-  // تصفير حالة السكرول لما يشيل صباعه
-  document.addEventListener('touchend', () => {
-      setTimeout(() => { isScrolling = false; }, 100);
-  });
-
-  document.addEventListener('mousedown', e => {
-    if (!e.target.closest('.el') && !e.target.closest('#sidebar')) deselect();
-  });
-
-  document.addEventListener('touchstart', e => {
-    // لو بيعمل سكرول حالياً، متلغيش التحديد!
-    if (isScrolling) return; 
-    
-    // لو داس بره العنصر والسايدبار، وبدون سكرول، سعتها بس نلغي التحديد
-    if (!e.target.closest('.el') && !e.target.closest('#sidebar')) {
-        deselect();
-    }
-  }, { passive:true });
+  // 🔴 مسحنا كل أكواد الإفلات (deselect) من هنا!
+  // دلوقتي العنصر هيفضل ممسوك مهما سحبت أو عملت سكرول في الشاشة
+  // ولن يتم إفلاته إلا لو ضغطت على عنصر آخر، أو ضغطت زر التحميل.
 
   document.addEventListener('click', onGrpClick);
-  document.getElementById('cdots-text').addEventListener('click', onTextDot);
-  document.getElementById('cdots-photo').addEventListener('click', onPhotoDot);
+  document.getElementById('cdots-text')?.addEventListener('click', onTextDot);
+  document.getElementById('cdots-photo')?.addEventListener('click', onPhotoDot);
 })();
 
 // ══════════════════════════
@@ -151,29 +71,18 @@ const CV = document.getElementById('canvas');
 // ══════════════════════════
 function switchMode(mode) {
   ['ready','design','group'].forEach(m => {
-    // 1. حماية لزرار تبديل المود
     const btn = document.getElementById('btn-' + m);
     if (btn) btn.classList.toggle('active', m === mode);
-    
-    // 2. حماية لعرض القسم (view)
     const v = document.getElementById('view-' + m);
     if (v) v.style.display = m === mode ? (m === 'design' ? 'flex' : 'block') : 'none';
   });
 
-  // 3. حماية لشريط الفلاتر (filterbar) - وده اللي كان عامل المشكلة الأكبر
   const filterbar = document.getElementById('filterbar');
-  if (filterbar) {
-    filterbar.style.display = mode === 'design' ? 'flex' : 'none';
-  }
+  if (filterbar) filterbar.style.display = mode === 'design' ? 'flex' : 'none';
 
-  if (mode !== 'design') {
-    fillAltBgs();
-  }
+  if (mode !== 'design') fillAltBgs();
 }
 
-// ══════════════════════════
-// FILTER
-// ══════════════════════════
 function setFilter(btn) {
   document.querySelectorAll('.fpill').forEach(p => p.classList.remove('on'));
   btn.classList.add('on');
@@ -187,17 +96,14 @@ function buildReady(key) {
 function readyClick(el) {
   addText(el.textContent, 22, '#FFD700', 30, 60);
   notify('تمت الإضافة ✓');
-  openTab('fmt');
 }
 
-// ══════════════════════════
-// TABS
-// ══════════════════════════
 function switchTab(btn) {
   document.querySelectorAll('.stab').forEach(b => b.classList.remove('on'));
   document.querySelectorAll('.spanel').forEach(p => p.classList.remove('on'));
   btn.classList.add('on');
-  document.getElementById('panel-' + btn.dataset.tab).classList.add('on');
+  const panel = document.getElementById('panel-' + btn.dataset.tab);
+  if(panel) panel.classList.add('on');
 }
 function openTab(id) {
   document.querySelectorAll('.stab').forEach(b => b.classList.toggle('on', b.dataset.tab === id));
@@ -221,9 +127,6 @@ function onGrpClick(e) {
   else if (g === 'lgpos') setLogoPos(val);
 }
 
-// ══════════════════════════
-// COLOR DOTS
-// ══════════════════════════
 function onTextDot(e) {
   const dot = e.target.closest('.cdot');
   if (!dot) return;
@@ -259,8 +162,10 @@ function A(prop, val) {
     case 'size':
       if (txt) txt.style.fontSize = val + 'px';
       else if (img) { img.style.width = (val*4)+'px'; img.style.maxWidth = (val*4)+'px'; }
-      document.getElementById('vl-size').textContent = val;
-      document.getElementById('sl-size').value = val;
+      const vlSize = document.getElementById('vl-size');
+      const slSize = document.getElementById('sl-size');
+      if(vlSize) vlSize.textContent = val;
+      if(slSize) slSize.value = val;
       break;
     case 'shadow':
       if (txt) txt.style.textShadow = val > 0 ? `0 ${Math.ceil(val/4)}px ${val}px rgba(0,0,0,.6)` : 'none';
@@ -270,14 +175,25 @@ function A(prop, val) {
 }
 
 // ══════════════════════════
-// DRAG ENGINE
+// DRAG ENGINE & SELECTION
 // ══════════════════════════
 function makeWrap(x, y) {
   const w = document.createElement('div');
   w.className = 'el'; w.dataset.id = ++eid;
   w.style.left = x + 'px'; w.style.top = y + 'px';
+  
+  const delBtn = document.createElement('div');
+  delBtn.className = 'del-btn'; delBtn.innerHTML = '✕';
+  delBtn.addEventListener('mousedown', e => e.stopPropagation());
+  delBtn.addEventListener('touchstart', e => e.stopPropagation(), {passive:false});
+  delBtn.addEventListener('click', e => {
+    e.stopPropagation(); w.remove();
+    if (selEl === w) selEl = null;
+    notify('تم الحذف ✓');
+  });
+
   const rh = document.createElement('div'); rh.className = 'rhandle';
-  w.appendChild(rh);
+  w.appendChild(delBtn); w.appendChild(rh);
   attachDrag(w, rh);
   CV.appendChild(w);
   return w;
@@ -326,8 +242,9 @@ function attachDrag(el, rhandle) {
     if (txt) {
       const nSize = Math.max(10, startFontSize + dx * 0.4);
       txt.style.fontSize = nSize + 'px';
-      document.getElementById('sl-size').value = Math.round(nSize);
-      document.getElementById('vl-size').textContent = Math.round(nSize);
+      const sl = document.getElementById('sl-size'), vl = document.getElementById('vl-size');
+      if(sl) sl.value = Math.round(nSize);
+      if(vl) vl.textContent = Math.round(nSize);
     } else {
       const img = el.querySelector('img');
       if (img) { const nw=Math.max(40,ow+dx); el.style.width=nw+'px'; img.style.width=nw+'px'; img.style.maxWidth=nw+'px'; }
@@ -339,18 +256,48 @@ function attachDrag(el, rhandle) {
   function off(ev,fn) { document.removeEventListener(ev,fn); }
 }
 
+// 🔴 تم تحديث دالة الـ Select لربط الأزرار بحالة العنصر بدقة
 function select(el) {
   deselect(); selEl = el; el.classList.add('selected');
   const txt = el.querySelector('.el-text');
+  
   if (txt) {
+    // 1. تحديث الحجم
     const fs = parseInt(window.getComputedStyle(txt).fontSize) || 26;
-    document.getElementById('sl-size').value = fs;
-    document.getElementById('vl-size').textContent = fs;
+    const slSize = document.getElementById('sl-size');
+    if(slSize) slSize.value = fs;
+    const vlSize = document.getElementById('vl-size');
+    if(vlSize) vlSize.textContent = fs;
+
+    // 2. تحديث المحاذاة (Align)
+    let align = txt.style.textAlign || 'right';
+    const taGrp = document.querySelector('[data-grp="ta"]');
+    if (taGrp) {
+        taGrp.querySelectorAll('.gbtn').forEach(b => b.classList.remove('on'));
+        const aBtn = taGrp.querySelector(`[data-val="${align}"]`);
+        if (aBtn) aBtn.classList.add('on');
+    }
+
+    // 3. تحديث سُمك الخط (Weight)
+    let weight = txt.style.fontWeight || '700';
+    if(weight === 'bold') weight = '700';
+    if(weight === 'normal') weight = '400';
+    const fwGrp = document.querySelector('[data-grp="fw"]');
+    if (fwGrp) {
+        fwGrp.querySelectorAll('.gbtn').forEach(b => b.classList.remove('on'));
+        const wBtn = fwGrp.querySelector(`[data-val="${weight}"]`) || fwGrp.querySelector('[data-val="700"]');
+        if (wBtn) wBtn.classList.add('on');
+    }
   }
+  
+  // 4. تحديث الشفافية
   const op = Math.round((parseFloat(el.style.opacity)||1)*100);
-  document.getElementById('sl-op').value = op;
-  document.getElementById('vl-op').textContent = op + '%';
+  const slOp = document.getElementById('sl-op');
+  if(slOp) slOp.value = op;
+  const vlOp = document.getElementById('vl-op');
+  if(vlOp) vlOp.textContent = op + '%';
 }
+
 function deselect() {
   document.querySelectorAll('.el').forEach(e => {
     e.classList.remove('selected');
@@ -373,6 +320,7 @@ function addText(text, size, color, x, y) {
   d.style.fontWeight = '700';
   d.style.textAlign = 'right';
   d.textContent = text;
+  
   d.addEventListener('dblclick', function(e) {
     e.stopPropagation();
     this.contentEditable = 'true';
@@ -383,7 +331,10 @@ function addText(text, size, color, x, y) {
   });
   d.addEventListener('blur', function() {
     this.contentEditable = 'false'; this.style.cursor = 'inherit';
+    // تنظيف الأكواد اللي بيحطها المتصفح بعد الكتابة
+    this.innerHTML = this.textContent; 
   });
+  
   w.insertBefore(d, w.firstChild);
   select(w); return w;
 }
@@ -407,7 +358,7 @@ function addQuick() {
 }
 
 function addCallig(src, name) {
-  const sz = parseInt(document.getElementById('sl-csz').value) || 180;
+  const sz = parseInt(document.getElementById('sl-csz')?.value) || 180;
   const x  = Math.max(0, CV.offsetWidth/2 - sz/2);
   const y  = Math.max(0, CV.offsetHeight/2 - 70);
   const w  = makeWrap(x, y);
@@ -429,21 +380,17 @@ function clearAll() {
 }
 
 // ══════════════════════════
-// CALLIGRAPHY
+// CALLIGRAPHY & BG
 // ══════════════════════════
 function buildCalGrid(cat) {
-  // التسميات العربية للأقسام لو محتاجها في مكان تاني
-  const folders = { black: 'مخطوطات سوداء', '3d': 'مخطوطات ثلاثية الأبعاد', white: 'مخطوطات بيضاء' };
   const bgcls = cat === 'black' ? 'lt' : 'dk';
-  
   const items = CAL[cat];
   const lim = calShown[cat];
   const grid = document.getElementById('cg-' + cat);
+  if(!grid) return;
 
   grid.innerHTML = items.slice(0, lim).map(name => {
-    // المسار الجديد بناءً على الترقيم E1.png, E2.png...
     const src = `./images/${name}.png`;
-
     return `
     <div class="citem ${bgcls}" onclick="addCallig('${src.replace(/'/g, "\\'")}','${name}')">
       <img src="${src}" alt="${name}" loading="lazy" onerror="this.style.display='none'">
@@ -452,11 +399,13 @@ function buildCalGrid(cat) {
   }).join('');
 
   const btn = document.getElementById('sm-' + cat);
-  if (items.length > lim) {
-    btn.classList.add('vis');
-    btn.textContent = `▼ عرض المزيد (${items.length - lim} متبقية)`;
-  } else {
-    btn.classList.remove('vis');
+  if (btn) {
+      if (items.length > lim) {
+        btn.classList.add('vis');
+        btn.textContent = `▼ عرض المزيد (${items.length - lim} متبقية)`;
+      } else {
+        btn.classList.remove('vis');
+      }
   }
 }
 function moreCallig(cat) { calShown[cat] += 30; buildCalGrid(cat); }
@@ -464,18 +413,20 @@ function switchCat(btn) {
   document.querySelectorAll('.catbtn').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
   const cat = btn.dataset.cat;
-  ['black','3d','white'].forEach(c =>
-    document.getElementById('cat-'+c).style.display = c===cat ? 'block' : 'none');
+  ['black','3d','white'].forEach(c => {
+    const el = document.getElementById('cat-'+c);
+    if(el) el.style.display = c===cat ? 'block' : 'none';
+  });
 }
 
-// ══════════════════════════
-// BACKGROUND
-// ══════════════════════════
 function buildBgGrid() {
-  document.getElementById('bggrid').innerHTML = BG_ITEMS.map((bg,i) =>
-    `<div class="bgthumb" onclick="setBg(this,'${bg.src}')">
-      <img src="${bg.src}" loading="lazy" alt="خلفية ${i+1}" onerror="this.parentElement.style.display='none'">
-    </div>`).join('');
+  const grid = document.getElementById('bggrid');
+  if(grid) {
+      grid.innerHTML = BG_ITEMS.map((bg,i) =>
+        `<div class="bgthumb" onclick="setBg(this,'${bg.src}')">
+          <img src="${bg.src}" loading="lazy" alt="خلفية ${i+1}" onerror="this.parentElement.style.display='none'">
+        </div>`).join('');
+  }
 }
 function setBg(el, src) {
   CV.style.backgroundImage = `url('${src}')`;
@@ -490,7 +441,7 @@ function uploadBg(e) {
 }
 
 // ══════════════════════════
-// PHOTO
+// PHOTO & LOGO
 // ══════════════════════════
 function uploadPhoto(e) {
   const f = e.target.files[0]; if (!f) return;
@@ -503,13 +454,15 @@ function uploadPhoto(e) {
     img.style.cssText = 'width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 4px 16px rgba(0,0,0,.3);';
     w.insertBefore(img, w.firstChild);
     photoEl = w; select(w);
-    document.getElementById('pho-ctrl').style.display = 'flex';
+    const ctrl = document.getElementById('pho-ctrl');
+    if(ctrl) ctrl.style.display = 'flex';
     notify('تم إضافة صورتك ✓');
   };
   r.readAsDataURL(f);
 }
 function resizePhoto(v) {
-  document.getElementById('vl-phsz').textContent = v;
+  const vl = document.getElementById('vl-phsz');
+  if(vl) vl.textContent = v;
   if (!photoEl) return;
   const img = photoEl.querySelector('img');
   if (img) { img.style.width = v+'px'; img.style.height = v+'px'; }
@@ -520,15 +473,12 @@ function setPhotoShape(val) {
   img.style.borderRadius = val==='circle' ? '50%' : val==='rounded' ? '16px' : '4px';
 }
 
-// ══════════════════════════
-// LOGO
-// ══════════════════════════
 function uploadLogo(e) {
   const f = e.target.files[0]; if (!f) return;
   const r = new FileReader();
   r.onload = ev => {
-    document.getElementById('lgp-preview').innerHTML =
-      `<img src="${ev.target.result}" style="max-height:60px;max-width:100%;object-fit:contain">`;
+    const prev = document.getElementById('lgp-preview');
+    if(prev) prev.innerHTML = `<img src="${ev.target.result}" style="max-height:60px;max-width:100%;object-fit:contain">`;
     if (logoEl) { logoEl.remove(); logoEl = null; }
     const w = makeWrap(10, 10);
     const img = document.createElement('img');
@@ -536,7 +486,8 @@ function uploadLogo(e) {
     img.style.cssText = 'display:block;width:100px;height:auto;max-width:100px;';
     w.insertBefore(img, w.firstChild);
     logoEl = w; select(w);
-    document.getElementById('lgp-ctrl').style.display = 'flex';
+    const ctrl = document.getElementById('lgp-ctrl');
+    if(ctrl) ctrl.style.display = 'flex';
     notify('تم إضافة الشعار ✓');
   };
   r.readAsDataURL(f);
@@ -554,7 +505,7 @@ function setLogoPos(val) {
 }
 
 // ══════════════════════════
-// EXPORT (Design Mode)
+// EXPORT & SHARE
 // ══════════════════════════
 async function capture() {
   deselect();
@@ -601,22 +552,17 @@ async function shareNative() {
 async function shareWA() {
   showNotif("⏳ جاري تجهيز البطاقة للواتساب...");
   try {
-    deselect(); // إلغاء تحديد أي عنصر عشان الحدود متظهرش في الصورة
-    await new Promise(r => setTimeout(r, 150)); // انتظار بسيط
-    
+    deselect();
+    await new Promise(r => setTimeout(r, 150)); 
     const canvas = await html2canvas(CV, { useCORS: true, scale: 2, allowTaint: true, backgroundColor: null });
     const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
     const file = new File([blob], "sallim-design.png", { type: "image/png" });
 
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
-        await navigator.share({
-          files: [file]
-        });
+        await navigator.share({ files: [file] });
         showNotif("تم فتح الواتساب بنجاح ✓");
-      } catch (err) {
-        console.log("إلغاء المشاركة:", err);
-      }
+      } catch (err) { console.log("إلغاء المشاركة:", err); }
     } else {
       showNotif("جاري التحميل... متصفحك لا يدعم المشاركة المباشرة");
       saveAs(blob, "sallim-design.png");
@@ -625,12 +571,12 @@ async function shareWA() {
       }, 500);
     }
   } catch (error) {
-    console.error("خطأ:", error);
     showNotif("حدث خطأ أثناء التجهيز.");
   }
 }
+
 // ══════════════════════════
-// ALT BACKGROUNDS (Ready/Group)
+// ALT BACKGROUNDS & MODES
 // ══════════════════════════
 let readyBgSrc = BG_ITEMS[0].src;
 let batchBgSrc = BG_ITEMS[0].src;
@@ -641,13 +587,15 @@ function fillAltBgs() {
       <img src="${bg.src}" loading="lazy">
     </div>`).join('');
 
-  if (!document.getElementById('ready-bg-grid').dataset.filled) {
-    document.getElementById('ready-bg-grid').innerHTML = html('ready-bg-grid','ready');
-    document.getElementById('ready-bg-grid').dataset.filled = '1';
+  const rGrid = document.getElementById('ready-bg-grid');
+  if (rGrid && !rGrid.dataset.filled) {
+    rGrid.innerHTML = html('ready-bg-grid','ready');
+    rGrid.dataset.filled = '1';
   }
-  if (!document.getElementById('batch-bg-grid').dataset.filled) {
-    document.getElementById('batch-bg-grid').innerHTML = html('batch-bg-grid','batch');
-    document.getElementById('batch-bg-grid').dataset.filled = '1';
+  const bGrid = document.getElementById('batch-bg-grid');
+  if (bGrid && !bGrid.dataset.filled) {
+    bGrid.innerHTML = html('batch-bg-grid','batch');
+    bGrid.dataset.filled = '1';
   }
 }
 function setAltBg(el, src, type) {
@@ -660,9 +608,6 @@ function setAltBg(el, src, type) {
   else batchBgSrc = src;
 }
 
-// ══════════════════════════
-// READY MODE
-// ══════════════════════════
 function updateReady() {
   const main  = document.getElementById('r-text-main');
   const sub   = document.getElementById('r-text-sub');
@@ -697,66 +642,37 @@ async function dlReady() {
     notify('تم التحميل ✓');
   } catch(e) { notify('خطأ في التحميل'); }
 }
-// دالة المشاركة للوضع الجاهز (Ready Mode)
+
 async function shareReadyWA() {
   const canvasElement = document.getElementById('ready-canvas'); 
-  
   showNotif("⏳ جاري تجهيز الصورة للواتساب...");
-
   try {
-    // 1. تحويل الـ HTML لـ Canvas
     const canvas = await html2canvas(canvasElement, { useCORS: true, scale: 2 });
-    
-    // 2. تحويل الـ Canvas لـ Blob بطريقة الـ Promise السريعة
     const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
     const file = new File([blob], "sallim-card.png", { type: "image/png" });
 
-    // 3. التحقق والمشاركة
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
-        await navigator.share({
-          // شيلنا الـ text من هنا عشان واتساب ميحذفش الصورة
-          files: [file] 
-        });
+        await navigator.share({ files: [file] });
         showNotif("تم فتح الواتساب بنجاح ✓");
-      } catch (err) {
-        console.log("إلغاء المشاركة أو خطأ:", err);
-      }
+      } catch (err) {}
     } else {
-      // لو المتصفح مش بيدعم
       showNotif("جاري التحميل... متصفحك لا يدعم المشاركة المباشرة");
       saveAs(blob, "sallim-card.png"); 
       setTimeout(() => {
         window.open("https://wa.me/?text=" + encodeURIComponent("صممت هذه البطاقة عبر منصة سَلِّم ✨"), "_blank");
       }, 500);
     }
-
   } catch (error) {
-    console.error("خطأ:", error);
     showNotif("حدث خطأ أثناء التجهيز.");
   }
 }
 
-// دالة بسيطة لإظهار الإشعارات (لو مش موجودة عندك)
-function showNotif(msg) {
-  const notif = document.getElementById('notif');
-  if(notif) {
-    notif.textContent = msg;
-    notif.classList.add('vis');
-    setTimeout(() => notif.classList.remove('vis'), 3000);
-  }
-}
-
-// ══════════════════════════
-// BATCH MODE (جماعي)
-// ══════════════════════════
 function updateBatch() {
   const names = document.getElementById('b-names').value.split('\n').map(n=>n.trim()).filter(n=>n);
   document.getElementById('b-count').textContent = names.length + ' أسماء';
-
   const nameEl = document.getElementById('b-text-name');
   nameEl.textContent = names[0] || 'الاسم يظهر هنا';
-
   const size  = document.getElementById('b-size').value;
   const pos   = document.getElementById('b-pos').value;
   const font  = document.getElementById('b-font').value;
@@ -813,15 +729,13 @@ async function dlBatchZip() {
   });
 }
 
-// ══════════════════════════
-// NOTIFY
-// ══════════════════════════
 function notify(msg) {
   const n = document.getElementById('notif');
+  if(!n) return;
   n.textContent = msg; n.classList.add('vis');
   clearTimeout(n._t); n._t = setTimeout(() => n.classList.remove('vis'), 2600);
 }
-
+function showNotif(msg) { notify(msg); }
 
 (function() {
     'use strict';
@@ -866,39 +780,3 @@ function notify(msg) {
     });
 
 })();
-
-// ══════════════════════════
-// DRAG ENGINE (تحديث زر الحذف)
-// ══════════════════════════
-function makeWrap(x, y) {
-  const w = document.createElement('div');
-  w.className = 'el'; w.dataset.id = ++eid;
-  w.style.left = x + 'px'; w.style.top = y + 'px';
-  
-  // 1. إنشاء زر الحذف (X)
-  const delBtn = document.createElement('div');
-  delBtn.className = 'del-btn';
-  delBtn.innerHTML = '✕';
-  
-  // منع تداخل النقر/السحب مع العنصر نفسه
-  delBtn.addEventListener('mousedown', e => e.stopPropagation());
-  delBtn.addEventListener('touchstart', e => e.stopPropagation(), {passive:false});
-  
-  // حدث الحذف عند النقر على (X)
-  delBtn.addEventListener('click', e => {
-    e.stopPropagation(); // عشان المتصفح ميعملش select تاني
-    w.remove(); // حذف العنصر من الشاشة
-    if (selEl === w) selEl = null; // تفريغ التحديد
-    notify('تم الحذف ✓');
-  });
-
-  // 2. مقبض التكبير والتصغير (الموجود عندك أصلاً)
-  const rh = document.createElement('div'); rh.className = 'rhandle';
-  
-  w.appendChild(delBtn); // إضافة الزر للعنصر
-  w.appendChild(rh);
-  
-  attachDrag(w, rh);
-  CV.appendChild(w);
-  return w;
-}

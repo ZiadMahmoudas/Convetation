@@ -615,3 +615,10 @@ select.sinp:focus { border-color: var(--c-gold); }
     #export-bar { width: 420px !important; min-width: 420px !important; margin: 0 auto; }
     #sidebar { width: 100% !important; height: auto !important; overflow: visible !important; border-left: none; border-top: 3px solid var(--c-gold); padding: 20px 16px; box-shadow: none; }
 }
+/* إجبار النص على أخذ التنسيق من الأزرار وتجاهل تخريب المتصفح */
+.el-text, .el-text * {
+    font-weight: inherit !important;
+    text-align: inherit !important;
+    font-family: inherit !important;
+    color: inherit !important;
+}
