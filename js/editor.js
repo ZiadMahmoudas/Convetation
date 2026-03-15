@@ -649,9 +649,56 @@ async function dlReady() {
     notify('تم التحميل ✓');
   } catch(e) { notify('خطأ في التحميل'); }
 }
+// دالة المشاركة للوضع الجاهز (Ready Mode)
 async function shareReadyWA() {
-  window.open(`https://wa.me/?text=${encodeURIComponent(document.getElementById('r-main').value + ' — كل عام وأنتم بخير 🌙')}`, '_blank');
-  await dlReady();
+  const canvasElement = document.getElementById('ready-canvas'); // الديف اللي فيه التصميم
+  
+  // إظهار إشعار للمستخدم عشان ينتظر ثانية
+  showNotif("جاري تجهيز البطاقة للمشاركة...");
+
+  try {
+    // 1. تحويل الـ HTML لـ Canvas
+    const canvas = await html2canvas(canvasElement, { useCORS: true, scale: 2 });
+    
+    // 2. تحويل الـ Canvas لـ Blob (ملف صورة حقيقي)
+    canvas.toBlob(async (blob) => {
+      const file = new File([blob], "greeting-card.png", { type: "image/png" });
+
+      // 3. التحقق هل المتصفح بيدعم مشاركة الملفات (Web Share API)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            title: 'بطاقة تهنئة',
+            text: 'كل عام وأنتم بخير! صممت هذه البطاقة عبر منصة سَلِّم ✨',
+            files: [file]
+          });
+          showNotif("تم فتح المشاركة بنجاح!");
+        } catch (err) {
+          console.log("المستخدم ألغى المشاركة أو حدث خطأ:", err);
+        }
+      } else {
+        // Fallback: لو المتصفح قديم أو مش بيدعم (زي بعض متصفحات الكمبيوتر)
+        // هنحمل الصورة ونفتح الواتساب عشان يبعتها بنفسه
+        alert("متصفحك لا يدعم المشاركة المباشرة للصور. سيتم تحميل البطاقة لتتمكن من إرسالها.");
+        saveAs(blob, "greeting-card.png"); // من مكتبة FileSaver اللي أنت ضايفها
+        window.open("https://wa.me/?text=كل عام وأنتم بخير! صممت هذه البطاقة عبر منصة سَلِّم", "_blank");
+      }
+    }, "image/png");
+
+  } catch (error) {
+    console.error("خطأ أثناء تحويل الصورة:", error);
+    showNotif("حدث خطأ أثناء تجهيز الصورة.");
+  }
+}
+
+// دالة بسيطة لإظهار الإشعارات (لو مش موجودة عندك)
+function showNotif(msg) {
+  const notif = document.getElementById('notif');
+  if(notif) {
+    notif.textContent = msg;
+    notif.classList.add('vis');
+    setTimeout(() => notif.classList.remove('vis'), 3000);
+  }
 }
 
 // ══════════════════════════

@@ -1,930 +1,1081 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>مكتبات المعلمين</title>
-  <link rel="shortcut icon" href="images/logo.webp" type="image/x-icon"/>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: { extend: { colors: {
-        navy:  '#2A3A4D', gold: '#F7AF3C',
-        ember: '#FA6267', azure: '#5BC0EA', jade: '#14A48D'
-      }}}
-    }
-  </script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>مكتبة المعلمين — بطاقات العيد</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <style>
-:root{
-  --navy:#2A3A4D; --gold:#F7AF3C; --ember:#FA6267;
-  --azure:#5BC0EA; --jade:#14A48D;
-  --bg:#F0F3F8; --white:#fff;
+/* ═══════════════════════════════════════
+   DESIGN CONCEPT: "Luxury Eid Atelier"
+   Dark jewel-tone base, gold calligraphy
+   editorial layout, immersive hero
+═══════════════════════════════════════ */
+:root {
+  --ink:    #0D1117;
+  --ink2:   #111922;
+  --ink3:   #162030;
+  --gold:   #D4A843;
+  --gold2:  #ECC96A;
+  --gold3:  #F5E09A;
+  --ivory:  #F7F2E8;
+  --ivory2: #EDE6D6;
+  --rose:   #C0705A;
+  --teal:   #2A8A7E;
+  --muted:  rgba(247,242,232,.45);
+  --border: rgba(212,168,67,.18);
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{font-family:"Tajawal",sans-serif;background:var(--bg);color:var(--navy);overflow-x:hidden}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   NAVBAR — split dark/light
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#navbar{
-  position:fixed;top:0;left:0;right:0;z-index:900;
-  height:64px;
-  background:var(--navy);
-  display:flex;align-items:center;
-  padding:0 32px;
-  justify-content:space-between;
-  border-bottom:3px solid var(--gold);
-  box-shadow:0 4px 32px rgba(42,58,77,.35);
-}
-.nav-logo img{width:120px;height:auto;filter:brightness(0) invert(1)}
-.nav-links{display:flex;gap:4px;align-items:center}
-.nav-links a{
-  padding:7px 16px;border-radius:4px;
-  color:rgba(255,255,255,.65);font-weight:700;font-size:14px;
-  text-decoration:none;transition:all .18s;
-}
-.nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(247,175,60,.15)}
-.nav-links a.active{color:var(--gold)}
-.nav-actions{display:flex;gap:10px;align-items:center}
-.nav-login{color:rgba(255,255,255,.65);font-weight:700;font-size:14px;text-decoration:none;transition:color .18s}
-.nav-login:hover{color:#fff}
-.nav-cta{
-  background:var(--gold);color:var(--navy);
-  padding:9px 22px;border-radius:6px;
-  font-weight:900;font-size:14px;text-decoration:none;
-  transition:all .18s;display:flex;align-items:center;gap:6px;
-  box-shadow:0 3px 12px rgba(247,175,60,.4);
-  border-bottom:2px solid #C88820;
-}
-.nav-cta:hover{background:#FFCC6E;transform:translateY(-1px)}
-.nav-hamburger{display:none;cursor:pointer;color:#fff;font-size:22px}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   MOBILE MENU
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#mobile-menu{
-  position:fixed;top:64px;left:0;right:0;z-index:899;
-  background:var(--navy);
-  border-bottom:3px solid var(--gold);
-  padding:20px 24px 28px;
-  display:none;flex-direction:column;gap:4px;
-  box-shadow:0 8px 32px rgba(0,0,0,.3);
-}
-#mobile-menu.open{display:flex}
-#mobile-menu a{
-  padding:12px 16px;border-radius:6px;
-  color:rgba(255,255,255,.75);font-weight:700;font-size:15px;
-  text-decoration:none;transition:all .15s;text-align:center;
-}
-#mobile-menu a:hover{background:rgba(247,175,60,.15);color:#fff}
-#mobile-menu .mob-cta{
-  background:var(--gold);color:var(--navy);
-  margin-top:8px;border-radius:6px;font-weight:900;
+/* ─── NEW HERO RIGHT SIDE (STACKED CARDS) ─── */
+.hr {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  background: var(--ink3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   HERO — asymmetric split layout
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#hero{
-  min-height:100vh;padding-top:64px;
-  display:grid;grid-template-columns:1fr 1fr;
-  overflow:hidden;position:relative;
-}
-/* يسار — نص */
-.hero-left{
-  background:var(--navy);
-  padding:80px 56px 80px 48px;
-  display:flex;flex-direction:column;justify-content:center;
-  position:relative;overflow:hidden;
-}
-/* نقاط خلفية */
-.hero-left::before{
-  content:"";position:absolute;inset:0;
-  background-image:radial-gradient(circle,rgba(247,175,60,.14) 1px,transparent 1px);
-  background-size:26px 26px;pointer-events:none;
-}
-/* شكل مائل يمين */
-.hero-left::after{
-  content:"";position:absolute;
-  top:0;left:100%;
-  width:80px;height:100%;
-  background:var(--navy);
-  clip-path:polygon(0 0,0 100%,100% 100%);
-  z-index:2;
-}
-.hero-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  background:rgba(247,175,60,.12);border:1px solid rgba(247,175,60,.35);
-  border-radius:4px;padding:6px 14px;
-  font-size:12px;font-weight:700;color:var(--gold);
-  margin-bottom:28px;width:fit-content;
-}
-.pulse{width:7px;height:7px;border-radius:50%;background:var(--jade);
-  animation:pulse-anim 2s infinite;display:inline-block}
-@keyframes pulse-anim{0%,100%{transform:scale(.9);opacity:.7}50%{transform:scale(1.3);opacity:1}}
-
-.hero-h1{
-  font-size:clamp(38px,4.5vw,58px);font-weight:900;
-  color:#fff;line-height:1.08;margin-bottom:22px;
-  letter-spacing:-.025em;position:relative;z-index:1;
-}
-.hero-h1 .line2{color:var(--gold)}
-.hero-p{
-  font-size:16px;color:rgba(255,255,255,.6);
-  line-height:1.8;margin-bottom:40px;max-width:380px;
-  position:relative;z-index:1;
-}
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
-.hbtn{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:13px 26px;border-radius:6px;
-  font-size:14px;font-weight:800;text-decoration:none;
-  transition:all .2s;
-}
-.hbtn-gold{background:var(--gold);color:var(--navy);border-bottom:3px solid #C88820;box-shadow:0 4px 18px rgba(247,175,60,.4)}
-.hbtn-gold:hover{background:#FFCC6E;transform:translateY(-2px)}
-.hbtn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.25)}
-.hbtn-outline:hover{border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.06)}
-
-.hero-stats{
-  display:flex;gap:36px;margin-top:56px;
-  padding-top:36px;border-top:1px solid rgba(255,255,255,.1);
-  position:relative;z-index:1;flex-wrap:wrap;
-}
-.hstat-num{font-size:28px;font-weight:900;color:var(--gold)}
-.hstat-lbl{font-size:12px;color:rgba(255,255,255,.4);font-weight:600;margin-top:2px}
-
-/* يمين — صورة */
-.hero-right{
-  position:relative;overflow:hidden;
-}
-.hero-img{
-  width:100%;height:100%;
-  object-fit:cover;object-position:center;
-  display:block;
-}
-/* overlay على الصورة */
-.hero-right::before{
-  content:"";position:absolute;inset:0;z-index:1;
-  background:linear-gradient(
-    200deg,
-    rgba(42,58,77,.2) 0%,
-    rgba(20,164,141,.15) 60%,
-    rgba(247,175,60,.1) 100%
-  );
-}
-/* بطاقة floating فوق الصورة */
-.hero-float-card{
-  position:absolute;bottom:40px;right:32px;z-index:3;
-  background:rgba(255,255,255,.95);
-  backdrop-filter:blur(12px);
-  border-radius:12px;padding:16px 20px;
-  border-right:4px solid var(--gold);
-  box-shadow:0 12px 40px rgba(42,58,77,.25);
-  min-width:200px;
-}
-.hfc-label{font-size:10px;font-weight:800;color:var(--jade);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
-.hfc-title{font-size:15px;font-weight:900;color:var(--navy);margin-bottom:4px}
-.hfc-sub{font-size:12px;color:#7A9AB5;font-weight:600}
-.hfc-avatars{display:flex;margin-top:10px}
-.hfc-avatar{
-  width:28px;height:28px;border-radius:50%;
-  border:2px solid #fff;margin-left:-8px;
-  background:var(--gold);display:flex;align-items:center;justify-content:center;
-  font-size:10px;font-weight:900;color:var(--navy);
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   TICKER
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.ticker-wrap{
-  background:rgba(42,58,77,.06);
-  border-top:1px solid rgba(42,58,77,.1);
-  border-bottom:1px solid rgba(42,58,77,.1);
-  padding:12px 0;overflow:hidden;
-}
-@keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(50%)}}
-.ticker-inner{display:flex;width:max-content;animation:ticker-scroll 38s linear infinite}
-.ticker-inner:hover{animation-play-state:paused}
-.t-item{display:flex;align-items:center;padding-left:28px;color:#5A7A94;font-size:13px;font-weight:600;white-space:nowrap}
-.t-sep{margin-right:28px;color:var(--gold);font-size:14px}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   SECTION HELPERS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.sec-label{
-  font-size:11px;font-weight:900;letter-spacing:.8px;
-  text-transform:uppercase;color:var(--gold);
-  background:rgba(247,175,60,.1);border:1px solid rgba(247,175,60,.3);
-  border-radius:4px;padding:4px 12px;
-  display:inline-block;margin-bottom:14px;
-}
-.sec-h{font-size:clamp(28px,4vw,40px);font-weight:900;color:var(--navy);letter-spacing:-.02em;line-height:1.15}
-.sec-p{color:#7A9AB5;font-size:16px;line-height:1.75;margin-top:10px}
-
-/* fade-up animation */
-.fu{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
-.fu.in{opacity:1;transform:none}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   OCCASIONS — horizontal cards
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#occasions{background:var(--white);padding:88px 0}
-.occ-track{
-  display:flex;gap:16px;
-  overflow-x:auto;padding:8px 32px 24px;
-  scroll-snap-type:x mandatory;
-  scrollbar-width:none;
-}
-.occ-track::-webkit-scrollbar{display:none}
-.occ-card{
-  flex:0 0 220px;scroll-snap-align:start;
-  background:#F7F9FC;border-radius:14px;
-  border:1.5px solid #E0E8F0;
-  padding:28px 20px;text-decoration:none;
-  transition:all .25s;text-align:center;
-  position:relative;overflow:hidden;
-}
-.occ-card::before{
-  content:"";position:absolute;
-  bottom:0;left:0;right:0;height:3px;
-  background:var(--gold);transform:scaleX(0);
-  transition:transform .22s;
-}
-.occ-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(42,58,77,.10);border-color:rgba(247,175,60,.4);background:#fff}
-.occ-card:hover::before{transform:scaleX(1)}
-.occ-icon-wrap{
-  width:64px;height:64px;border-radius:14px;
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 18px;font-size:26px;transition:transform .25s;
-}
-.occ-card:hover .occ-icon-wrap{transform:translateY(-4px) scale(1.08)}
-.occ-name{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:10px}
-.occ-go{
-  font-size:12px;font-weight:800;color:#9AB5CB;
-  transition:color .2s;display:flex;align-items:center;justify-content:center;gap:4px;
-}
-.occ-card:hover .occ-go{color:var(--gold)}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   TEMPLATES — masonry-feel grid
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#templates{background:var(--bg);padding:88px 0}
-.tpl-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-  gap:20px;
-}
-.tpl-card{
-  background:#fff;border-radius:14px;
-  border:1.5px solid #E0E8F0;
-  overflow:hidden;transition:all .25s;
-}
-.tpl-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(42,58,77,.10);border-color:rgba(247,175,60,.45)}
-.tpl-img-wrap{position:relative;aspect-ratio:1;overflow:hidden;background:#EEF2F7}
-.tpl-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .45s}
-.tpl-card:hover .tpl-img-wrap img{transform:scale(1.05)}
-.tpl-badge-wrap{position:absolute;top:10px;right:10px}
-.tpl-badge{background:var(--ember);color:#fff;font-size:10px;font-weight:900;padding:3px 10px;border-radius:4px}
-.tpl-body{padding:16px}
-.tpl-title{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:12px}
-.tpl-cta{
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  padding:10px;border-radius:8px;
-  background:var(--bg);border:1.5px solid #DDE5EF;
-  color:var(--navy);font-size:13px;font-weight:800;
-  text-decoration:none;transition:all .2s;
-}
-.tpl-cta:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   FEATURES — icon-left layout
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#features{background:var(--white);padding:88px 0}
-.feat-list{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.feat-card{
-  padding:32px 28px;border-radius:14px;
-  background:#F7F9FC;border:1.5px solid #E0E8F0;
-  transition:all .22s;position:relative;overflow:hidden;
-}
-.feat-card::after{
-  content:"";position:absolute;
-  top:0;right:0;left:0;height:3px;
-  background:transparent;transition:background .22s;
-}
-.feat-card:hover{box-shadow:0 12px 36px rgba(42,58,77,.08);transform:translateY(-3px)}
-.feat-card.c1:hover::after{background:var(--gold)}
-.feat-card.c2:hover::after{background:var(--jade)}
-.feat-card.c3:hover::after{background:var(--ember)}
-.feat-icon{
-  width:52px;height:52px;border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;color:#fff;margin-bottom:20px;
-  box-shadow:0 4px 14px rgba(0,0,0,.2);
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   GAME BANNER — full bleed
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#game-banner{
-  background:var(--navy);
-  padding:0;overflow:hidden;
-  display:grid;grid-template-columns:1fr 1fr;min-height:320px;
-}
-.game-left{
-  padding:64px 56px;
-  display:flex;flex-direction:column;justify-content:center;
-  background:linear-gradient(135deg,var(--navy) 60%,#1E2C3A 100%);
-  position:relative;
-}
-.game-label{font-size:11px;font-weight:900;letter-spacing:.8px;text-transform:uppercase;color:var(--jade);margin-bottom:14px}
-.game-h{font-size:32px;font-weight:900;color:#fff;margin-bottom:12px;line-height:1.15}
-.game-p{color:rgba(255,255,255,.6);font-size:15px;line-height:1.7;margin-bottom:28px}
-.game-btn{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--gold);color:var(--navy);
-  padding:13px 28px;border-radius:6px;
-  font-weight:900;font-size:15px;text-decoration:none;
-  border-bottom:3px solid #C88820;width:fit-content;
-  box-shadow:0 4px 18px rgba(247,175,60,.35);
-  transition:all .2s;
-}
-.game-btn:hover{background:#FFCC6E;transform:translateY(-2px)}
-.game-right{
-  position:relative;overflow:hidden;
-  background:linear-gradient(135deg,var(--gold) 0%,var(--ember) 100%);
-  display:flex;align-items:center;justify-content:center;
-}
-.game-right::before{
-  content:"";position:absolute;inset:0;
-  background-image:radial-gradient(circle,rgba(255,255,255,.15) 1px,transparent 1px);
-  background-size:18px 18px;
-}
-.dice-big{font-size:120px;filter:drop-shadow(0 8px 32px rgba(0,0,0,.25));position:relative;z-index:1;animation:dice-float 3s ease-in-out infinite}
-@keyframes dice-float{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-12px) rotate(5deg)}}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   STEPS — numbered horizontal
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#steps{background:var(--bg);padding:88px 0}
-.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative}
-.steps-grid::before{
+/* شعاع إضاءة خفيف ورا الكروت */
+.hr::before {
   content: "";
-    position: absolute;
-    top: 28px;
-    right: calc(12% + 28px);
-    left: calc(16% + 28px);
-    height: 2px;
-    background: linear-gradient(90deg, var(--gold), var(--jade));
-    pointer-events: none;
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(circle at center, rgba(212,168,67,0.15) 0%, transparent 70%);
+  pointer-events: none;
 }
-.step{padding:0 32px;text-align:center;position:relative}
-.step-num-wrap{
-  width:56px;height:56px;border-radius:14px;
-  background:var(--navy);color:var(--gold);
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;font-weight:900;
-  margin:0 auto 20px;
-  box-shadow:0 4px 16px rgba(42,58,77,.2);
-  position:relative;z-index:1;
-  border:3px solid var(--gold);
-}
-.step-title{font-size:17px;font-weight:900;color:var(--navy);margin-bottom:8px}
-.step-desc{font-size:13px;color:#7A9AB5;line-height:1.65}
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   PRICING — side by side
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#pricing{background:var(--white);padding:88px 0}
-.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:860px;margin:0 auto}
-.pc-free{
-  border-radius:16px;background:#F7F9FC;
-  border:1.5px solid #E0E8F0;border-top:4px solid var(--navy);
-  padding:36px 32px;display:flex;flex-direction:column;
+.hero-showcase {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.pc-pro{
-  border-radius:16px;background:var(--navy);
-  border:1.5px solid rgba(247,175,60,.3);border-top:4px solid var(--gold);
-  padding:36px 32px;display:flex;flex-direction:column;
-  position:relative;box-shadow:0 16px 48px rgba(42,58,77,.3);
-  transform:translateY(-8px);
-}
-.pc-badge{
-  position:absolute;top:-14px;right:50%;transform:translateX(50%);
-  background:var(--jade);color:#fff;
-  font-size:11px;font-weight:900;padding:5px 18px;border-radius:6px;
-  white-space:nowrap;
-}
-.pc-price{font-size:44px;font-weight:900;margin:16px 0 24px;line-height:1}
-.pc-free .pc-price{color:var(--navy)}
-.pc-pro .pc-price{color:var(--gold)}
-.pc-list{flex:1;display:flex;flex-direction:column;gap:14px;margin-bottom:28px}
-.pc-item{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600}
-.pc-free .pc-item{color:#3A5268}
-.pc-pro .pc-item{color:rgba(255,255,255,.8)}
-.pc-check-free{color:var(--jade);font-size:15px}
-.pc-check-pro{color:var(--gold);font-size:15px}
-.pc-btn-free{
-  display:block;text-align:center;padding:14px;border-radius:8px;
-  border:2px solid var(--navy);color:var(--navy);font-weight:900;font-size:15px;
-  text-decoration:none;transition:all .2s;
-}
-.pc-btn-free:hover{background:var(--navy);color:#fff}
-.pc-btn-pro{
-  display:block;text-align:center;padding:14px;border-radius:8px;
-  background:var(--gold);color:var(--navy);font-weight:900;font-size:15px;
-  text-decoration:none;transition:all .2s;
-  border-bottom:3px solid #C88820;
-  box-shadow:0 4px 18px rgba(247,175,60,.35);
-}
-.pc-btn-pro:hover{background:#FFCC6E;transform:translateY(-1px)}
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   FAQ — accordion
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#faq{background:var(--bg);padding:88px 0}
-.faq-list{display:flex;flex-direction:column;gap:10px;max-width:700px;margin:0 auto}
-.faq-item{
-  background:#fff;border-radius:12px;
-  border:1.5px solid #E0E8F0;overflow:hidden;
-  transition:border-color .2s;
+.hero-card {
+  position: absolute;
+  width: 260px; /* عرض الكارت */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-.faq-item.open{border-color:var(--gold)}
-.faq-head{
-  padding:18px 22px;cursor:pointer;
-  display:flex;justify-content:space-between;align-items:center;gap:12px;
-}
-.faq-head h3{font-size:15px;font-weight:800;color:var(--navy);text-align:right}
-.faq-chevron{
-  width:30px;height:30px;border-radius:6px;
-  background:#F0F3F8;display:flex;align-items:center;justify-content:center;
-  color:var(--gold);font-size:12px;flex-shrink:0;
-  transition:transform .25s,background .2s;
-}
-.faq-item.open .faq-chevron{transform:rotate(180deg);background:var(--gold);color:#fff}
-.faq-body{
-  max-height:0;overflow:hidden;
-  transition:max-height .35s ease;
-  padding:0 22px;color:#5A7A94;font-size:14px;line-height:1.75;
-}
-.faq-item.open .faq-body{max-height:160px;padding-bottom:18px}
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   CTA BOTTOM
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#cta-bottom{
-  background:var(--navy);padding:100px 0;
-  position:relative;overflow:hidden;
+/* الكارت اللي ورا على الشمال */
+.hero-card.c1 {
+  transform: rotate(-10deg) translateX(-70px) scale(0.85);
+  z-index: 1;
+  opacity: 0.6;
+  filter: blur(2px);
 }
-#cta-bottom::before{
-  content:"";position:absolute;inset:0;
-  background-image:radial-gradient(circle,rgba(247,175,60,.08) 1px,transparent 1px);
-  background-size:24px 24px;
-}
-#cta-bottom::after{
-  content:"";position:absolute;bottom:0;left:0;right:0;
-  height:4px;background:linear-gradient(90deg,var(--jade),var(--gold),var(--ember));
-}
-.cta-inner{position:relative;z-index:1;text-align:center;max-width:580px;margin:0 auto;padding:0 24px}
-.cta-inner h2{font-size:clamp(32px,5vw,48px);font-weight:900;color:#fff;letter-spacing:-.02em;margin-bottom:14px}
-.cta-inner p{color:rgba(255,255,255,.5);font-size:17px;margin-bottom:36px;line-height:1.7}
-.cta-main-btn{
-  display:inline-flex;align-items:center;gap:10px;
-  background:var(--gold);color:var(--navy);
-  padding:16px 40px;border-radius:8px;
-  font-size:17px;font-weight:900;text-decoration:none;
-  border-bottom:4px solid #C88820;
-  box-shadow:0 6px 28px rgba(247,175,60,.45);
-  transition:all .22s;
-}
-.cta-main-btn:hover{background:#FFCC6E;transform:translateY(-3px);box-shadow:0 12px 40px rgba(247,175,60,.55)}
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   PARTNERS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#partners{background:#1A2A3A;padding:72px 0}
-.partner-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.pcard{
-  border-radius:16px;background:#243548;
-  border:1.5px solid rgba(255,255,255,.07);
-  padding:32px 28px;text-decoration:none;
-  display:flex;align-items:center;gap:20px;
-  transition:all .25s;
+/* الكارت اللي ورا على اليمين */
+.hero-card.c2 {
+  transform: rotate(10deg) translateX(70px) scale(0.85);
+  z-index: 2;
+  opacity: 0.6;
+  filter: blur(2px);
 }
-.pcard.a:hover{border-color:var(--azure);box-shadow:0 12px 36px rgba(91,192,234,.15)}
-.pcard.e:hover{border-color:var(--ember);box-shadow:0 12px 36px rgba(250,98,103,.15)}
-.pcard:hover{transform:translateY(-4px)}
-.pcard-icon{
-  width:56px;height:56px;border-radius:14px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:26px;flex-shrink:0;transition:transform .25s;
-}
-.pcard:hover .pcard-icon{transform:scale(1.1)}
-.pcard-text h3{font-size:18px;font-weight:900;color:#fff;margin-bottom:6px;transition:color .2s}
-.pcard.a:hover .pcard-text h3{color:var(--azure)}
-.pcard.e:hover .pcard-text h3{color:var(--ember)}
-.pcard-text p{font-size:13px;color:#7A9AB5;line-height:1.6;margin-bottom:10px}
-.pcard-go{font-size:12px;font-weight:800;display:flex;align-items:center;gap:4px}
-.pcard.a .pcard-go{color:var(--azure)}
-.pcard.e .pcard-go{color:var(--ember)}
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   FOOTER
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#footer{
-  background:var(--navy);
-  border-top:3px solid var(--gold);
-  padding:64px 0 32px;
+/* الكارت الأساسي اللي في النص */
+.hero-card.c3 {
+  transform: rotate(0deg) translateY(-20px) scale(1.05);
+  z-index: 3;
+  border-color: var(--gold);
+  box-shadow: 0 30px 60px rgba(212,168,67,0.25), 0 0 0 1px var(--gold);
 }
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;margin-bottom:48px}
-.footer-brand p{color:rgba(255,255,255,.45);font-size:14px;line-height:1.75;margin-top:16px;max-width:300px}
-.footer-logo img{width:120px;filter:brightness(0) invert(1)}
-.footer-socials{display:flex;gap:10px;margin-top:20px}
-.footer-socials a{
-  width:38px;height:38px;border-radius:8px;
-  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
-  display:flex;align-items:center;justify-content:center;
-  color:rgba(255,255,255,.5);font-size:15px;text-decoration:none;
-  transition:all .18s;
-}
-.footer-socials a:hover{background:var(--gold);color:var(--navy);border-color:var(--gold)}
-.footer-col h4{font-size:13px;font-weight:900;color:var(--gold);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px}
-.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
-.footer-col ul a{color:rgba(255,255,255,.45);font-size:14px;text-decoration:none;font-weight:600;transition:color .15s}
-.footer-col ul a:hover{color:#fff}
-.footer-bottom{
-  border-top:1px solid rgba(255,255,255,.08);
-  padding-top:24px;
-  display:flex;justify-content:space-between;align-items:center;
-  flex-wrap:wrap;gap:12px;
-}
-.footer-bottom p{color:rgba(255,255,255,.3);font-size:13px}
-.footer-heart{color:var(--ember)}
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   RESPONSIVE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.container{max-width:1240px;margin:0 auto;padding:0 32px}
-
-@media(max-width:1024px){
-  #hero{grid-template-columns:1fr}
-  .hero-right{display:none}
-  .hero-left::after{display:none}
-  .hero-left{padding:100px 32px 80px}
-  #game-banner{grid-template-columns:1fr}
-  .game-right{display:none}
-  .feat-list{grid-template-columns:1fr}
-  .pricing-grid{grid-template-columns:1fr;max-width:440px}
-  .pc-pro{transform:none}
-  .steps-grid{grid-template-columns:1fr;gap:36px}
-  .steps-grid::before{display:none}
-  .footer-grid{grid-template-columns:1fr 1fr}
-  .partner-grid{grid-template-columns:1fr}
+.hero-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: var(--ink2); /* لون خلفية بديل لو الصورة محملتش */
 }
-@media(max-width:768px){
-  .nav-links{display:none}
-  .nav-login{display:none}
-  .nav-hamburger{display:block}
-  .hero-left{padding:90px 24px 64px}
-  .hero-stats{gap:24px}
-  .container{padding:0 20px}
-  .footer-grid{grid-template-columns:1fr}
-  #game-banner{display:block}
-  .game-left{padding:48px 24px}
-  .occ-track{padding:8px 20px 20px}
-  #steps,#features,#templates,#occasions,#pricing,#faq,#cta-bottom,#partners{padding:64px 0}
+
+/* تأثير عند مرور الماوس على المنطقة */
+.hr:hover .hero-card.c1 { transform: rotate(-15deg) translateX(-100px) scale(0.85); }
+.hr:hover .hero-card.c2 { transform: rotate(15deg) translateX(100px) scale(0.85); }
+.hr:hover .hero-card.c3 { transform: translateY(-30px) scale(1.1); }
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--ink);
+  color: var(--ivory);
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ─── ORNAMENT CANVAS ─── */
+#ornaCanvas {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none; opacity: .55;
+}
+
+/* ─── NAVBAR ─── */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+  height: 70px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px;
+  background: rgba(13,17,23,.85);
+  backdrop-filter: blur(24px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none;
+}
+.nav-brand .logomark {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--gold), var(--rose));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Amiri', serif;
+  font-size: 18px; color: var(--ink); font-weight: 700;
+  box-shadow: 0 0 18px rgba(212,168,67,.35);
+}
+.nav-brand .brand-text { line-height: 1.1; }
+.nav-brand .b1 { font-size: 15px; font-weight: 900; color: var(--ivory); letter-spacing: -.01em; }
+.nav-brand .b2 { font-size: 10px; font-weight: 600; color: var(--gold); letter-spacing: .04em; text-transform: uppercase; }
+
+.nav-links { display: flex; gap: 2px; }
+.nav-links a {
+  padding: 8px 16px; border-radius: 6px;
+  font-size: 14px; font-weight: 600; color: rgba(247,242,232,.5);
+  text-decoration: none; transition: all .2s;
+}
+.nav-links a:hover { color: var(--ivory); background: rgba(255,255,255,.05); }
+.nav-links a.act { color: var(--gold); }
+
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-cta {
+  padding: 10px 24px; border-radius: 8px;
+  background: var(--gold); color: var(--ink);
+  font-size: 14px; font-weight: 900; text-decoration: none;
+  display: flex; align-items: center; gap: 7px;
+  border-bottom: 3px solid rgba(0,0,0,.25);
+  box-shadow: 0 4px 24px rgba(212,168,67,.4);
+  transition: all .2s;
+}
+.nav-cta:hover { background: var(--gold2); transform: translateY(-1px); }
+.nav-ham { display: none; background: none; border: none; cursor: pointer; color: var(--ivory); font-size: 22px; }
+
+/* mob menu */
+#mob {
+  display: none; position: fixed;
+  top: 70px; left: 0; right: 0; z-index: 899;
+  background: var(--ink2);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 28px 28px;
+  flex-direction: column; gap: 4px;
+}
+#mob.show { display: flex; }
+#mob a {
+  padding: 13px 16px; border-radius: 8px; text-align: center;
+  color: rgba(247,242,232,.65); font-size: 15px; font-weight: 600;
+  text-decoration: none; transition: .15s;
+}
+#mob a:hover { background: rgba(255,255,255,.05); color: var(--ivory); }
+#mob .mcta { background: var(--gold); color: var(--ink); font-weight: 900; margin-top: 8px; }
+
+/* ─── HERO ─── */
+#hero {
+  min-height: 100vh;
+  padding-top: 70px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative; overflow: hidden;
+}
+
+/* left panel — dark with calligraphy texture */
+.hl {
+  background: var(--ink2);
+  padding: 80px 64px 80px 56px;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; z-index: 2;
+}
+
+/* diagonal clip into right panel */
+.hl::after {
+  content: "";
+  position: absolute; top: 0; left: 100%;
+  width: 120px; height: 100%;
+  background: var(--ink2);
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+  z-index: 1;
+}
+
+/* subtle top-left gold accent line */
+.hl::before {
+  content: "";
+  position: absolute; top: 0; right: 0; left: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.eid-label {
+  display: inline-flex; align-items: center; gap: 10px;
+  border: 1px solid var(--border);
+  background: rgba(212,168,67,.06);
+  border-radius: 6px; padding: 6px 16px;
+  margin-bottom: 32px; width: fit-content;
+}
+.eid-label .el-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 8px var(--teal);
+  animation: throb 2s ease-in-out infinite;
+}
+@keyframes throb { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+.eid-label span { font-size: 12px; font-weight: 700; color: var(--gold); letter-spacing: .04em; }
+
+.hero-display {
+  font-family: 'Amiri', serif;
+  font-size: clamp(52px, 6vw, 80px);
+  color: var(--ivory);
+  line-height: 1.05;
+  margin-bottom: 10px;
+  position: relative; z-index: 1;
+}
+.hero-display em { font-style: normal; color: var(--gold); }
+
+.hero-sub-heading {
+  font-family: 'Cairo', sans-serif;
+  font-size: 17px; font-weight: 300;
+  color: rgba(247,242,232,.45);
+  letter-spacing: .08em; text-transform: uppercase;
+  margin-bottom: 28px;
+  position: relative; z-index: 1;
+}
+
+.hero-desc {
+  font-size: 15px; font-weight: 400;
+  color: rgba(247,242,232,.55);
+  line-height: 1.9; max-width: 400px;
+  margin-bottom: 44px;
+  position: relative; z-index: 1;
+}
+
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; position: relative; z-index: 1; }
+.ha-primary {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 15px 32px; border-radius: 10px;
+  background: var(--gold); color: var(--ink);
+  font-size: 15px; font-weight: 900; text-decoration: none;
+  border-bottom: 3px solid rgba(0,0,0,.3);
+  box-shadow: 0 6px 30px rgba(212,168,67,.45);
+  transition: all .22s;
+}
+.ha-primary:hover { background: var(--gold2); transform: translateY(-2px); box-shadow: 0 10px 40px rgba(212,168,67,.55); }
+
+.ha-sec {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 15px 28px; border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(212,168,67,.05);
+  color: rgba(247,242,232,.7);
+  font-size: 15px; font-weight: 600; text-decoration: none;
+  transition: all .2s;
+}
+.ha-sec:hover { border-color: rgba(212,168,67,.5); background: rgba(212,168,67,.1); color: var(--ivory); }
+
+.hero-nums {
+  display: flex; gap: 40px; margin-top: 56px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+  position: relative; z-index: 1; flex-wrap: wrap;
+}
+.hnum-n {
+  font-family: 'Amiri', serif;
+  font-size: 36px; color: var(--gold); line-height: 1;
+}
+.hnum-l { font-size: 12px; color: rgba(247,242,232,.35); font-weight: 600; margin-top: 4px; letter-spacing: .03em; }
+
+/* right panel — mosaic of cards */
+.hr {
+  position: relative; overflow: hidden; z-index: 1;
+  background: var(--ink3);
+}
+
+/* decorative pattern behind cards */
+
+
+.cards-mosaic {
+  position: absolute; inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 3px; padding: 3px;
+}
+
+.mc {
+  overflow: hidden; position: relative;
+  transition: transform .4s ease;
+  cursor: pointer;
+}
+.mc:hover { transform: scale(1.02); z-index: 5; }
+.mc img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform .6s ease;
+}
+.mc:hover img { transform: scale(1.08); }
+
+/* span certain cells */
+.mc.tall { grid-row: span 2; }
+.mc.wide { grid-column: span 2; }
+
+/* gold shimmer overlay on hover */
+.mc::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(212,168,67,.0), rgba(212,168,67,.25));
+  opacity: 0; transition: opacity .35s;
+}
+.mc:hover::after { opacity: 1; }
+
+/* card label */
+.mc-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 28px 16px 14px;
+  background: linear-gradient(transparent, rgba(13,17,23,.85));
+  font-size: 12px; font-weight: 700;
+  color: rgba(247,242,232,.7);
+  transform: translateY(100%);
+  transition: transform .3s ease;
+}
+.mc:hover .mc-label { transform: none; }
+
+/* floating edit button on mosaic */
+.mosaic-cta {
+  position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+  z-index: 10;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px; border-radius: 30px;
+  background: rgba(13,17,23,.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  color: var(--gold); font-size: 14px; font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+  transition: all .25s;
+  white-space: nowrap;
+}
+.mosaic-cta:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+
+/* ─── TICKER ─── */
+.ticker {
+  background: var(--ink2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 13px 0; overflow: hidden;
+  position: relative; z-index: 2;
+}
+@keyframes rtl-scroll { 0%{transform:translateX(0)} 100%{transform:translateX(50%)} }
+.ticker-track { display: flex; width: max-content; animation: rtl-scroll 50s linear infinite; }
+.ticker-track:hover { animation-play-state: paused; }
+.ti { display: flex; align-items: center; padding-left: 36px; font-size: 13px; font-weight: 600; color: rgba(247,242,232,.35); white-space: nowrap; }
+.ti-sep { margin-right: 36px; color: var(--gold); opacity: .6; font-size: 10px; }
+
+/* ─── SECTION WRAPPER ─── */
+.sec { padding: 110px 0; position: relative; z-index: 2; }
+.sec.alt { background: var(--ink2); }
+.container { max-width: 1240px; margin: 0 auto; padding: 0 48px; }
+.sec-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 16px;
+}
+.sec-eyebrow::before, .sec-eyebrow::after {
+  content: ""; display: block;
+  width: 20px; height: 1px; background: var(--gold); opacity: .5;
+}
+.sec-title {
+  font-family: 'Amiri', serif;
+  font-size: clamp(32px, 4vw, 50px);
+  color: var(--ivory); line-height: 1.12; letter-spacing: -.01em;
+}
+.sec-title em { font-style: normal; color: var(--gold); }
+.sec-body { font-size: 15px; color: rgba(247,242,232,.45); line-height: 1.85; margin-top: 12px; max-width: 520px; }
+
+/* animate in */
+.ai { opacity: 0; transform: translateY(32px); transition: opacity .7s ease, transform .7s ease; }
+.ai.vis { opacity: 1; transform: none; }
+
+/* ─── HOW IT WORKS ─── */
+#how .how-track {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-top: 64px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.how-cell {
+  padding: 48px 40px;
+  background: rgba(22,32,48,.6);
+  position: relative; overflow: hidden;
+  transition: background .25s;
+}
+.how-cell:hover { background: rgba(212,168,67,.05); }
+/* vertical divider */
+.how-cell:not(:last-child)::after {
+  content: "";
+  position: absolute; top: 40px; bottom: 40px; left: 0;
+  width: 1px; background: var(--border);
+}
+.how-num {
+  font-family: 'Amiri', serif;
+  font-size: 72px; line-height: 1;
+  color: rgba(212,168,67,.08);
+  position: absolute; top: 24px; left: 32px; /* left in RTL = right visually */
+  pointer-events: none;
+  font-weight: 700;
+}
+.how-icon {
+  width: 56px; height: 56px; border-radius: 14px;
+  background: rgba(212,168,67,.1);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: var(--gold);
+  margin-bottom: 24px; position: relative; z-index: 1;
+}
+.how-cell h3 { font-size: 18px; font-weight: 900; color: var(--ivory); margin-bottom: 10px; position: relative; z-index: 1; }
+.how-cell p { font-size: 14px; color: rgba(247,242,232,.45); line-height: 1.75; position: relative; z-index: 1; }
+
+/* connector dots on top */
+.how-connector {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin-bottom: 56px;
+}
+.hc-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gold); opacity: .3;
+}
+.hc-line { flex: 1; height: 1px; background: var(--border); max-width: 80px; }
+.hc-dot.act { opacity: 1; box-shadow: 0 0 12px var(--gold); }
+
+/* ─── TEMPLATES ─── */
+#templates { background: var(--ink); }
+.tpl-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 52px; }
+.tpl-all {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; color: var(--gold);
+  text-decoration: none; border-bottom: 1px solid rgba(212,168,67,.3);
+  padding-bottom: 2px; transition: border-color .2s;
+}
+.tpl-all:hover { border-color: var(--gold); }
+
+.tpl-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.tc {
+  border-radius: 16px; overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--ink2);
+  transition: all .3s; cursor: pointer;
+  position: relative;
+}
+.tc:hover { transform: translateY(-8px); box-shadow: 0 24px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(212,168,67,.3); }
+.tc-img { aspect-ratio: 1; overflow: hidden; position: relative; background: var(--ink3); }
+.tc-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.tc:hover .tc-img img { transform: scale(1.06); }
+
+/* overlay with quick action on hover */
+.tc-overlay {
+  position: absolute; inset: 0;
+  background: rgba(13,17,23,.7);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .3s;
+}
+.tc:hover .tc-overlay { opacity: 1; }
+.tc-overlay-btn {
+  padding: 12px 28px; border-radius: 8px;
+  background: var(--gold); color: var(--ink);
+  font-size: 14px; font-weight: 900;
+  text-decoration: none;
+  transform: translateY(10px);
+  transition: transform .3s .05s, background .2s;
+}
+.tc:hover .tc-overlay-btn { transform: none; }
+.tc-overlay-btn:hover { background: var(--gold2); }
+
+.tc-tag {
+  position: absolute; top: 14px; right: 14px;
+  padding: 4px 12px; border-radius: 5px;
+  font-size: 10px; font-weight: 900; letter-spacing: .05em;
+}
+.tc-tag.free { background: rgba(42,138,126,.2); color: var(--teal); border: 1px solid rgba(42,138,126,.3); }
+
+.tc-foot {
+  padding: 18px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.tc-name { font-size: 14px; font-weight: 700; color: rgba(247,242,232,.8); }
+.tc-action {
+  width: 34px; height: 34px; border-radius: 8px;
+  background: rgba(212,168,67,.1); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold); font-size: 13px; text-decoration: none;
+  transition: all .2s;
+}
+.tc:hover .tc-action { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+
+/* ─── FEATURE STRIP ─── */
+#features {
+  background: var(--ink2);
+  padding: 110px 0;
+}
+.feat-layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 80px; align-items: center;
+}
+.feat-left { position: relative; }
+.feat-left .sec-body { max-width: 340px; }
+.feat-pills {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  margin-top: 40px;
+}
+.fpill {
+  padding: 8px 18px; border-radius: 30px;
+  background: rgba(212,168,67,.07); border: 1px solid var(--border);
+  font-size: 12px; font-weight: 700; color: rgba(247,242,232,.55);
+  transition: all .2s; cursor: default;
+}
+.fpill:hover { background: rgba(212,168,67,.15); color: var(--ivory); border-color: rgba(212,168,67,.4); }
+
+.feat-right {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.fcard {
+  background: rgba(22,32,48,.7);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 28px;
+  transition: all .25s; position: relative; overflow: hidden;
+}
+.fcard::before {
+  content: "";
+  position: absolute; top: 0; right: 0; left: 0; height: 2px;
+  background: transparent; transition: background .25s;
+}
+.fcard:hover { background: rgba(212,168,67,.04); transform: translateY(-3px); }
+.fcard.gc1:hover::before { background: var(--gold); }
+.fcard.gc2:hover::before { background: var(--teal); }
+.fcard.gc3:hover::before { background: var(--rose); }
+.fcard.gc4:hover::before { background: var(--gold2); }
+.fcard-ic {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+.fcard h4 { font-size: 16px; font-weight: 900; color: var(--ivory); margin-bottom: 8px; }
+.fcard p { font-size: 13px; color: rgba(247,242,232,.4); line-height: 1.7; }
+
+/* ─── OCCASIONS STRIP ─── */
+#occasions { background: var(--ink); }
+.occ-scroll {
+  display: flex; gap: 14px; overflow-x: auto; padding-bottom: 8px;
+  scrollbar-width: none; margin-top: 52px;
+}
+.occ-scroll::-webkit-scrollbar { display: none; }
+.occ-chip {
+  flex-shrink: 0;
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 22px; border-radius: 12px;
+  background: var(--ink2); border: 1px solid var(--border);
+  text-decoration: none; color: rgba(247,242,232,.6);
+  font-size: 14px; font-weight: 600;
+  transition: all .25s;
+}
+.occ-chip .chip-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.occ-chip:hover { border-color: rgba(212,168,67,.5); background: rgba(212,168,67,.06); color: var(--ivory); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,.3); }
+
+/* ─── CTA GRAND ─── */
+#cta {
+  background: var(--ink);
+  padding: 110px 0;
+  position: relative; overflow: hidden;
+}
+#cta::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(212,168,67,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-inner {
+  text-align: center;
+  position: relative; z-index: 1; max-width: 680px; margin: 0 auto;
+}
+.cta-eid-ornament {
+  font-family: 'Amiri', serif;
+  font-size: 80px; line-height: 1;
+  color: rgba(212,168,67,.1);
+  position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+  pointer-events: none; white-space: nowrap;
+}
+.cta-inner h2 {
+  font-family: 'Amiri', serif;
+  font-size: clamp(36px, 5vw, 60px);
+  color: var(--ivory); line-height: 1.1;
+  margin-bottom: 16px; position: relative; z-index: 1;
+}
+.cta-inner h2 em { font-style: normal; color: var(--gold); }
+.cta-inner p { font-size: 16px; color: rgba(247,242,232,.45); margin-bottom: 40px; line-height: 1.8; }
+.cta-main {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 18px 48px; border-radius: 12px;
+  background: var(--gold); color: var(--ink);
+  font-size: 17px; font-weight: 900; text-decoration: none;
+  border-bottom: 4px solid rgba(0,0,0,.25);
+  box-shadow: 0 8px 40px rgba(212,168,67,.5);
+  transition: all .22s;
+}
+.cta-main:hover { background: var(--gold2); transform: translateY(-3px); box-shadow: 0 16px 56px rgba(212,168,67,.6); }
+.cta-note { margin-top: 20px; font-size: 13px; color: rgba(247,242,232,.2); }
+
+/* ─── PARTNERS ─── */
+#partners {
+  background: var(--ink2);
+  border-top: 1px solid var(--border);
+  padding: 80px 0;
+}
+.partners-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 48px; }
+.pcard {
+  display: flex; align-items: center; gap: 20px;
+  padding: 28px 32px; border-radius: 14px;
+  background: rgba(22,32,48,.5); border: 1px solid var(--border);
+  text-decoration: none; transition: all .25s;
+}
+.pcard:hover { border-color: rgba(212,168,67,.4); background: rgba(212,168,67,.04); transform: translateY(-4px); }
+.pcard-ic {
+  width: 52px; height: 52px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+.pcard h3 { font-size: 17px; font-weight: 900; color: var(--ivory); margin-bottom: 5px; }
+.pcard p { font-size: 13px; color: rgba(247,242,232,.4); line-height: 1.55; }
+.pcard .pa { font-size: 12px; font-weight: 700; color: var(--gold); display: flex; align-items: center; gap: 4px; margin-top: 8px; }
+
+/* ─── FOOTER ─── */
+#footer {
+  background: var(--ink);
+  border-top: 1px solid var(--border);
+  padding: 64px 0 28px;
+}
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px; margin-bottom: 52px; }
+.f-brand .brand-name {
+  font-family: 'Amiri', serif;
+  font-size: 32px; color: var(--ivory); font-weight: 700;
+}
+.brand-name img{
+  width: 150px;
+  height: auto;
+  object-fit: cover;
+}
+.f-brand .brand-name span { color: var(--gold); }
+.f-brand p { font-size: 14px; color: rgba(247,242,232,.35); line-height: 1.8; margin-top: 14px; max-width: 280px; }
+.f-socials { display: flex; gap: 10px; margin-top: 24px; }
+.f-socials a {
+  width: 38px; height: 38px; border-radius: 8px;
+  background: rgba(255,255,255,.04); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(247,242,232,.4); font-size: 14px; text-decoration: none;
+  transition: all .18s;
+}
+.f-socials a:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+.f-col h4 { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; opacity: .8; }
+.f-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.f-col ul a { font-size: 14px; color: rgba(247,242,232,.35); text-decoration: none; transition: color .15s; }
+.f-col ul a:hover { color: var(--ivory); }
+.f-bottom {
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+}
+.f-bottom p { font-size: 12px; color: rgba(247,242,232,.2); }
+.f-bottom .heart { color: var(--rose); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1100px) {
+  #hero { grid-template-columns: 1fr; }
+  .hr { display: none; }
+  .hl::after { display: none; }
+  .hl { padding: 90px 40px 80px; }
+  .feat-layout { grid-template-columns: 1fr; }
+  .feat-left .sec-body { max-width: 100%; }
+  #how .how-track { grid-template-columns: 1fr; }
+  .how-cell:not(:last-child)::after { display: none; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .partners-grid { grid-template-columns: 1fr; }
+  .tpl-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-cta { display: none; }
+  .nav-ham { display: block; }
+  #nav { padding: 0 24px; }
+  .container { padding: 0 24px; }
+  .sec { padding: 80px 0; }
+  .hl { padding: 80px 24px 60px; }
+  .hero-nums { gap: 24px; }
+  .tpl-grid { grid-template-columns: 1fr; }
+  .feat-right { grid-template-columns: 1fr; }
+  .footer-top { grid-template-columns: 1fr; }
+  .tpl-header { flex-direction: column; align-items: flex-start; gap: 16px; }
 }
 </style>
 </head>
 <body>
 
-<!-- ══════════ NAVBAR ══════════ -->
-<nav id="navbar">
-  <a href="/index.html" class="nav-logo"><img src="images/logo.webp" alt="سَلِّم"/></a>
+<canvas id="ornaCanvas"></canvas>
+
+<!-- NAVBAR -->
+<nav id="nav">
+    <a href="index.html" class="brand-name">
+      <img src="images/logo.webp" alt="">
+    </a>
   <div class="nav-links">
-    <a href="#" class="active">الرئيسية</a>
-    <a href="#features">المميزات</a>
+    <a href="#" class="act">الرئيسية</a>
+    <a href="#how">كيف تعمل</a>
     <a href="#templates">القوالب</a>
-    <a href="#pricing">الأسعار</a>
+    <a href="#features">المميزات</a>
   </div>
-  <div class="nav-actions">
-    <a href="/login" class="nav-login">تسجيل الدخول</a>
-    <a href="/editor.html" class="nav-cta"><i class="fa-solid fa-pen-nib"></i> المحرر</a>
-    <div class="nav-hamburger" id="ham-btn"><i class="fa-solid fa-bars"></i></div>
+  <div class="nav-right">
+    <a href="/editor.html" class="nav-cta">
+      <i class="fa-solid fa-pen-nib"></i> ابدأ التصميم
+    </a>
+    <button class="nav-ham" id="hamBtn"><i class="fa-solid fa-bars"></i></button>
   </div>
 </nav>
 
-<div id="mobile-menu">
+<div id="mob">
   <a href="#">الرئيسية</a>
-  <a href="#features">المميزات</a>
+  <a href="#how">كيف تعمل</a>
   <a href="#templates">القوالب</a>
-  <a href="#pricing">الأسعار</a>
-  <a href="/login">تسجيل الدخول</a>
-  <a href="/editor.html" class="mob-cta">افتح المحرر</a>
+  <a href="#features">المميزات</a>
+  <a href="/editor.html" class="mcta">ابدأ التصميم مجاناً</a>
 </div>
 
 <!-- ══════════ HERO ══════════ -->
 <section id="hero">
-  <!-- يسار: نص -->
-  <div class="hero-left">
-    <div class="hero-badge fu"><span class="pulse"></span> نسخة تجريبية — قوالب جديدة باستمرار</div>
-    <h1 class="hero-h1 fu" style="animation-delay:.08s">
-      صمّم لحظتك<br/>
-      <span class="line2">بأناقة لا تُنسى</span>
-    </h1>
-    <p class="hero-p fu" style="animation-delay:.16s">قوالب فاخرة، تخصيص كامل، ومشاركة فورية — كل ما تحتاجه في مكان واحد</p>
-    <div class="hero-btns fu" style="animation-delay:.24s">
-      <a href="/editor.html" class="hbtn hbtn-gold">ابدأ التصميم <i class="fa-solid fa-arrow-left"></i></a>
-      <a href="#" class="hbtn hbtn-outline">أطلق ديوانيتك ✨</a>
+
+  <!-- TEXT SIDE -->
+  <div class="hl">
+    <div class="eid-label ai">
+      <span class="el-dot"></span>
+      <span>عيد الفطر ١٤٤٦ — قوالب جاهزة</span>
     </div>
-    <div class="hero-stats fu" style="animation-delay:.32s">
-      <div><div class="hstat-num">+٥٠,٠٠٠</div><div class="hstat-lbl">بطاقة مصممة</div></div>
-      <div><div class="hstat-num">+٢٠</div><div class="hstat-lbl">قالب جاهز</div></div>
-      <div><div class="hstat-num">٨</div><div class="hstat-lbl">خطوط عربية</div></div>
+
+    <h1 class="hero-display ai" style="transition-delay:.07s">
+      بطاقاتك<br/>
+      <em>تتحدث</em><br/>
+      عنك
+    </h1>
+
+    <p class="hero-sub-heading ai" style="transition-delay:.13s">مكتبة المعلمين · استوديو البطاقات</p>
+
+    <p class="hero-desc ai" style="transition-delay:.19s">
+      اختر قالباً من مكتبتنا، خصّصه بنصوصك وصورك، ثم حمّله بجودة طباعة عالية أو أرسله عبر واتساب — في دقيقتين وبدون تسجيل.
+    </p>
+
+    <div class="hero-actions ai" style="transition-delay:.25s">
+      <a href="/editor.html" class="ha-primary">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        ابدأ التصميم مجاناً
+      </a>
+      <a href="#how" class="ha-sec">
+        <i class="fa-solid fa-circle-play"></i>
+        كيف يعمل الموقع؟
+      </a>
+    </div>
+
+    <div class="hero-nums ai" style="transition-delay:.31s">
+      <div>
+        <div class="hnum-n">+٥٠,٠٠٠</div>
+        <div class="hnum-l">بطاقة تم تصميمها</div>
+      </div>
+      <div>
+        <div class="hnum-n">+٢٠</div>
+        <div class="hnum-l">قالب احترافي</div>
+      </div>
+      <div>
+        <div class="hnum-n">٣</div>
+        <div class="hnum-l">خطوط عربية</div>
+      </div>
+      <!-- <div>
+        <div class="hnum-n">صفر</div>
+        <div class="hnum-l">تسجيل مطلوب</div>
+      </div> -->
     </div>
   </div>
-  <!-- يمين: صورة -->
-  <div class="hero-right">
-    <img class="hero-img"
-      src="images/2.png"
-      alt="تصميم بطاقات"/>
-    <div class="hero-float-card">
-      <div class="hfc-label">✦ أحدث تصميم</div>
-      <div class="hfc-title">بطاقة عيد  ١٤٤٧</div>
-      <div class="hfc-sub">تم التصميم قبل دقيقتين</div>
-      <div class="hfc-avatars">
-        <div class="hfc-avatar">أ</div>
-        <div class="hfc-avatar" style="background:var(--jade);color:#fff">م</div>
-        <div class="hfc-avatar" style="background:var(--ember);color:#fff">س</div>
-        <div class="hfc-avatar" style="background:#243548;color:var(--gold)">+٩</div>
+
+  <!-- MOSAIC SIDE -->
+<div class="hr">
+    <div class="hero-showcase">
+      <div class="hero-card c1 ai" style="transition-delay:.3s">
+        <img src="images/1.png" alt="قالب ١" onerror="this.src='https://via.placeholder.com/260x360/1a2840/D4A843?text=Template+1'"/>
+      </div>
+      <div class="hero-card c2 ai" style="transition-delay:.4s">
+        <img src="images/11.png" alt="قالب ٢" onerror="this.src='https://via.placeholder.com/260x360/201520/c0705a?text=Template+2'"/>
+      </div>
+      <div class="hero-card c3 ai" style="transition-delay:.5s">
+        <img src="images/2.png" alt="قالب ٣" onerror="this.src='https://via.placeholder.com/260x360/1a2030/D4A843?text=Main+Template'"/>
       </div>
     </div>
+
+    <a href="/editor.html" class="mosaic-cta ai" style="transition-delay:.6s">
+      <i class="fa-solid fa-pen-nib"></i> خصّص القالب الرئيسي
+    </a>
   </div>
+
 </section>
 
-<!-- ══════════ TICKER ══════════ -->
-<div class="ticker-wrap">
-  <div class="ticker-inner">
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
     <div style="display:flex">
-      <span class="t-item">تم إضافة لعبة العيدية التفاعلية<span class="t-sep">✦</span></span>
-      <span class="t-item">قوالب جديدة تُضاف أسبوعياً<span class="t-sep">✦</span></span>
-      <span class="t-item">أطلق ديوانيتك الخاصة الآن<span class="t-sep">✦</span></span>
-      <span class="t-item">حلول مخصصة للشركات والمؤسسات<span class="t-sep">✦</span></span>
-      <span class="t-item">نسخة العيد 2026 متاحة الآن<span class="t-sep">✦</span></span>
+      <span class="ti">قوالب عيد الفطر ١٤٤٦ متاحة الآن<span class="ti-sep">✦</span></span>
+      <span class="ti">تصدير PNG و PDF بجودة طباعة عالية<span class="ti-sep">✦</span></span>
+      <span class="ti">مشاركة فورية عبر واتساب بضغطة واحدة<span class="ti-sep">✦</span></span>
+      <span class="ti">لا تسجيل — لا اشتراك — مجاناً تماماً<span class="ti-sep">✦</span></span>
+      <span class="ti">٣ خطوط عربية احترافية في المحرر<span class="ti-sep">✦</span></span>
+      <span class="ti">قوالب جديدة تُضاف أسبوعياً<span class="ti-sep">✦</span></span>
     </div>
     <div style="display:flex">
-      <span class="t-item">تم إضافة لعبة العيدية التفاعلية<span class="t-sep">✦</span></span>
-      <span class="t-item">قوالب جديدة تُضاف أسبوعياً<span class="t-sep">✦</span></span>
-      <span class="t-item">أطلق ديوانيتك الخاصة الآن<span class="t-sep">✦</span></span>
-      <span class="t-item">حلول مخصصة للشركات والمؤسسات<span class="t-sep">✦</span></span>
-      <span class="t-item">نسخة العيد 2026 متاحة الآن<span class="t-sep">✦</span></span>
+      <span class="ti">قوالب عيد الفطر ١٤٤٦ متاحة الآن<span class="ti-sep">✦</span></span>
+      <span class="ti">تصدير PNG و PDF بجودة طباعة عالية<span class="ti-sep">✦</span></span>
+      <span class="ti">مشاركة فورية عبر واتساب بضغطة واحدة<span class="ti-sep">✦</span></span>
+      <span class="ti">لا تسجيل — لا اشتراك — مجاناً تماماً<span class="ti-sep">✦</span></span>
+      <span class="ti">٣ خطوط عربية احترافية في المحرر<span class="ti-sep">✦</span></span>
+      <span class="ti">قوالب جديدة تُضاف أسبوعياً<span class="ti-sep">✦</span></span>
     </div>
   </div>
 </div>
 
-<!-- ══════════ OCCASIONS ══════════ -->
-<section id="occasions">
+<!-- ══════════ HOW IT WORKS ══════════ -->
+<section id="how" class="sec alt">
   <div class="container">
-    <div class="fu" style="margin-bottom:40px">
-      <span class="sec-label">المناسبات</span>
-      <h2 class="sec-h">اختر مناسبتك</h2>
-      <p class="sec-p">بطاقات لكل لحظة تستحق التذكر</p>
+    <div class="ai" style="text-align:center">
+      <div class="sec-eyebrow" style="justify-content:center">كيف تعمل المنصة</div>
+      <h2 class="sec-title">ثلاث خطوات <em>وبطاقتك جاهزة</em></h2>
+      <p class="sec-body" style="margin:12px auto 0; text-align:center">لا تحتاج أي خبرة في التصميم — الموقع يوجهك في كل خطوة</p>
     </div>
-  </div>
-  <div class="occ-track">
 
-    <a class="occ-card fu" href="/editor.html" style="animation-delay:.28s">
-      <div class="occ-icon-wrap" style="background:rgba(42,58,77,.08)"><i class="fa-solid fa-briefcase" style="color:var(--navy)"></i></div>
-      <div class="occ-name">بطاقة الدعوات</div>
-      <div class="occ-go">استعرض <i class="fa-solid fa-arrow-left text-xs"></i></div>
-    </a>
-    <a class="occ-card fu" href="/editor.html" style="animation-delay:.35s">
-      <div class="occ-icon-wrap" style="background:rgba(20,164,141,.1)"><i class="fa-solid fa-star-and-crescent" style="color:var(--jade)"></i></div>
-      <div class="occ-name">المناسبات الدينية</div>
-      <div class="occ-go">استعرض <i class="fa-solid fa-arrow-left text-xs"></i></div>
-    </a>
+    <div class="how-track ai" style="transition-delay:.12s">
+      <div class="how-cell">
+        <div class="how-num">١</div>
+        <div class="how-icon"><i class="fa-solid fa-grid-2"></i></div>
+        <h3>اختر قالبك</h3>
+        <p>تصفح مكتبة القوالب المصممة بعناية واختر ما يناسب مناسبتك — عيد، زفاف، دعوة، أو تهنئة</p>
+      </div>
+      <div class="how-cell">
+        <div class="how-num">٢</div>
+        <div class="how-icon"><i class="fa-solid fa-sliders"></i></div>
+        <h3>خصّص بحرية كاملة</h3>
+        <p>غيّر الاسم والنص والصورة والألوان والخطوط عبر محرر مرئي — ما تراه هو ما ستحصل عليه بالضبط</p>
+      </div>
+      <div class="how-cell">
+        <div class="how-num">٣</div>
+        <div class="how-icon"><i class="fa-brands fa-whatsapp"></i></div>
+        <h3>احفظ وشارك فوراً</h3>
+        <p>حمّل بطاقتك بجودة طباعة عالية (PNG أو PDF) أو أرسلها مباشرة عبر واتساب بضغطة واحدة</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ══════════ TEMPLATES ══════════ -->
-<section id="templates">
+<section id="templates" class="sec">
   <div class="container">
-    <div class="fu" style="margin-bottom:40px">
-      <span class="sec-label">القوالب</span>
-      <h2 class="sec-h">صمّم تهنئتك</h2>
-      <p class="sec-p">مجانية ١٠٠٪ — ابدأ التخصيص الآن</p>
+    <div class="tpl-header ai">
+      <div>
+        <div class="sec-eyebrow">مكتبة القوالب</div>
+        <h2 class="sec-title">اختر <em>تصميمك</em></h2>
+        <p class="sec-body">جميع القوالب مجانية — خصّص وحمّل الآن</p>
+      </div>
+      <a href="/editor.html" class="tpl-all">
+        استعرض كل القوالب <i class="fa-solid fa-arrow-left fa-sm"></i>
+      </a>
     </div>
+
     <div class="tpl-grid">
-      <div class="tpl-card fu">
-        <div class="tpl-img-wrap">
-          <img src="images/1.png" alt="الخط الديواني"
-            onerror="this.src='images/1.png'"/>
-          <div class="tpl-badge-wrap"><span class="tpl-badge">مجاني</span></div>
+
+      <div class="tc ai">
+        <div class="tc-img">
+          <img src="images/1.png" alt="تصميم ديواني"
+            onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#1a2840,#2a8a7e)'"/>
+          <div class="tc-tag free">مجاني</div>
+          <div class="tc-overlay">
+            <a href="/editor.html" class="tc-overlay-btn">ابدأ التصميم</a>
+          </div>
         </div>
-        <div class="tpl-body">
-          <div class="tpl-title">تصميم الخط الديواني الملكي</div>
-          <a href="/editor.html" class="tpl-cta">ابدأ التصميم <i class="fa-solid fa-paintbrush text-xs"></i></a>
-        </div>
-      </div>
-      <div class="tpl-card fu" style="animation-delay:.1s">
-        <div class="tpl-img-wrap">
-          <img src="images/2.png" alt="العيد العصرية"
-            onerror="this.src='images/2.png'"/>
-          <div class="tpl-badge-wrap"><span class="tpl-badge">مجاني</span></div>
-        </div>
-        <div class="tpl-body">
-          <div class="tpl-title">بطاقة العيد العصرية</div>
-          <a href="/editor.html" class="tpl-cta">ابدأ التصميم <i class="fa-solid fa-paintbrush text-xs"></i></a>
+        <div class="tc-foot">
+          <span class="tc-name">الخط الديواني الملكي</span>
+          <a href="/editor.html" class="tc-action"><i class="fa-solid fa-pen-nib"></i></a>
         </div>
       </div>
-      <div class="tpl-card fu" style="animation-delay:.2s">
-        <div class="tpl-img-wrap">
-          <img src="images/11.png" alt="بطاقة الزفاف"
-            onerror="this.src='images/11.png'"/>
-          <div class="tpl-badge-wrap"><span class="tpl-badge">مجاني</span></div>
+
+      <div class="tc ai" style="transition-delay:.1s">
+        <div class="tc-img">
+          <img src="images/2.png" alt="بطاقة عيد"
+            onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#1a2030,#d4a843)'"/>
+          <div class="tc-tag free">مجاني</div>
+          <div class="tc-overlay">
+            <a href="/editor.html" class="tc-overlay-btn">ابدأ التصميم</a>
+          </div>
         </div>
-        <div class="tpl-body">
-          <div class="tpl-title">بطاقة الزفاف الكلاسيكية</div>
-          <a href="/editor.html" class="tpl-cta">ابدأ التصميم <i class="fa-solid fa-paintbrush text-xs"></i></a>
+        <div class="tc-foot">
+          <span class="tc-name">بطاقة العيد العصرية</span>
+          <a href="/editor.html" class="tc-action"><i class="fa-solid fa-pen-nib"></i></a>
         </div>
       </div>
+
+      <div class="tc ai" style="transition-delay:.2s">
+        <div class="tc-img">
+          <img src="images/11.png" alt="بطاقة زفاف"
+            onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#201520,#c0705a)'"/>
+          <div class="tc-tag free">مجاني</div>
+          <div class="tc-overlay">
+            <a href="/editor.html" class="tc-overlay-btn">ابدأ التصميم</a>
+          </div>
+        </div>
+        <div class="tc-foot">
+          <span class="tc-name">بطاقة الزفاف الفاخرة</span>
+          <a href="/editor.html" class="tc-action"><i class="fa-solid fa-pen-nib"></i></a>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
+
+<!-- ══════════ OCCASIONS ══════════ -->
+<!-- <section id="occasions" class="sec alt">
+  <div class="container">
+    <div class="ai">
+      <div class="sec-eyebrow">المناسبات</div>
+      <h2 class="sec-title">بطاقة لكل <em>مناسبة</em></h2>
+    </div>
+    <div class="occ-scroll ai" style="transition-delay:.1s">
+      <a href="/editor.html" class="occ-chip">
+        <div class="chip-icon" style="background:rgba(212,168,67,.1);color:var(--gold)"><i class="fa-solid fa-star-and-crescent"></i></div>
+        عيد الفطر
+      </a>
+      <a href="/editor.html" class="occ-chip">
+        <div class="chip-icon" style="background:rgba(212,168,67,.1);color:var(--gold)"><i class="fa-solid fa-moon"></i></div>
+        عيد الأضحى
+      </a>
+    </div>
+  </div>
+</section> -->
 
 <!-- ══════════ FEATURES ══════════ -->
-<section id="features">
+<section id="features" class="sec">
   <div class="container">
-    <div class="fu" style="margin-bottom:48px;text-align:center">
-      <span class="sec-label">المميزات</span>
-      <h2 class="sec-h">لماذا سَلِّم؟</h2>
-    </div>
-    <div class="feat-list">
-      <div class="feat-card c1 fu">
-        <div class="feat-icon" style="background:var(--navy)"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-        <h3 style="font-size:18px;font-weight:900;color:var(--navy);margin-bottom:10px">قوالب احترافية</h3>
-        <p style="color:#7A9AB5;font-size:14px;line-height:1.7">أكثر من ٢٠ قالب مصمم بعناية ليناسب ذوقك الرفيع لكل المناسبات.</p>
+    <div class="feat-layout">
+      <div class="feat-left ai">
+        <div class="sec-eyebrow">لماذا مكتبة المعلمين</div>
+        <h2 class="sec-title">تصميم <em>يليق</em><br/>بالمناسبة</h2>
+        <p class="sec-body">ليس مجرد أداة — هي منصة عربية مبنية خصيصاً لأذواق المناسبات العربية بخطوط وتصاميم تراثية عصرية</p>
+        <div class="feat-pills">
+          <span class="fpill">خطوط عربية أصيلة</span>
+          <span class="fpill">تصدير PNG & PDF</span>
+          <span class="fpill">مشاركة واتساب</span>
+          <span class="fpill">بدون تسجيل</span>
+          <span class="fpill">مجاني ١٠٠٪</span>
+          <span class="fpill">متجاوب مع الجوال</span>
+        </div>
       </div>
-      <div class="feat-card c2 fu" style="animation-delay:.1s">
-        <div class="feat-icon" style="background:var(--jade)"><i class="fa-solid fa-file-export"></i></div>
-        <h3 style="font-size:18px;font-weight:900;color:var(--navy);margin-bottom:10px">تصدير عالي الجودة</h3>
-        <p style="color:#7A9AB5;font-size:14px;line-height:1.7">حمّل بطاقتك بصيغ PNG و PDF بأعلى دقة ممكنة للطباعة أو النشر.</p>
-      </div>
-      <div class="feat-card c3 fu" style="animation-delay:.2s">
-        <div class="feat-icon" style="background:var(--ember)"><i class="fa-brands fa-whatsapp text-2xl"></i></div>
-        <h3 style="font-size:18px;font-weight:900;color:var(--navy);margin-bottom:10px">مشاركة فورية</h3>
-        <p style="color:#7A9AB5;font-size:14px;line-height:1.7">شارك إبداعك مباشرة عبر واتساب مع الأهل والأصدقاء بضغطة زر.</p>
+
+      <div class="feat-right ai" style="transition-delay:.12s">
+        <div class="fcard gc1">
+          <div class="fcard-ic" style="background:rgba(212,168,67,.08); color:var(--gold)"><i class="fa-solid fa-layer-group"></i></div>
+          <h4>قوالب احترافية</h4>
+          <p>أكثر من ٢٠ قالب مصمم بعناية لكل المناسبات العربية من العيد إلى الزفاف والدعوات</p>
+        </div>
+        <div class="fcard gc2">
+          <div class="fcard-ic" style="background:rgba(42,138,126,.1); color:var(--teal)"><i class="fa-solid fa-sliders"></i></div>
+          <h4>تخصيص كامل</h4>
+          <p>غيّر كل شيء: النص، الاسم، الصورة، الألوان، والخط — بمحرر مرئي بسيط بدون أي خبرة</p>
+        </div>
+        <div class="fcard gc3">
+          <div class="fcard-ic" style="background:rgba(192,112,90,.1); color:var(--rose)"><i class="fa-solid fa-file-arrow-down"></i></div>
+          <h4>جودة طباعة عالية</h4>
+          <p>تصدير PNG و PDF بدقة عالية جاهزة للطباعة أو النشر على السوشيال ميديا</p>
+        </div>
+        <div class="fcard gc4">
+          <div class="fcard-ic" style="background:rgba(212,168,67,.08); color:var(--gold2)"><i class="fa-brands fa-whatsapp"></i></div>
+          <h4>مشاركة فورية</h4>
+          <p>أرسل بطاقتك لأهلك وأصدقائك مباشرة عبر واتساب بضغطة واحدة بدون تحميل</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════ GAME BANNER ══════════ -->
-<section id="game-banner">
-  <div class="game-left">
-    <div class="game-label">🎮 ميزة جديدة</div>
-    <h2 class="game-h">لعبة العيدية<br/>التفاعلية</h2>
-    <p class="game-p">حوّل تهنئتك إلى مغامرة — أنشئ أسئلتك، حدد جوائزك، وتنافس مع عائلتك!</p>
-    <a href="/" class="game-btn">ابدأ اللعبة <i class="fa-solid fa-arrow-left"></i></a>
-  </div>
-  <div class="game-right">
-    <div class="dice-big">🎲</div>
-  </div>
-</section>
-
-<!-- ══════════ STEPS ══════════ -->
-<section id="steps">
+<!-- ══════════ CTA ══════════ -->
+<section id="cta">
   <div class="container">
-    <div class="fu" style="text-align:center;margin-bottom:56px">
-      <span class="sec-label">كيف تعمل</span>
-      <h2 class="sec-h">ثلاث خطوات بسيطة</h2>
+    <div class="cta-inner ai">
+      <div class="cta-eid-ornament" aria-hidden="true">عيد مبارك</div>
+      <div class="sec-eyebrow" style="justify-content:center;margin-bottom:20px">ابدأ الآن — مجاناً</div>
+      <h2>صمّم بطاقتك<br/><em>في دقيقتين</em></h2>
+      <p>لا تسجيل، لا اشتراك، لا تعقيد<br/>اختر قالباً وابدأ التخصيص الآن</p>
+      <a href="/editor.html" class="cta-main">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        افتح محرر البطاقات مجاناً
+      </a>
+      <p class="cta-note">أكثر من ٥٠,٠٠٠ بطاقة تم تصميمها حتى الآن ✦</p>
     </div>
-    <div class="steps-grid">
-      <div class="step fu">
-        <div class="step-num-wrap">01</div>
-        <h3 class="step-title">اختر القالب</h3>
-        <p class="step-desc">تصفح مكتبة القوالب المميزة واختر ما يناسب مناسبتك</p>
-      </div>
-      <div class="step fu" style="animation-delay:.12s">
-        <div class="step-num-wrap" style="border-color:var(--jade);color:var(--jade)">02</div>
-        <h3 class="step-title">خصّص التصميم</h3>
-        <p class="step-desc">أضف اسمك ونصوصك وصورتك بأدوات تحرير سهلة الاستخدام</p>
-      </div>
-      <div class="step fu" style="animation-delay:.24s">
-        <div class="step-num-wrap" style="border-color:var(--ember);color:var(--ember)">03</div>
-        <h3 class="step-title">صدّر وشارك</h3>
-        <p class="step-desc">حمّل التصميم بجودة عالية أو شاركه مباشرة عبر واتساب</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ PRICING ══════════ -->
-<section id="pricing">
-  <div class="container">
-    <div class="fu" style="text-align:center;margin-bottom:52px">
-      <span class="sec-label">الباقات</span>
-      <h2 class="sec-h">اختر ما يناسبك</h2>
-      <p class="sec-p">مرن. سهل. يخدم الجميع.</p>
-    </div>
-    <div class="pricing-grid fu">
-      <div class="pc-free">
-        <h3 style="font-size:22px;font-weight:900;color:var(--navy)">الباقة المجانية</h3>
-        <p style="color:#7A9AB5;font-size:14px;margin-top:6px">مثالية للاستخدام الشخصي</p>
-        <div class="pc-price">مجاناً</div>
-        <div class="pc-list">
-          <div class="pc-item"><i class="fa-solid fa-circle-check pc-check-free"></i><span>تصميم <strong>غير محدود</strong> من البطاقات</span></div>
-          <div class="pc-item"><i class="fa-solid fa-circle-check pc-check-free"></i><span>مكتبة القوالب الأساسية</span></div>
-          <div class="pc-item"><i class="fa-solid fa-circle-check pc-check-free"></i><span>تصدير PNG و PDF عالي الجودة</span></div>
-        </div>
-        <a href="/editor.html" class="pc-btn-free">ابدأ مجاناً الآن</a>
-      </div>
-      <div class="pc-pro">
-        <div class="pc-badge">الأكثر طلباً للأعمال</div>
-        <h3 style="font-size:22px;font-weight:900;color:#fff;margin-top:12px">باقة الشركات</h3>
-        <p style="color:rgba(255,255,255,.45);font-size:14px;margin-top:6px">حلول تعكس هوية مؤسستك</p>
-        <div class="pc-price">تواصل معنا</div>
-        <div class="pc-list">
-          <div class="pc-item"><i class="fa-solid fa-circle-check pc-check-pro"></i><span>تخصيص كامل بألوان شركتك</span></div>
-          <div class="pc-item"><i class="fa-solid fa-circle-check pc-check-pro"></i><span>إزالة العلامة المائية</span></div>
-          <div class="pc-item"><i class="fa-solid fa-circle-check pc-check-pro"></i><span>قوالب VIP مغلقة لشركتك</span></div>
-          <div class="pc-item"><i class="fa-solid fa-circle-check pc-check-pro"></i><span>دعم فني ذو أولوية</span></div>
-        </div>
-        <a href="mailto:sales@solimanw.com" class="pc-btn-pro">تواصل مع المبيعات <i class="fa-solid fa-headset mr-1"></i></a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ FAQ ══════════ -->
-<section id="faq">
-  <div class="container">
-    <div class="fu" style="text-align:center;margin-bottom:48px">
-      <span class="sec-label">الأسئلة</span>
-      <h2 class="sec-h">أسئلة شائعة</h2>
-    </div>
-    <div class="faq-list fu">
-      <div class="faq-item">
-        <div class="faq-head" onclick="faqToggle(this)">
-          <h3>هل المنصة مجانية؟</h3>
-          <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
-        </div>
-        <div class="faq-body">نعم، يمكنك استخدام القوالب الأساسية وتصميم بطاقتك وتصديرها بشكل مجاني تماماً. نوفر أيضاً باقات مدفوعة للشركات التي تحتاج تخصيصاً أكبر.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-head" onclick="faqToggle(this)">
-          <h3>ما جودة الصور المُصدرة؟</h3>
-          <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
-        </div>
-        <div class="faq-body">نصدّر الصور بجودة عالية (High Resolution) بصيغة PNG أو PDF جاهزة للمشاركة على وسائل التواصل أو للطباعة.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-head" onclick="faqToggle(this)">
-          <h3>هل تعمل المنصة على الهاتف؟</h3>
-          <div class="faq-chevron"><i class="fa-solid fa-chevron-down"></i></div>
-        </div>
-        <div class="faq-body">بالتأكيد! المنصة متجاوبة بالكامل مع جميع الأجهزة — موبايل، تابلت، وكمبيوتر.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ CTA BOTTOM ══════════ -->
-<section id="cta-bottom">
-  <div class="cta-inner fu">
-    <h2>جاهز للبدء؟</h2>
-    <p>صمّم بطاقتك الآن مجاناً في أقل من دقيقتين</p>
-    <a href="/editor.html" class="cta-main-btn">
-      ابدأ التصميم مجاناً <i class="fa-solid fa-arrow-left"></i>
-    </a>
   </div>
 </section>
 
 <!-- ══════════ PARTNERS ══════════ -->
 <section id="partners">
   <div class="container">
-    <div class="fu" style="text-align:center;margin-bottom:40px">
-      <span class="sec-label" style="color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)">اكتشف المزيد</span>
-      <h2 class="sec-h" style="color:#fff">منصاتنا الأخرى</h2>
+    <div class="ai">
+      <div class="sec-eyebrow">مواقعنا الأخرى</div>
+      <h2 class="sec-title">منصات <em>المعلمين</em></h2>
     </div>
-    <div class="partner-grid fu">
-      <a href="https://sabir5-1-1.com/" target="_blank" rel="noopener noreferrer" class="pcard a">
-        <div class="pcard-icon" style="background:rgba(91,192,234,.15)"><i class="fa-solid fa-globe" style="color:var(--azure)"></i></div>
-        <div class="pcard-text">
-          <h3>موقع صابر</h3>
-          <p>تصفح أحدث الخدمات والمميزات الإضافية التي نقدمها.</p>
-          <span class="pcard-go">زور الموقع <i class="fa-solid fa-arrow-left"></i></span>
+    <div class="partners-grid ai" style="transition-delay:.1s">
+      <a href="https://sabir5-1-1.com/" target="_blank" rel="noopener" class="pcard">
+        <div class="pcard-ic" style="background:rgba(42,138,126,.1); color:var(--teal)">
+          <i class="fa-solid fa-globe"></i>
+        </div>
+        <div>
+          <h3>مكتبة المعلمين</h3>
+          <p>تصفح أحدث الخدمات والمحتوى التعليمي والمميزات الإضافية</p>
+          <span class="pa">زور الموقع <i class="fa-solid fa-arrow-left fa-xs"></i></span>
         </div>
       </a>
-      <a href="https://sabir511.com/" target="_blank" rel="noopener noreferrer" class="pcard e">
-        <div class="pcard-icon" style="background:rgba(250,98,103,.12)"><i class="fa-solid fa-rocket" style="color:var(--ember)"></i></div>
-        <div class="pcard-text">
-          <h3>صابر 511</h3>
-          <p>اكتشف الحلول الإبداعية المصممة خصيصاً لتلبية احتياجاتك.</p>
-          <span class="pcard-go">زور الموقع <i class="fa-solid fa-arrow-left"></i></span>
+      <a href="https://sabir511.com/" target="_blank" rel="noopener" class="pcard">
+        <div class="pcard-ic" style="background:rgba(192,112,90,.1); color:var(--rose)">
+          <i class="fa-solid fa-flask"></i>
+        </div>
+        <div>
+          <h3>منصة العلوم</h3>
+          <p>اكتشف المحتوى العلمي والحلول الإبداعية المصممة لاحتياجاتك</p>
+          <span class="pa">زور الموقع <i class="fa-solid fa-arrow-left fa-xs"></i></span>
         </div>
       </a>
     </div>
@@ -934,72 +1085,111 @@ body{font-family:"Tajawal",sans-serif;background:var(--bg);color:var(--navy);ove
 <!-- ══════════ FOOTER ══════════ -->
 <footer id="footer">
   <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="footer-logo"><img src="images/logo.webp" alt="سَلِّم"/></div>
-        <p>المنصة العربية الأولى لتصميم بطاقات التهنئة والمناسبات باحترافية وسهولة.</p>
-        <div class="footer-socials">
+    <div class="footer-top">
+      <div class="f-brand">
+        <a href="index.html" class="brand-name"><img src="images/logo.webp" alt=""></a>
+        <p>المنصة العربية لتصميم بطاقات التهنئة والمناسبات — بخطوط عربية أصيلة وجودة احترافية.</p>
+        <div class="f-socials">
           <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-          <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
           <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="mailto:sales@solimanw.com"><i class="fa-solid fa-envelope"></i></a>
         </div>
       </div>
-      <div class="footer-col">
+      <div class="f-col">
         <h4>روابط سريعة</h4>
         <ul>
           <li><a href="#">الرئيسية</a></li>
-          <li><a href="/editor.html">محرر البطاقات</a></li>
+          <li><a href="#how">كيف تعمل</a></li>
           <li><a href="#templates">القوالب</a></li>
-          <li><a href="#pricing">الأسعار</a></li>
+          <li><a href="/editor.html">المحرر</a></li>
         </ul>
       </div>
-      <div class="footer-col">
-        <h4>الدعم</h4>
+      <div class="f-col">
+        <h4>تواصل</h4>
         <ul>
-          <li><a href="#">الأسئلة الشائعة</a></li>
-          <li><a href="#">شروط الاستخدام</a></li>
-          <li><a href="#">سياسة الخصوصية</a></li>
-          <li><a href="#">تواصل معنا</a></li>
+          <li><a href="https://sabir5-1-1.com/" target="_blank">مكتبة المعلمين</a></li>
+          <li><a href="https://sabir511.com/" target="_blank">منصة العلوم</a></li>
+          <li><a href="mailto:sales@solimanw.com">راسلنا</a></li>
         </ul>
       </div>
     </div>
-    <div class="footer-bottom">
-      <p>© 2026 منصة سَلِّم — جميع الحقوق محفوظة.</p>
-      <p>صُنع بكل <span class="footer-heart">♥</span> في المملكة العربية السعودية</p>
+    <div class="f-bottom">
+      <p>© 2026 مكتبة المعلمين — جميع الحقوق محفوظة</p>
+      <p>صُنع بكل <span class="heart">♥</span> في المملكة العربية السعودية</p>
     </div>
   </div>
 </footer>
 
-
 <script>
-/* Mobile menu */
-document.getElementById('ham-btn').addEventListener('click',()=>{
-  document.getElementById('mobile-menu').classList.toggle('open');
-});
-/* Close menu on link click */
-document.querySelectorAll('#mobile-menu a').forEach(a=>a.addEventListener('click',()=>{
-  document.getElementById('mobile-menu').classList.remove('open');
-}));
+/* ── Ornament Canvas (Islamic geometric) ── */
+const canvas = document.getElementById('ornaCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
 
-/* FAQ */
-function faqToggle(head){
-  const item=head.closest('.faq-item');
-  document.querySelectorAll('.faq-item.open').forEach(i=>{if(i!==item)i.classList.remove('open')});
-  item.classList.toggle('open');
+function drawStar(cx, cy, r, points, color, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = .5;
+  const outer = r, inner = r * .42;
+  ctx.beginPath();
+  for (let i = 0; i < points * 2; i++) {
+    const angle = (i * Math.PI) / points - Math.PI / 2;
+    const rad = i % 2 === 0 ? outer : inner;
+    const x = cx + rad * Math.cos(angle);
+    const y = cy + rad * Math.sin(angle);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+  ctx.restore();
 }
 
-/* Reveal on scroll */
-const obs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')});
-},{threshold:.1});
-document.querySelectorAll('.fu').forEach(el=>obs.observe(el));
+function drawOrnaments() {
+  ctx.clearRect(0, 0, W, H);
+  const spacing = 140;
+  for (let x = spacing / 2; x < W; x += spacing) {
+    for (let y = spacing / 2; y < H; y += spacing) {
+      drawStar(x, y, 22, 8, '#D4A843', .18);
+      drawStar(x, y, 10, 6, '#D4A843', .1);
+    }
+  }
+}
 
-/* Navbar shadow on scroll */
-window.addEventListener('scroll',()=>{
-  document.getElementById('navbar').style.boxShadow=
-    window.scrollY>20?'0 4px 28px rgba(42,58,77,.4)':'0 4px 32px rgba(42,58,77,.35)';
+drawOrnaments();
+window.addEventListener('resize', drawOrnaments);
+
+/* ── Nav hamburger ── */
+document.getElementById('hamBtn').addEventListener('click', () => {
+  document.getElementById('mob').classList.toggle('show');
+});
+document.querySelectorAll('#mob a').forEach(a => a.addEventListener('click', () => {
+  document.getElementById('mob').classList.remove('show');
+}));
+
+/* ── Scroll reveal ── */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+}, { threshold: .08 });
+document.querySelectorAll('.ai').forEach(el => io.observe(el));
+
+/* ── Trigger hero items (already in view) ── */
+document.querySelectorAll('#hero .ai').forEach(el => {
+  setTimeout(() => el.classList.add('vis'), 80);
+});
+
+/* ── Navbar scroll effect ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').style.background =
+    window.scrollY > 30 ? 'rgba(13,17,23,.97)' : 'rgba(13,17,23,.85)';
 });
 </script>
-<script src="js/index.js"></script>
 </body>
 </html>
