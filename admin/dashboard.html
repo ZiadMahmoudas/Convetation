@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>لوحة الإدارة — مكتبة المعلمين</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<style>
+:root {
+  --ink:#0D1117; --ink2:#111922; --ink3:#162030; --ink4:#1C2B3A;
+  --gold:#D4A843; --gold2:#ECC96A; --gold3:#F5E09A;
+  --ivory:#F7F2E8; --ivory2:#EDE6D6;
+  --rose:#C0705A; --rose2:#E08070;
+  --teal:#2A8A7E; --teal2:#3AADA0;
+  --muted:rgba(247,242,232,.45);
+  --border:rgba(212,168,67,.15); --border2:rgba(212,168,67,.28);
+  --sh:0 4px 20px rgba(0,0,0,.3); --sh-lg:0 12px 48px rgba(0,0,0,.4);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:"Tajawal",sans-serif;background:var(--ink);color:var(--ivory);display:flex}
+
+/* ── SIDEBAR ── */
+#dash-sidebar{width:220px;flex-shrink:0;background:var(--ink2);border-left:1px solid var(--border);display:flex;flex-direction:column;height:100vh}
+.dash-logo{padding:22px 18px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.dash-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 16px rgba(212,168,67,.25);flex-shrink:0}
+.dash-logo-text{font-family:"Amiri",serif;font-size:20px;font-weight:700;color:var(--gold2)}
+.dash-logo-sub{font-size:9px;color:rgba(247,242,232,.3);font-weight:500;letter-spacing:.5px}
+.dash-nav{flex:1;overflow-y:auto;padding:12px 10px}
+.dash-nav::-webkit-scrollbar{width:3px}
+.dash-nav::-webkit-scrollbar-thumb{background:var(--border2)}
+.nav-section{font-size:9px;font-weight:800;color:rgba(212,168,67,.45);text-transform:uppercase;letter-spacing:.8px;padding:12px 8px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;color:rgba(247,242,232,.45);font-size:13px;font-weight:700;transition:all .16s;margin-bottom:2px;position:relative;border:none;background:transparent;width:100%;text-align:right;font-family:"Tajawal",sans-serif}
+.nav-item:hover{background:rgba(212,168,67,.06);color:rgba(247,242,232,.8)}
+.nav-item.on{background:rgba(212,168,67,.1);color:var(--gold2)}
+.nav-item.on::before{content:"";position:absolute;right:0;top:25%;bottom:25%;width:3px;background:var(--gold);border-radius:2px 0 0 2px}
+.nav-item i{width:18px;text-align:center;font-size:14px;flex-shrink:0}
+.dash-user{padding:14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.dash-avatar{width:34px;height:34px;background:linear-gradient(135deg,var(--gold),var(--teal));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--ink);flex-shrink:0}
+.dash-uname{font-size:13px;font-weight:700;color:var(--ivory2);display:block}
+.dash-role{font-size:10px;color:var(--gold);font-weight:600}
+.btn-logout{margin-right:auto;background:none;border:none;color:rgba(247,242,232,.2);cursor:pointer;font-size:16px;transition:color .15s;padding:4px}
+.btn-logout:hover{color:var(--rose2)}
+
+/* ── MAIN ── */
+#dash-main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+#dash-topbar{height:56px;flex-shrink:0;background:var(--ink2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:14px;box-shadow:0 2px 12px rgba(0,0,0,.2)}
+#page-title{font-size:17px;font-weight:800;color:var(--ivory)}
+.topbar-actions{display:flex;gap:8px;margin-right:auto}
+.btn-sm{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-family:"Tajawal",sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .16s}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--ink);box-shadow:0 3px 12px rgba(212,168,67,.2)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,168,67,.3)}
+.btn-ghost{background:rgba(247,242,232,.05);color:rgba(247,242,232,.6);border:1px solid var(--border)}
+.btn-ghost:hover{background:rgba(247,242,232,.1);color:var(--ivory)}
+.btn-danger{background:rgba(192,112,90,.12);color:var(--rose2);border:1px solid rgba(192,112,90,.25)}
+.btn-danger:hover{background:rgba(192,112,90,.2)}
+
+#dash-content{flex:1;overflow-y:auto;padding:24px;background:var(--ink);background-image:radial-gradient(circle,rgba(212,168,67,.02) 1px,transparent 1px);background-size:20px 20px}
+#dash-content::-webkit-scrollbar{width:5px}
+#dash-content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.dash-page{display:none}
+.dash-page.on{display:block}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:28px}
+.stat-card{background:var(--ink2);border:1px solid var(--border);border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--sh)}
+.stat-card::after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px}
+.stat-card.gold::after{background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.stat-card.teal::after{background:linear-gradient(90deg,var(--teal),var(--teal2))}
+.stat-card.rose::after{background:linear-gradient(90deg,var(--rose),var(--rose2))}
+.stat-card.blue::after{background:linear-gradient(90deg,#3B82F6,#60A5FA)}
+.stat-icon{font-size:22px;margin-bottom:10px;display:block}
+.stat-val{font-size:30px;font-weight:900;color:var(--ivory);line-height:1;margin-bottom:5px}
+.stat-lbl{font-size:12px;color:rgba(247,242,232,.4);font-weight:500}
+
+/* ── SECTION CARD ── */
+.section-card{background:var(--ink2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px}
+.section-head{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);background:rgba(212,168,67,.03)}
+.section-head h3{font-size:14px;font-weight:800;color:var(--ivory)}
+.section-head p{font-size:11px;color:rgba(247,242,232,.35);margin-top:2px}
+.section-actions{margin-right:auto;display:flex;gap:8px}
+.section-body{padding:20px}
+
+/* ── TABLE ── */
+.dash-table{width:100%;border-collapse:collapse}
+.dash-table th{text-align:right;padding:10px 14px;font-size:10px;font-weight:800;color:rgba(212,168,67,.6);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border);background:rgba(212,168,67,.03)}
+.dash-table td{padding:12px 14px;border-bottom:1px solid rgba(212,168,67,.07);font-size:13px;vertical-align:middle}
+.dash-table tr:last-child td{border-bottom:none}
+.dash-table tr:hover td{background:rgba(212,168,67,.03)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:800}
+.badge-gold{background:rgba(212,168,67,.15);color:var(--gold2)}
+.badge-teal{background:rgba(42,138,126,.15);color:var(--teal2)}
+.badge-rose{background:rgba(192,112,90,.15);color:var(--rose2)}
+.badge-gray{background:rgba(247,242,232,.07);color:rgba(247,242,232,.4)}
+.row-actions{display:flex;gap:5px}
+.ra-btn{width:28px;height:28px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .13s}
+.ra-edit{background:rgba(212,168,67,.1);color:var(--gold2)}
+.ra-edit:hover{background:rgba(212,168,67,.2)}
+.ra-del{background:rgba(192,112,90,.1);color:var(--rose2)}
+.ra-del:hover{background:rgba(192,112,90,.22)}
+.ra-toggle{background:rgba(42,138,126,.1);color:var(--teal2)}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
+.modal-overlay.on{display:flex}
+.modal{background:var(--ink2);border:1px solid var(--border2);border-radius:18px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:var(--sh-lg)}
+.modal::-webkit-scrollbar{width:3px}
+.modal::-webkit-scrollbar-thumb{background:var(--border2)}
+.modal-head{display:flex;align-items:center;gap:12px;padding:20px 22px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(212,168,67,.04) 0%,transparent 100%);position:sticky;top:0;z-index:10}
+.modal-head h3{font-size:16px;font-weight:800;color:var(--ivory);flex:1}
+.modal-close{background:none;border:none;color:rgba(247,242,232,.3);cursor:pointer;font-size:18px;transition:color .15s;padding:4px}
+.modal-close:hover{color:var(--rose2)}
+.modal-body{padding:22px}
+.modal-footer{padding:16px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-start;gap:10px}
+.mfield{margin-bottom:16px}
+.mfield label{display:block;font-size:10px;font-weight:800;color:rgba(212,168,67,.65);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
+.mfield input,.mfield select,.mfield textarea{width:100%;padding:10px 14px;background:var(--ink3);border:1.5px solid var(--border);border-radius:10px;color:var(--ivory);font-family:"Tajawal",sans-serif;font-size:13px;outline:none;direction:rtl;transition:border-color .18s,box-shadow .18s}
+.mfield input:focus,.mfield select:focus,.mfield textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,168,67,.1)}
+.mfield textarea{resize:vertical;min-height:80px}
+.mfield select option{background:var(--ink3)}
+.upload-zone{border:2px dashed var(--border2);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:all .18s;background:rgba(212,168,67,.02);position:relative}
+.upload-zone:hover{border-color:var(--gold);background:rgba(212,168,67,.05)}
+.upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-zone-icon{font-size:28px;margin-bottom:10px;color:var(--gold)}
+.upload-zone p{font-size:13px;font-weight:700;color:rgba(247,242,232,.6)}
+.upload-zone small{font-size:11px;color:rgba(247,242,232,.25)}
+.progress-bar{height:4px;border-radius:2px;background:var(--border);overflow:hidden;margin-top:8px;display:none}
+.progress-bar.vis{display:block}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .3s}
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.img-card{border-radius:10px;overflow:hidden;border:1.5px solid var(--border);background:var(--ink3);cursor:pointer;transition:all .16s;position:relative}
+.img-card:hover{border-color:var(--gold);transform:scale(1.02);box-shadow:var(--sh)}
+.img-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.img-card-foot{padding:6px 8px;background:rgba(0,0,0,.4);font-size:10px;color:rgba(247,242,232,.6);display:flex;justify-content:space-between;align-items:center}
+.toggle-sw{position:relative;width:38px;height:20px;flex-shrink:0}
+.toggle-sw input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:rgba(247,242,232,.1);border-radius:10px;cursor:pointer;transition:background .2s;border:1px solid var(--border)}
+.toggle-sw input:checked + .toggle-track{background:var(--teal)}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .2s}
+.toggle-sw input:checked ~ .toggle-thumb{transform:translateX(18px)}
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--ink3);border:1.5px solid var(--border);border-radius:10px;padding:8px 14px;margin-bottom:16px}
+.search-bar i{color:rgba(247,242,232,.2);font-size:14px}
+.search-bar input{flex:1;background:none;border:none;outline:none;color:var(--ivory);font-family:"Tajawal",sans-serif;font-size:13px;direction:rtl}
+.search-bar input::placeholder{color:rgba(247,242,232,.2)}
+.page-tabs{display:flex;gap:4px;background:var(--ink3);border-radius:10px;padding:4px;margin-bottom:20px}
+.ptab{flex:1;padding:8px;text-align:center;border-radius:7px;border:none;background:none;color:rgba(247,242,232,.35);font-family:"Tajawal",sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
+.ptab.on{background:var(--ink2);color:var(--gold2);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.color-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.color-swatch{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .13s}
+.color-swatch:hover,.color-swatch.on{border-color:var(--ivory);transform:scale(1.15)}
+
+/* ── COUPON FILTER PILLS ── */
+.cp-pill{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:rgba(247,242,232,.04);color:rgba(247,242,232,.4);font-family:"Tajawal",sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .13s}
+.cp-pill:hover{border-color:var(--border2);color:rgba(247,242,232,.7)}
+.cp-pill.on{background:rgba(212,168,67,.12);color:var(--gold2);border-color:var(--border2)}
+
+/* ── COUPON CODE DISPLAY ── */
+.coupon-code{
+  font-family:monospace;font-size:16px;font-weight:900;
+  letter-spacing:4px;color:var(--gold2);
+  background:rgba(212,168,67,.07);
+  padding:5px 12px;border-radius:7px;
+  border:1px solid rgba(212,168,67,.12);
+  display:inline-block;
+}
+
+/* ── PREMIUM BADGE (for calligraphy modal) ── */
+.premium-toggle-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(212,168,67,.05);border:1px solid rgba(212,168,67,.15);border-radius:10px}
+.premium-toggle-row label{font-size:13px;font-weight:700;color:rgba(247,242,232,.7);cursor:pointer}
+.premium-toggle-row small{font-size:10px;color:rgba(212,168,67,.5);display:block}
+
+/* ── TOAST ── */
+#dash-toast{position:fixed;bottom:24px;left:24px;background:var(--ink2);color:var(--ivory);padding:12px 22px;border-radius:10px;border:1px solid var(--border);border-right:3px solid var(--gold);font-size:13px;font-weight:700;z-index:9999;opacity:0;transition:all .22s;transform:translateY(10px);pointer-events:none;box-shadow:var(--sh-lg)}
+#dash-toast.vis{opacity:1;transform:translateY(0)}
+#dash-toast.ok{border-right-color:var(--teal)}
+#dash-toast.err{border-right-color:var(--rose)}
+
+.empty-state{text-align:center;padding:48px 20px;color:rgba(247,242,232,.25)}
+.empty-state i{font-size:40px;margin-bottom:14px;display:block;color:rgba(212,168,67,.2)}
+.empty-state p{font-size:14px;font-weight:600}
+.loading-row{display:flex;align-items:center;justify-content:center;gap:10px;padding:40px;color:rgba(247,242,232,.3);font-size:13px}
+.spin{width:18px;height:18px;border:2px solid rgba(212,168,67,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cat-color{width:10px;height:10px;border-radius:2px;display:inline-block;margin-left:6px}
+
+@media(max-width:900px){
+  #dash-sidebar{width:60px}
+  .nav-item span,.dash-logo-text,.dash-logo-sub,.dash-uname,.dash-role{display:none}
+  .dash-logo{justify-content:center;padding:14px 8px}
+  .nav-item{justify-content:center;padding:12px}
+  .dash-user{justify-content:center;padding:10px 8px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<div id="dash-sidebar">
+  <div class="dash-logo">
+    <div class="dash-logo-icon">✦</div>
+    <div>
+      <div class="dash-logo-text">مكتبة المعلمين</div>
+      <div class="dash-logo-sub">ADMIN PANEL</div>
+    </div>
+  </div>
+  <nav class="dash-nav">
+    <div class="nav-section">الرئيسية</div>
+    <button class="nav-item on" data-page="overview" onclick="navTo(this)">
+      <i class="fa-solid fa-chart-pie"></i><span>نظرة عامة</span>
+    </button>
+    <div class="nav-section">المحتوى</div>
+    <button class="nav-item" data-page="categories" onclick="navTo(this)">
+      <i class="fa-solid fa-folder-tree"></i><span>التصنيفات</span>
+    </button>
+    <button class="nav-item" data-page="calligraphy" onclick="navTo(this)">
+      <i class="fa-solid fa-pen-nib"></i><span>المخطوطات</span>
+    </button>
+    <button class="nav-item" data-page="backgrounds" onclick="navTo(this)">
+      <i class="fa-solid fa-image"></i><span>الخلفيات</span>
+    </button>
+    <div class="nav-section">الإدارة</div>
+    <button class="nav-item" data-page="coupons" onclick="navTo(this)">
+      <i class="fa-solid fa-ticket"></i><span>الكوبونات</span>
+    </button>
+    <button class="nav-item" data-page="users" onclick="navTo(this)">
+      <i class="fa-solid fa-users"></i><span>المستخدمون</span>
+    </button>
+    <button class="nav-item" data-page="activity" onclick="navTo(this)">
+      <i class="fa-solid fa-clock-rotate-left"></i><span>السجلات</span>
+    </button>
+    <div class="nav-section">الموقع</div>
+    <button class="nav-item" onclick="window.open('/editor.html','_blank')">
+      <i class="fa-solid fa-arrow-up-right-from-square"></i><span>فتح المحرر</span>
+    </button>
+  </nav>
+  <div class="dash-user">
+    <div class="dash-avatar" id="admin-avatar">A</div>
+    <div>
+      <span class="dash-uname" id="admin-name">أدمن</span>
+      <span class="dash-role">مدير النظام</span>
+    </div>
+    <button class="btn-logout" onclick="Auth.logout()" title="تسجيل الخروج">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div id="dash-main">
+  <div id="dash-topbar">
+    <div id="page-title">نظرة عامة</div>
+    <div class="topbar-actions" id="topbar-actions"></div>
+  </div>
+
+  <div id="dash-content">
+
+    <!-- PAGE: OVERVIEW -->
+    <div class="dash-page on" id="page-overview">
+      <div class="stat-grid" id="stat-grid">
+        <div class="stat-card gold"><span class="stat-icon">👥</span><div class="stat-val" id="s-users">—</div><div class="stat-lbl">المستخدمون</div></div>
+        <div class="stat-card teal"><span class="stat-icon">🖋️</span><div class="stat-val" id="s-cal">—</div><div class="stat-lbl">المخطوطات</div></div>
+        <div class="stat-card rose"><span class="stat-icon">🖼️</span><div class="stat-val" id="s-bg">—</div><div class="stat-lbl">الخلفيات</div></div>
+        <div class="stat-card blue"><span class="stat-icon">📂</span><div class="stat-val" id="s-cat">—</div><div class="stat-lbl">التصنيفات</div></div>
+        <div class="stat-card gold"><span class="stat-icon">🎟️</span><div class="stat-val" id="s-cp-av">—</div><div class="stat-lbl">كوبونات متاحة</div></div>
+        <div class="stat-card teal"><span class="stat-icon">✅</span><div class="stat-val" id="s-cp-us">—</div><div class="stat-lbl">كوبونات مستخدمة</div></div>
+      </div>
+      <div class="section-card">
+        <div class="section-head"><div><h3><i class="fa-solid fa-clock-rotate-left" style="color:var(--gold);margin-left:8px"></i>آخر الأنشطة</h3></div></div>
+        <div class="section-body" id="recent-activity"><div class="loading-row"><div class="spin"></div> تحميل...</div></div>
+      </div>
+    </div>
+
+    <!-- PAGE: CATEGORIES -->
+    <div class="dash-page" id="page-categories">
+      <div class="section-card">
+        <div class="section-head">
+          <div><h3><i class="fa-solid fa-folder-tree" style="color:var(--gold);margin-left:8px"></i>إدارة التصنيفات</h3></div>
+          <div class="section-actions"><button class="btn-sm btn-primary" onclick="openCatModal()"><i class="fa-solid fa-plus"></i> تصنيف جديد</button></div>
+        </div>
+        <div class="section-body">
+          <table class="dash-table">
+            <thead><tr><th>الأيقونة</th><th>الاسم</th><th>المعرف</th><th>الترتيب</th><th>الحالة</th><th></th></tr></thead>
+            <tbody id="cats-body"><tr><td colspan="6"><div class="loading-row"><div class="spin"></div></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: CALLIGRAPHY -->
+    <div class="dash-page" id="page-calligraphy">
+      <div class="section-card">
+        <div class="section-head">
+          <div><h3><i class="fa-solid fa-pen-nib" style="color:var(--gold);margin-left:8px"></i>إدارة المخطوطات</h3></div>
+          <div class="section-actions">
+            <button class="btn-sm btn-ghost" onclick="switchCalView()" id="cal-view-btn"><i class="fa-solid fa-table-cells"></i> عرض شبكي</button>
+            <button class="btn-sm btn-primary" onclick="openCalModal()"><i class="fa-solid fa-upload"></i> رفع مخطوطة</button>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="page-tabs" id="cal-style-tabs">
+            <button class="ptab on" data-style="" onclick="filterCalStyle(this)">الكل</button>
+            <button class="ptab" data-style="black" onclick="filterCalStyle(this)">سوداء</button>
+            <button class="ptab" data-style="white" onclick="filterCalStyle(this)">بيضاء</button>
+            <button class="ptab" data-style="3d" onclick="filterCalStyle(this)">ثلاثية</button>
+            <button class="ptab" data-style="colored" onclick="filterCalStyle(this)">ملونة</button>
+          </div>
+          <div class="search-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="cal-search" placeholder="ابحث..." oninput="filterCalSearch(this.value)"/></div>
+          <div id="cal-view-table">
+            <table class="dash-table">
+              <thead><tr><th>الصورة</th><th>الاسم</th><th>التصنيف</th><th>النوع</th><th>حصري</th><th>الحالة</th><th></th></tr></thead>
+              <tbody id="cal-body"><tr><td colspan="7"><div class="loading-row"><div class="spin"></div></div></td></tr></tbody>
+            </table>
+          </div>
+          <div id="cal-view-grid" style="display:none"><div class="img-grid" id="cal-grid-inner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: BACKGROUNDS -->
+    <div class="dash-page" id="page-backgrounds">
+      <div class="section-card">
+        <div class="section-head">
+          <div><h3><i class="fa-solid fa-image" style="color:var(--gold);margin-left:8px"></i>إدارة الخلفيات</h3></div>
+          <div class="section-actions"><button class="btn-sm btn-primary" onclick="openBgModal()"><i class="fa-solid fa-upload"></i> رفع خلفية</button></div>
+        </div>
+        <div class="section-body"><div class="img-grid" id="bg-grid-inner"><div class="loading-row" style="grid-column:1/-1"><div class="spin"></div></div></div></div>
+      </div>
+    </div>
+
+    <!-- PAGE: COUPONS ══════════════════════════ -->
+    <div class="dash-page" id="page-coupons">
+      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
+        <div class="stat-card teal">
+          <span class="stat-icon"><i class="fa-solid fa-ticket" style="font-size:22px;color:var(--teal2)"></i></span>
+          <div class="stat-val" id="cp-available">—</div><div class="stat-lbl">متاحة</div>
+        </div>
+        <div class="stat-card rose">
+          <span class="stat-icon"><i class="fa-solid fa-check-circle" style="font-size:22px;color:var(--rose2)"></i></span>
+          <div class="stat-val" id="cp-used">—</div><div class="stat-lbl">مستخدمة</div>
+        </div>
+        <div class="stat-card gold">
+          <span class="stat-icon"><i class="fa-solid fa-layer-group" style="font-size:22px;color:var(--gold2)"></i></span>
+          <div class="stat-val" id="cp-total">—</div><div class="stat-lbl">إجمالي</div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <h3><i class="fa-solid fa-ticket" style="color:var(--gold);margin-left:8px"></i>الكوبونات</h3>
+            <p>توليد وإدارة كوبونات الوصول للمحتوى الحصري (9 أرقام)</p>
+          </div>
+          <div class="section-actions">
+            <button class="btn-sm btn-ghost" onclick="exportCoupons()"><i class="fa-solid fa-download"></i> CSV</button>
+            <button class="btn-sm btn-ghost" onclick="copyCoupons()"><i class="fa-solid fa-copy"></i> نسخ المتاحة</button>
+            <button class="btn-sm btn-primary" onclick="openGenerateModal()"><i class="fa-solid fa-wand-magic-sparkles"></i> توليد كوبونات</button>
+          </div>
+        </div>
+        <div class="section-body">
+          <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap">
+            <button class="cp-pill on" onclick="filterCoupons(this,'all')">الكل</button>
+            <button class="cp-pill" onclick="filterCoupons(this,'unused')">المتاحة</button>
+            <button class="cp-pill" onclick="filterCoupons(this,'used')">المستخدمة</button>
+            <div class="search-bar" style="margin-bottom:0;flex:1;max-width:220px;padding:6px 12px">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="cp-search" placeholder="ابحث بالكوبون..." oninput="searchCoupons(this.value)"/>
+            </div>
+          </div>
+          <table class="dash-table">
+            <thead><tr><th>الكوبون</th><th>الحالة</th><th>المستخدم</th><th>المحتوى</th><th>التاريخ</th><th>ملاحظة</th><th></th></tr></thead>
+            <tbody id="coupons-body"><tr><td colspan="7"><div class="loading-row"><div class="spin"></div></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- ════════════════════════════════════ -->
+
+    <!-- PAGE: USERS -->
+    <div class="dash-page" id="page-users">
+      <div class="section-card">
+        <div class="section-head"><div><h3><i class="fa-solid fa-users" style="color:var(--gold);margin-left:8px"></i>إدارة المستخدمين</h3></div></div>
+        <div class="section-body">
+          <div class="search-bar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="ابحث..." oninput="filterUsers(this.value)"/></div>
+          <table class="dash-table">
+            <thead><tr><th>المستخدم</th><th>البريد</th><th>الدور</th><th>تاريخ التسجيل</th><th></th></tr></thead>
+            <tbody id="users-body"><tr><td colspan="5"><div class="loading-row"><div class="spin"></div></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: ACTIVITY -->
+    <div class="dash-page" id="page-activity">
+      <div class="section-card">
+        <div class="section-head"><div><h3><i class="fa-solid fa-clock-rotate-left" style="color:var(--gold);margin-left:8px"></i>سجل الأنشطة</h3></div></div>
+        <div class="section-body">
+          <table class="dash-table">
+            <thead><tr><th>الوقت</th><th>الإجراء</th><th>النوع</th><th>التفاصيل</th></tr></thead>
+            <tbody id="activity-body"><tr><td colspan="4"><div class="loading-row"><div class="spin"></div></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MODAL: CATEGORY ══ -->
+<div class="modal-overlay" id="modal-cat">
+  <div class="modal">
+    <div class="modal-head"><h3 id="modal-cat-title">تصنيف جديد</h3><button class="modal-close" onclick="closeModal('modal-cat')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="cat-edit-id"/>
+      <div class="mfield"><label>اسم التصنيف</label><input type="text" id="cat-name" placeholder="مخطوطات العيد"/></div>
+      <div class="mfield"><label>المعرف (إنجليزي)</label><input type="text" id="cat-name-en" placeholder="eid"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="mfield"><label>الأيقونة</label><input type="text" id="cat-icon" placeholder="🌙" style="font-size:20px;text-align:center"/></div>
+        <div class="mfield"><label>الترتيب</label><input type="number" id="cat-order" placeholder="1" min="0"/></div>
+      </div>
+      <div class="mfield">
+        <label>اللون</label>
+        <div class="color-row">
+          <div class="color-swatch on" style="background:#D4A843" data-c="#D4A843" onclick="pickCatColor(this)"></div>
+          <div class="color-swatch" style="background:#2A8A7E" data-c="#2A8A7E" onclick="pickCatColor(this)"></div>
+          <div class="color-swatch" style="background:#C0705A" data-c="#C0705A" onclick="pickCatColor(this)"></div>
+          <div class="color-swatch" style="background:#5B8BD4" data-c="#5B8BD4" onclick="pickCatColor(this)"></div>
+          <div class="color-swatch" style="background:#8B5CF6" data-c="#8B5CF6" onclick="pickCatColor(this)"></div>
+          <input type="color" id="cat-color" value="#D4A843" style="width:28px;height:28px;border-radius:6px;border:1.5px solid var(--border);cursor:pointer;padding:0;background:none" oninput="document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('on'))"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn-sm btn-primary" onclick="saveCategory()"><i class="fa-solid fa-check"></i> حفظ</button><button class="btn-sm btn-ghost" onclick="closeModal('modal-cat')">إلغاء</button></div>
+  </div>
+</div>
+
+<!-- ══ MODAL: CALLIGRAPHY ══ -->
+<div class="modal-overlay" id="modal-cal">
+  <div class="modal">
+    <div class="modal-head"><h3 id="modal-cal-title">رفع مخطوطة</h3><button class="modal-close" onclick="closeModal('modal-cal')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="cal-edit-id"/>
+      <div class="mfield">
+        <label>الصورة / الصور</label>
+        <div class="upload-zone">
+          <input type="file" id="cal-files" accept="image/*" multiple onchange="previewFiles(this,'cal')"/>
+          <div class="upload-zone-icon">🖋️</div>
+          <p>اسحب الصور أو اضغط للاختيار</p>
+          <small>PNG · JPG · WEBP — حتى 10 صور</small>
+        </div>
+        <div id="cal-upload-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"></div>
+        <div class="progress-bar" id="cal-progress"><div class="progress-fill" id="cal-pfill" style="width:0%"></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="mfield"><label>اسم المخطوطة</label><input type="text" id="cal-name-inp" placeholder="مخطوطة عيد مبارك"/></div>
+        <div class="mfield"><label>التصنيف</label><select id="cal-cat-sel"><option value="">بدون تصنيف</option></select></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="mfield"><label>النوع</label>
+          <select id="cal-style-sel">
+            <option value="black">سوداء</option>
+            <option value="white">بيضاء</option>
+            <option value="3d">ثلاثية الأبعاد</option>
+            <option value="colored">ملونة</option>
+          </select>
+        </div>
+        <div class="mfield"><label>الترتيب</label><input type="number" id="cal-order-inp" value="0" min="0"/></div>
+      </div>
+      <div class="mfield"><label>وسوم (مفصولة بفاصلة)</label><input type="text" id="cal-tags-inp" placeholder="عيد, مبارك"/></div>
+      <!-- ★ Premium Toggle -->
+      <div class="premium-toggle-row">
+        <div style="flex:1">
+          <label for="cal-premium" style="font-size:13px;font-weight:700;color:rgba(247,242,232,.7);cursor:pointer;display:flex;align-items:center;gap:8px">
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="#D4A843"><path d="M10 2l2.4 5h5.1l-4.1 3.1 1.5 5.2L10 12.2l-4.9 3.1 1.5-5.2L2.5 7h5.1z"/></svg>
+            محتوى حصري — يتطلب كوبون
+          </label>
+          <small>اليوزر المسجل هيحتاج كوبون صحيح لفتح هذه المخطوطة</small>
+        </div>
+        <label class="toggle-sw">
+          <input type="checkbox" id="cal-premium"/>
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm btn-primary" id="btn-save-cal" onclick="saveCalligraphy()"><i class="fa-solid fa-upload"></i> رفع وحفظ</button>
+      <button class="btn-sm btn-ghost" onclick="closeModal('modal-cal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: BACKGROUND ══ -->
+<div class="modal-overlay" id="modal-bg">
+  <div class="modal">
+    <div class="modal-head"><h3>رفع خلفية</h3><button class="modal-close" onclick="closeModal('modal-bg')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="bg-edit-id"/>
+      <div class="mfield">
+        <label>الصورة / الصور</label>
+        <div class="upload-zone">
+          <input type="file" id="bg-files" accept="image/*" multiple onchange="previewFiles(this,'bg')"/>
+          <div class="upload-zone-icon">🖼️</div>
+          <p>اسحب صور الخلفيات هنا</p>
+          <small>PNG · JPG · WEBP</small>
+        </div>
+        <div id="bg-upload-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"></div>
+        <div class="progress-bar" id="bg-progress"><div class="progress-fill" id="bg-pfill" style="width:0%"></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="mfield"><label>الاسم</label><input type="text" id="bg-name-inp" placeholder="خلفية العيد"/></div>
+        <div class="mfield"><label>الفئة</label>
+          <select id="bg-cat-sel">
+            <option value="general">عامة</option><option value="eid">العيد</option>
+            <option value="ramadan">رمضان</option><option value="national">الوطن</option>
+            <option value="congrats">التهاني</option>
+          </select>
+        </div>
+      </div>
+      <!-- ★ Premium Toggle للخلفيات -->
+      <div class="premium-toggle-row">
+        <div style="flex:1">
+          <label for="bg-premium" style="font-size:13px;font-weight:700;color:rgba(247,242,232,.7);cursor:pointer;display:flex;align-items:center;gap:8px">
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="#D4A843"><path d="M10 2l2.4 5h5.1l-4.1 3.1 1.5 5.2L10 12.2l-4.9 3.1 1.5-5.2L2.5 7h5.1z"/></svg>
+            محتوى حصري — يتطلب كوبون
+          </label>
+          <small>اليوزر المسجل هيحتاج كوبون صحيح لفتح هذه الخلفية</small>
+        </div>
+        <label class="toggle-sw">
+          <input type="checkbox" id="bg-premium"/>
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm btn-primary" id="btn-save-bg" onclick="saveBackground()"><i class="fa-solid fa-upload"></i> رفع وحفظ</button>
+      <button class="btn-sm btn-ghost" onclick="closeModal('modal-bg')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: GENERATE COUPONS ══ -->
+<div class="modal-overlay" id="modal-coupons">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head">
+      <h3><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--gold);margin-left:8px"></i>توليد كوبونات</h3>
+      <button class="modal-close" onclick="closeModal('modal-coupons')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="mfield">
+        <label>عدد الكوبونات</label>
+        <input type="number" id="cp-count" value="10" min="1" max="500" oninput="previewCouponCodes()"/>
+      </div>
+      <div class="mfield">
+        <label>ملاحظة (اختيارية)</label>
+        <input type="text" id="cp-note" placeholder="مثال: حملة رمضان 2026"/>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:900;letter-spacing:.6px;color:rgba(212,168,67,.5);text-transform:uppercase;margin-bottom:10px">معاينة الكوبونات</div>
+        <div id="cp-preview-list" style="display:flex;flex-wrap:wrap;gap:6px;max-height:100px;overflow:auto"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm btn-primary" id="btn-do-generate" onclick="doGenerateCoupons()"><i class="fa-solid fa-check"></i> حفظ وتوليد</button>
+      <button class="btn-sm btn-ghost" onclick="closeModal('modal-coupons')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: CONFIRM ══ -->
+<div class="modal-overlay" id="modal-confirm">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-head"><h3>تأكيد الحذف</h3><button class="modal-close" onclick="closeModal('modal-confirm')">✕</button></div>
+    <div class="modal-body"><p style="color:rgba(247,242,232,.6);font-size:14px" id="confirm-msg">هل أنت متأكد؟</p></div>
+    <div class="modal-footer">
+      <button class="btn-sm btn-danger" id="btn-confirm-del"><i class="fa-solid fa-trash"></i> تأكيد الحذف</button>
+      <button class="btn-sm btn-ghost" onclick="closeModal('modal-confirm')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div id="dash-toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/admin.js"></script>
+</body>
+</html>

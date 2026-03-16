@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>مكتبة القوالب — مكتبة المعلمين</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<style>
+  :root {
+    --gold: #D4A843;
+    --gold2: #e6c06a;
+    --teal: #2a8a7e;
+    --rose: #c0705a;
+    --bg: #0d1117;
+    --bg2: #131920;
+    --bg3: #1a2333;
+    --border: rgba(212,168,67,.15);
+    --text: #e8e0d0;
+    --muted: rgba(232,224,208,.55);
+    --radius: 16px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── CANVAS BG ── */
+  #ornaCanvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: .35;
+  }
+
+  /* ── NAV ── */
+  #nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 68px;
+    background: rgba(13,17,23,.85);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand-name img { height: 38px; }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: .9rem;
+    font-weight: 600;
+    transition: color .2s;
+  }
+  .nav-links a:hover, .nav-links a.act { color: var(--gold); }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-cta {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--gold);
+    color: #0d1117;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    font-size: .85rem;
+    padding: 8px 18px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background .2s, transform .15s;
+  }
+  .nav-cta:hover { background: var(--gold2); transform: translateY(-1px); }
+  .nav-cta1 {
+    display: flex; align-items: center; gap: 7px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-weight: 600;
+    font-size: .85rem;
+    padding: 8px 16px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: border-color .2s, color .2s;
+  }
+  .nav-cta1:hover { border-color: var(--gold); color: var(--gold); }
+  .nav-ham { display: none; background: none; border: none; color: var(--text); font-size: 1.3rem; cursor: pointer; }
+
+  /* ── MOB MENU ── */
+  #mob {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    top: 68px; left: 0; right: 0;
+    background: rgba(13,17,23,.97);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px;
+    gap: 16px;
+    z-index: 99;
+  }
+  #mob.open { display: flex; }
+  #mob a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 1rem; }
+  #mob a:hover { color: var(--gold); }
+  .mcta {
+    background: var(--gold);
+    color: #0d1117 !important;
+    padding: 10px 20px;
+    border-radius: 50px;
+    text-align: center;
+    font-weight: 700 !important;
+  }
+
+  /* ── PAGE HERO ── */
+  .page-hero {
+    position: relative;
+    z-index: 1;
+    padding: 72px 40px 56px;
+    text-align: center;
+  }
+  .page-hero .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(212,168,67,.08);
+    border: 1px solid rgba(212,168,67,.2);
+    border-radius: 50px;
+    padding: 6px 18px;
+    font-size: .8rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: .04em;
+    margin-bottom: 24px;
+  }
+  .page-hero h1 {
+    font-family: 'Amiri', serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .page-hero h1 em { color: var(--gold); font-style: normal; }
+  .page-hero p {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ── SEARCH BAR ── */
+  .search-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 540px;
+    margin: 32px auto 0;
+  }
+  .search-wrap input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 13px 52px 13px 24px;
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: .95rem;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .search-wrap input:focus { border-color: var(--gold); }
+  .search-wrap input::placeholder { color: var(--muted); }
+  .search-wrap .s-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .tpl-page {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+  }
+
+  /* ── RESULTS BAR ── */
+  .results-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .results-count {
+    font-size: .85rem;
+    color: var(--muted);
+  }
+  .results-count span { color: var(--gold); font-weight: 700; }
+  .sort-select {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 7px 16px;
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: .85rem;
+    outline: none;
+    cursor: pointer;
+  }
+  .sort-select:focus { border-color: var(--gold); }
+
+  /* ── GRID ── */
+  .tpl-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    margin-bottom: 56px;
+  }
+
+  /* ── TEMPLATE CARD ── */
+  .tc {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform .3s, border-color .3s, box-shadow .3s;
+    opacity: 0;
+    animation: fadeUp .5s forwards;
+  }
+  .tc:hover {
+    transform: translateY(-6px);
+    border-color: rgba(212,168,67,.4);
+    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .tc-img {
+    position: relative;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    background: var(--bg2);
+  }
+  .tc-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .4s;
+  }
+  .tc:hover .tc-img img { transform: scale(1.04); }
+
+  /* placeholder when no image */
+  .tc-img .tc-placeholder {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 12px;
+    color: var(--muted);
+  }
+  .tc-img .tc-placeholder i { font-size: 2.5rem; opacity: .4; }
+  .tc-img .tc-placeholder span { font-size: .8rem; opacity: .5; }
+
+  .tc-tag {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: .72rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 50px;
+    letter-spacing: .04em;
+  }
+  .tc-tag.free { background: rgba(42,138,126,.9); color: #fff; }
+  .tc-tag.new  { background: rgba(212,168,67,.9); color: #0d1117; }
+  .tc-tag.premium { background: rgba(192,112,90,.9); color: #fff; }
+
+  .tc-num {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    font-size: .72rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 50px;
+    background: rgba(13,17,23,.75);
+    color: var(--muted);
+    backdrop-filter: blur(8px);
+  }
+
+  .tc-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(13,17,23,.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity .3s;
+    backdrop-filter: blur(2px);
+  }
+  .tc:hover .tc-overlay { opacity: 1; }
+  .tc-overlay-btn {
+    background: var(--gold);
+    color: #0d1117;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    font-size: .88rem;
+    padding: 10px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    transition: transform .2s, background .2s;
+  }
+  .tc-overlay-btn:hover { background: var(--gold2); transform: scale(1.04); }
+
+  .tc-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+  }
+  .tc-name {
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+  .tc-action {
+    width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(212,168,67,.1);
+    border-radius: 50%;
+    color: var(--gold);
+    font-size: .85rem;
+    text-decoration: none;
+    transition: background .2s, transform .2s;
+    flex-shrink: 0;
+  }
+  .tc-action:hover { background: var(--gold); color: #0d1117; transform: rotate(-10deg); }
+
+  /* ── PAGINATION ── */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .pg-btn {
+    min-width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted);
+    font-family: 'Cairo', sans-serif;
+    font-size: .9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    text-decoration: none;
+    padding: 0 14px;
+  }
+  .pg-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .pg-btn.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #0d1117;
+  }
+  .pg-btn:disabled { opacity: .35; cursor: not-allowed; }
+  .pg-dots {
+    color: var(--muted);
+    display: flex; align-items: center;
+    font-size: 1rem;
+    padding: 0 4px;
+  }
+  .pg-info {
+    text-align: center;
+    color: var(--muted);
+    font-size: .82rem;
+    margin-top: 20px;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 20px;
+    gap: 16px;
+  }
+  .empty-state.visible { display: flex; }
+  .empty-state i { font-size: 3rem; color: var(--muted); opacity: .4; }
+  .empty-state h3 { font-size: 1.2rem; color: var(--text); }
+  .empty-state p { color: var(--muted); font-size: .9rem; }
+
+  /* ── FOOTER ── */
+  #footer {
+    position: relative; z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 48px 40px 32px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 40px;
+  }
+  .f-brand p { color: var(--muted); font-size: .88rem; line-height: 1.7; margin-top: 14px; }
+  .f-brand img { height: 36px; }
+  .f-socials { display: flex; gap: 14px; margin-top: 18px; }
+  .f-socials a {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: .9rem;
+    transition: all .2s;
+  }
+  .f-socials a:hover { border-color: var(--gold); color: var(--gold); }
+  .f-col h4 { font-size: .9rem; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+  .f-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .f-col ul li a { color: var(--muted); text-decoration: none; font-size: .85rem; transition: color .2s; }
+  .f-col ul li a:hover { color: var(--gold); }
+  .f-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: .82rem;
+  }
+  .heart { color: var(--rose); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .tpl-grid { grid-template-columns: repeat(2, 1fr); }
+    .nav-links { display: none; }
+    .nav-ham { display: block; }
+    .tpl-page { padding: 0 20px 60px; }
+    .page-hero { padding: 48px 20px 36px; }
+    .footer-top { grid-template-columns: 1fr; gap: 32px; }
+    #nav { padding: 0 20px; }
+    #footer { padding: 40px 20px 24px; }
+    .f-bottom { flex-direction: column; gap: 8px; text-align: center; }
+  }
+  @media (max-width: 560px) {
+    .tpl-grid { grid-template-columns: 1fr; }
+    .results-bar { flex-direction: column; gap: 12px; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="ornaCanvas"></canvas>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="brand-name">
+    <img src="images/logo.webp" alt="مكتبة المعلمين" onerror="this.style.display='none'"/>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">الرئيسية</a>
+    <a href="index.html#how">كيف تعمل</a>
+    <a href="templates.html" class="act">القوالب</a>
+    <a href="index.html#features">المميزات</a>
+  </div>
+  <div class="nav-right">
+    <a href="/editor.html" class="nav-cta">
+      <i class="fa-solid fa-pen-nib"></i> ابدأ التصميم
+    </a>
+    <div id="nav-auth-area">
+      <a href="/login.html" class="nav-cta1" id="btn-login-nav">
+        <i class="fa-solid fa-user-plus"></i>
+        <span>تسجيل الدخول</span>
+      </a>
+    </div>
+    <button class="nav-ham" id="hamBtn"><i class="fa-solid fa-bars"></i></button>
+  </div>
+</nav>
+
+<div id="mob">
+  <a href="index.html">الرئيسية</a>
+  <a href="index.html#how">كيف تعمل</a>
+  <a href="templates.html">القوالب</a>
+  <a href="index.html#features">المميزات</a>
+  <a href="/editor.html" class="mcta">ابدأ التصميم مجاناً</a>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="eyebrow">
+    <i class="fa-solid fa-layer-group"></i>
+    مكتبة القوالب الكاملة
+  </div>
+  <h1>اختر <em>تصميمك</em><br/>المثالي</h1>
+  <p>جميع القوالب مجانية — خصّص واحفظ في دقيقتين بدون تسجيل</p>
+
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="ابحث عن قالب..." />
+    <i class="fa-solid fa-magnifying-glass s-icon"></i>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="tpl-page">
+
+  <div class="results-bar">
+    <div class="results-count">عرض <span id="rangeText">1–9</span> من <span id="totalCount">0</span> قالب</div>
+    <select class="sort-select" id="sortSelect">
+      <option value="default">الترتيب الافتراضي</option>
+      <option value="name">حسب الاسم</option>
+      <option value="free">المجاني أولاً</option>
+      <option value="new">الأحدث أولاً</option>
+    </select>
+  </div>
+
+  <div class="tpl-grid" id="tplGrid"></div>
+
+  <div class="empty-state" id="emptyState">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <h3>لا توجد نتائج</h3>
+    <p>جرّب كلمة بحث مختلفة</p>
+  </div>
+
+  <nav class="pagination" id="pagination" aria-label="التنقل بين الصفحات"></nav>
+  <p class="pg-info" id="pgInfo"></p>
+
+</div>
+
+<!-- FOOTER -->
+<footer id="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="f-brand">
+        <a href="index.html"><img src="images/logo.webp" alt="" onerror="this.style.display='none'"/></a>
+        <p>المنصة العربية لتصميم بطاقات التهنئة والمناسبات — بخطوط عربية أصيلة وجودة احترافية.</p>
+        <div class="f-socials">
+          <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="mailto:sales@solimanw.com"><i class="fa-solid fa-envelope"></i></a>
+        </div>
+      </div>
+      <div class="f-col">
+        <h4>روابط سريعة</h4>
+        <ul>
+          <li><a href="index.html">الرئيسية</a></li>
+          <li><a href="index.html#how">كيف تعمل</a></li>
+          <li><a href="templates.html">القوالب</a></li>
+          <li><a href="/editor.html">المحرر</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h4>تواصل</h4>
+        <ul>
+          <li><a href="https://sabir5-1-1.com/" target="_blank">مكتبة المعلمين</a></li>
+          <li><a href="https://sabir511.com/" target="_blank">منصة العلوم</a></li>
+          <li><a href="mailto:sales@solimanw.com">راسلنا</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="f-bottom">
+      <p>© 2026 مكتبة المعلمين — جميع الحقوق محفوظة</p>
+      <p>صُنع بكل <span class="heart">♥</span> في المملكة العربية السعودية</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ══ CANVAS ORNAMENT ══ */
+(function(){
+  const cv = document.getElementById('ornaCanvas');
+  if(!cv) return;
+  const ctx = cv.getContext('2d');
+  let W, H, dots=[];
+  function resize(){ W=cv.width=innerWidth; H=cv.height=innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  for(let i=0;i<70;i++) dots.push({
+    x:Math.random()*1000, y:Math.random()*1000,
+    vx:(Math.random()-.5)*.18, vy:(Math.random()-.5)*.18,
+    r:Math.random()*1.4+.4,
+    a:Math.random()
+  });
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    dots.forEach(d=>{
+      d.x+=d.vx; d.y+=d.vy;
+      if(d.x<0||d.x>W) d.vx*=-1;
+      if(d.y<0||d.y>H) d.vy*=-1;
+      ctx.beginPath();
+      ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(212,168,67,${d.a*.4})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ══ NAV MOBILE ══ */
+document.getElementById('hamBtn').addEventListener('click', function(){
+  document.getElementById('mob').classList.toggle('open');
+});
+
+/* ══ DATA ══ */
+const TEMPLATES = [
+  { id:1, name:'الخط الديواني الملكي',   img:'images/1.png',  tag:'free',    cat:'eid' },
+  { id:2, name:'بطاقة العيد العصرية',    img:'images/2.png',  tag:'free',    cat:'eid' },
+  { id:3, name:'بطاقة الزفاف الفاخرة',   img:'images/11.png', tag:'free',    cat:'wedding' },
+  { id:4, name:'تصميم العيد الذهبي',     img:'images/1.png',  tag:'new',     cat:'eid' },
+  { id:5, name:'بطاقة التهنئة الكلاسيكية', img:'images/2.png', tag:'free',   cat:'general' },
+  { id:6, name:'قالب المناسبات الراقي',  img:'images/11.png', tag:'free',    cat:'general' },
+  { id:7, name:'بطاقة رمضان المبارك',    img:'images/1.png',  tag:'new',     cat:'eid' },
+  { id:8, name:'تصميم الدعوة المميز',    img:'images/2.png',  tag:'free',    cat:'wedding' },
+  { id:9, name:'قالب التهنئة الفضي',     img:'images/11.png', tag:'free',    cat:'general' },
+  { id:10, name:'بطاقة عيد الأضحى',     img:'images/1.png',  tag:'new',     cat:'eid' },
+  { id:11, name:'تصميم الزفاف الأبيض',  img:'images/11.png', tag:'free',    cat:'wedding' },
+  { id:12, name:'قالب النجاح والتفوق',   img:'images/2.png',  tag:'free',    cat:'general' },
+  { id:13, name:'بطاقة المولود الجديد',  img:'images/1.png',  tag:'free',    cat:'general' },
+  { id:14, name:'تهنئة التخرج الذهبية', img:'images/2.png',  tag:'new',     cat:'general' },
+  { id:15, name:'قالب عيد ميلاد فاخر',  img:'images/11.png', tag:'free',    cat:'general' },
+  { id:16, name:'بطاقة الشكر والامتنان', img:'images/1.png',  tag:'free',    cat:'general' },
+  { id:17, name:'تصميم خطوبة مميز',     img:'images/11.png', tag:'new',     cat:'wedding' },
+  { id:18, name:'قالب الدعوة للحفلات',  img:'images/2.png',  tag:'free',    cat:'general' },
+  { id:19, name:'بطاقة تهنئة رسمية',    img:'images/1.png',  tag:'free',    cat:'general' },
+  { id:20, name:'تصميم العيد الفضي',    img:'images/2.png',  tag:'new',     cat:'eid' },
+  { id:21, name:'قالب الاحتفال الملكي', img:'images/11.png', tag:'free',    cat:'general' },
+];
+
+const PER_PAGE = 9;
+let currentPage = 1;
+let filtered = [...TEMPLATES];
+
+const tagLabels = { free:'مجاني', new:'جديد', premium:'مميز' };
+
+/* ══ RENDER ══ */
+function renderGrid() {
+  const grid   = document.getElementById('tplGrid');
+  const empty  = document.getElementById('emptyState');
+  const pgNav  = document.getElementById('pagination');
+  const pgInfo = document.getElementById('pgInfo');
+
+  const totalPages = Math.ceil(filtered.length / PER_PAGE);
+  currentPage = Math.min(currentPage, totalPages || 1);
+  const start  = (currentPage - 1) * PER_PAGE;
+  const end    = Math.min(start + PER_PAGE, filtered.length);
+  const page   = filtered.slice(start, end);
+
+  // results bar
+  document.getElementById('totalCount').textContent = filtered.length;
+  document.getElementById('rangeText').textContent =
+    filtered.length ? `${start+1}–${end}` : '0';
+
+  if (!page.length) {
+    grid.innerHTML = '';
+    empty.classList.add('visible');
+    pgNav.innerHTML = '';
+    pgInfo.textContent = '';
+    return;
+  }
+  empty.classList.remove('visible');
+
+  grid.innerHTML = page.map((t, i) => `
+    <div class="tc" style="animation-delay:${i * 0.07}s">
+      <div class="tc-img">
+        <img src="${t.img}" alt="${t.name}"
+          onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='flex')"/>
+        <div class="tc-placeholder" style="display:none">
+          <i class="fa-solid fa-image"></i>
+          <span>صورة القالب</span>
+        </div>
+        <div class="tc-tag ${t.tag}">${tagLabels[t.tag]}</div>
+        <div class="tc-num">#${t.id}</div>
+        <div class="tc-overlay">
+          <a href="/editor.html" class="tc-overlay-btn">
+            <i class="fa-solid fa-pen-nib"></i> ابدأ التصميم
+          </a>
+        </div>
+      </div>
+      <div class="tc-foot">
+        <span class="tc-name">${t.name}</span>
+        <a href="/editor.html" class="tc-action"><i class="fa-solid fa-pen-nib"></i></a>
+      </div>
+    </div>
+  `).join('');
+
+  // pagination
+  buildPagination(totalPages, pgNav);
+  pgInfo.textContent = totalPages > 1
+    ? `صفحة ${currentPage} من ${totalPages}`
+    : '';
+}
+
+function buildPagination(total, nav) {
+  if (total <= 1) { nav.innerHTML = ''; return; }
+
+  let html = '';
+
+  // prev
+  html += `<button class="pg-btn" id="pgPrev" ${currentPage===1?'disabled':''} onclick="goPage(${currentPage-1})">
+    <i class="fa-solid fa-chevron-right fa-xs"></i>
+  </button>`;
+
+  // page numbers
+  const pages = getPageNumbers(currentPage, total);
+  pages.forEach(p => {
+    if (p === '…') {
+      html += `<span class="pg-dots">…</span>`;
+    } else {
+      html += `<button class="pg-btn ${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+    }
+  });
+
+  // next
+  html += `<button class="pg-btn" id="pgNext" ${currentPage===total?'disabled':''} onclick="goPage(${currentPage+1})">
+    <i class="fa-solid fa-chevron-left fa-xs"></i>
+  </button>`;
+
+  nav.innerHTML = html;
+}
+
+function getPageNumbers(cur, total) {
+  if (total <= 7) return Array.from({length:total}, (_,i)=>i+1);
+  const pages = [];
+  if (cur <= 4) {
+    for(let i=1;i<=5;i++) pages.push(i);
+    pages.push('…'); pages.push(total);
+  } else if (cur >= total-3) {
+    pages.push(1); pages.push('…');
+    for(let i=total-4;i<=total;i++) pages.push(i);
+  } else {
+    pages.push(1); pages.push('…');
+    for(let i=cur-1;i<=cur+1;i++) pages.push(i);
+    pages.push('…'); pages.push(total);
+  }
+  return pages;
+}
+
+function goPage(p) {
+  currentPage = p;
+  renderGrid();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ══ SEARCH ══ */
+document.getElementById('searchInput').addEventListener('input', function(){
+  const q = this.value.trim().toLowerCase();
+  filtered = q
+    ? TEMPLATES.filter(t => t.name.includes(q))
+    : [...TEMPLATES];
+  applySortAndRender();
+});
+
+/* ══ SORT ══ */
+document.getElementById('sortSelect').addEventListener('change', applySortAndRender);
+
+function applySortAndRender(){
+  const sort = document.getElementById('sortSelect').value;
+  const order = { free:0, new:1, premium:2 };
+  if (sort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name, 'ar'));
+  else if (sort === 'free') filtered.sort((a,b) => (order[a.tag]||0)-(order[b.tag]||0));
+  else if (sort === 'new') filtered.sort((a,b) => b.id-a.id);
+  else filtered.sort((a,b) => a.id-b.id);
+  currentPage = 1;
+  renderGrid();
+}
+
+// init
+renderGrid();
+(function() {
+    'use strict';
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'F12' || e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+        }
+
+        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) {
+            e.preventDefault();
+            return false;
+        }
+
+   if (e.ctrlKey && (e.key === 'u' || e.keyCode === 85)) {
+        e.preventDefault();
+        return false;
+    }
+    });
+
+    const devToolsCheck = function() {
+        if (window.console && window.console.time) {
+                (function() {
+                    (function() {
+                        debugger;
+                    }).apply(this, ['alwaysOn']);
+                })();
+         
+        }
+    };
+    
+
+    setInterval(devToolsCheck, 1000);
+
+
+    document.addEventListener('copy', function(e) {
+        e.preventDefault();
+    });
+
+})();
+</script>
+</body>
+</html>

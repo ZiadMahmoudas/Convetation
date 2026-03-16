@@ -732,3 +732,68 @@ body {
   .footer-top { grid-template-columns: 1fr; }
   .tpl-header { flex-direction: column; align-items: flex-start; gap: 16px; }
 }
+
+.nav-cta1 {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 24px;
+    background-color: #F7AF3C; /* الأصفر بتاع الهوية */
+    color: #2A3A4D; /* الأزرق الداكن للنص */
+    text-decoration: none;
+    font-family: "Tajawal", sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    border-radius: 50px; /* شكل بيضاوي Modern */
+    box-shadow: 0 4px 15px rgba(247, 175, 60, 0.3); /* ظل بلون الأصفر */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* تأثير الأيقونة */
+.nav-cta1 i {
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+
+/* تأثير عند مرور الماوس */
+.nav-cta1:hover {
+    background-color: #2A3A4D; /* يقلب أزرق داكن */
+    color: #FFFFFF; /* النص يبقى أبيض */
+    box-shadow: 0 6px 20px rgba(42, 58, 77, 0.4);
+    transform: translateY(-2px); /* يترفع لفوق سيكا */
+}
+
+.nav-cta1:hover i {
+    transform: scale(1.2) rotate(-10deg); /* الأيقونة تكبر وتلف شوية */
+}
+
+/* تأثير اللمعة اللي بتمر على الزرار (Optional) */
+.nav-cta1::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transition: all 0.5s;
+}
+
+.nav-cta1:hover::before {
+    left: 100%;
+}
+
+/* للموبايل: نصغر الحجم شوية */
+@media (max-width: 480px) {
+    .nav-cta1 {
+        padding: 8px 18px;
+        font-size: 13px;
+    }
+}

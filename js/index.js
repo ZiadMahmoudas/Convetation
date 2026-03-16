@@ -110,3 +110,111 @@ window.addEventListener('scroll', () => {
     });
 
 })();
+
+
+
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return;
+
+  const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
+  const name    = profile?.full_name || profile?.username || 'حسابي';
+  const isAdmin = profile?.role === 'admin';
+  const letter  = name.charAt(0).toUpperCase();
+
+  document.getElementById('nav-auth-area').innerHTML = `
+    <div style="position:relative" id="ubox">
+
+      <button onclick="
+        var m=document.getElementById('umenu');
+        var c=document.getElementById('uchev');
+        var open=m.style.display==='block';
+        m.style.display=open?'none':'block';
+        c.style.transform=open?'rotate(0)':'rotate(180deg)';
+      " style="
+        display:flex;align-items:center;gap:8px;
+        padding:6px 12px 6px 8px;
+        background:rgba(212,168,67,.08);
+        border:1px solid rgba(212,168,67,.22);
+        border-radius:22px;cursor:pointer;
+        color:#F7F2E8;font-family:Tajawal,sans-serif;
+        font-size:13px;font-weight:700;transition:all .18s;
+      "
+      onmouseover="this.style.background='rgba(212,168,67,.15)'"
+      onmouseout="this.style.background='rgba(212,168,67,.08)'">
+
+        <span style="max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</span>
+        <i id="uchev" class="fa-solid fa-chevron-down" style="font-size:10px;opacity:.5;transition:transform .2s"></i>
+      </button>
+
+      <div id="umenu" style="
+        display:none;position:absolute;top:calc(100% + 10px);left:0;
+        min-width:210px;
+        background:#111922;
+        border:1px solid rgba(212,168,67,.18);
+        border-radius:14px;padding:6px;
+        box-shadow:0 16px 48px rgba(0,0,0,.5);
+        z-index:9999;font-family:Tajawal,sans-serif;
+      ">
+        <!-- Profile strip -->
+
+        <div style="height:1px;background:rgba(212,168,67,.1);margin:0 6px 6px"></div>
+
+        ${isAdmin ? `
+        <a href="../admin/dashboard.html" style="
+          display:flex;align-items:center;gap:9px;
+          padding:9px 12px;border-radius:8px;
+          color:rgba(247,242,232,.65);font-size:13px;font-weight:700;
+          text-decoration:none;transition:background .14s;
+        "
+        onmouseover="this.style.background='rgba(212,168,67,.07)';this.style.color='#F7F2E8'"
+        onmouseout="this.style.background='transparent';this.style.color='rgba(247,242,232,.65)'">
+          <i class="fa-solid fa-gauge" style="width:16px;text-align:center;color:rgba(212,168,67,.5)"></i>
+          لوحة الإدارة
+        </a>` : ''}
+
+        <a href="../editor.html" style="
+          display:flex;align-items:center;gap:9px;
+          padding:9px 12px;border-radius:8px;
+          color:rgba(247,242,232,.65);font-size:13px;font-weight:700;
+          text-decoration:none;transition:background .14s;
+        "
+        onmouseover="this.style.background='rgba(212,168,67,.07)';this.style.color='#F7F2E8'"
+        onmouseout="this.style.background='transparent';this.style.color='rgba(247,242,232,.65)'">
+          <i class="fa-solid fa-pen-nib" style="width:16px;text-align:center;color:rgba(212,168,67,.5)"></i>
+          محرر البطاقات
+        </a>
+
+        <div style="height:1px;background:rgba(212,168,67,.1);margin:6px"></div>
+
+        <button onclick="
+          localStorage.removeItem('_sallim_guest');
+          localStorage.removeItem('_sallim_fp');
+          sb.auth.signOut().then(()=> window.location.href='/index.html');
+        " style="
+          display:flex;align-items:center;gap:9px;width:100%;
+          padding:9px 12px;border-radius:8px;border:none;background:none;
+          color:rgba(192,112,90,.7);font-family:Tajawal,sans-serif;
+          font-size:13px;font-weight:700;cursor:pointer;text-align:right;
+          transition:background .14s;
+        "
+        onmouseover="this.style.background='rgba(192,112,90,.08)';this.style.color='#C0705A'"
+        onmouseout="this.style.background='transparent';this.style.color='rgba(192,112,90,.7)'">
+          <i class="fa-solid fa-right-from-bracket" style="width:16px;text-align:center;color:rgba(192,112,90,.5)"></i>
+          تسجيل الخروج
+        </button>
+      </div>
+    </div>
+  `;
+
+  // إغلاق القائمة لما يضغط برا
+  document.addEventListener('click', e => {
+    const box = document.getElementById('ubox');
+    const menu = document.getElementById('umenu');
+    const chev = document.getElementById('uchev');
+    if (box && !box.contains(e.target) && menu) {
+      menu.style.display = 'none';
+      if (chev) chev.style.transform = 'rotate(0)';
+    }
+  });
+})();
