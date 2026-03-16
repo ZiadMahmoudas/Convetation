@@ -188,6 +188,9 @@ async function _loadCalligraphy() {
       if (byStyle[s]) byStyle[s].push(c);
     });
 
+    // 🌟 نجيب العناصر اللي اليوزر فتحها بالكوبونات قبل كده
+    let unlockedItems = JSON.parse(localStorage.getItem('sallim_unlocked') || '[]');
+
     ['black', '3d', 'white'].forEach(style => {
       const grid = document.getElementById('cg-' + style);
       if (!grid || !byStyle[style].length) return;
@@ -197,9 +200,10 @@ async function _loadCalligraphy() {
         const src      = item.public_url || item.storage_path;
         const safeSrc  = src.replace(/'/g, "\\'");
         const safeName = item.name.replace(/'/g, "\\'");
-        const isPremium = !!item.is_premium;
+        
+        // 🌟 لو مدفوعة بس هو فاتحها قبل كده، هنعتبرها مجانية بالنسبة له
+        const isPremium = !!item.is_premium && !unlockedItems.includes(item.id);
 
-        // onclick: premium → coupon popup | else → direct add
         const clickFn = isPremium && !isGuestMode
           ? `_showCouponPopup('${item.id}','calligraphy',function(){window.addCallig('${safeSrc}','${safeName}','${item.id}')})`
           : `window.addCallig('${safeSrc}','${safeName}','${item.id}')`;
@@ -210,22 +214,10 @@ async function _loadCalligraphy() {
             draggable="true"
             style="position:relative;cursor:pointer"
             ondragstart="_onCalDragStart(event,this)">
-            <img src="${src}" alt="${item.name}" loading="lazy"
-              onerror="this.style.display='none'"/>
+            <img src="${src}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'"/>
             ${isPremium ? `
-              <div style="
-                position:absolute;top:3px;right:3px;
-                background:linear-gradient(135deg,#D4A843,#B8860B);
-                color:#0D1117;font-size:7px;font-weight:900;
-                padding:2px 5px;border-radius:3px;
-                display:flex;align-items:center;gap:2px;
-                box-shadow:0 2px 6px rgba(212,168,67,.5);
-                line-height:1;pointer-events:none;
-              ">
-                <svg width="7" height="7" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M10 2l2.4 5h5.1l-4.1 3.1 1.5 5.2L10 12.2l-4.9 3.1 1.5-5.2L2.5 7h5.1z"/>
-                </svg>
-                كوبون
+              <div style="position:absolute;top:3px;right:3px;background:linear-gradient(135deg,#D4A843,#B8860B);color:#0D1117;font-size:7px;font-weight:900;padding:2px 5px;border-radius:3px;display:flex;align-items:center;gap:2px;box-shadow:0 2px 6px rgba(212,168,67,.5);line-height:1;pointer-events:none;">
+                ★ كوبون
               </div>` : ''}
             <div class="clabel">${item.name}</div>
           </div>`;
@@ -238,7 +230,6 @@ async function _loadCalligraphy() {
     _buildCategoryTabs(categories, items);
   } catch(e) { console.warn('Cal load failed:', e.message); }
 }
-
 // ══════════════════════════════════════════
 //  LOAD BACKGROUNDS — مع تاج كوبون ★
 // ══════════════════════════════════════════
@@ -247,7 +238,6 @@ async function _loadBackgrounds() {
     const bgs = await DB.getBackgrounds();
     if (!bgs.length) return;
 
-    // أول خلفية تتحط تلقائياً
     const firstSrc = bgs[0].public_url || bgs[0].storage_path;
     const cv = document.getElementById('canvas');
     if (cv) cv.style.setProperty('background-image', `url('${firstSrc}')`, 'important');
@@ -256,20 +246,21 @@ async function _loadBackgrounds() {
       if (el) el.style.backgroundImage = `url('${firstSrc}')`;
     });
 
-    // بناء الـ grids
+    // 🌟 نجيب العناصر اللي فتحها
+    let unlockedItems = JSON.parse(localStorage.getItem('sallim_unlocked') || '[]');
+
     ['bggrid','ready-bg-grid','batch-bg-grid'].forEach(gridId => {
       const grid = document.getElementById(gridId);
       if (!grid) return;
-      const type = gridId === 'bggrid' ? 'design'
-                 : gridId === 'ready-bg-grid' ? 'ready' : 'batch';
+      const type = gridId === 'bggrid' ? 'design' : gridId === 'ready-bg-grid' ? 'ready' : 'batch';
 
       grid.innerHTML = bgs.map((bg, idx) => {
         const src       = bg.public_url || bg.storage_path;
         const safeSrc   = src.replace(/'/g, "\\'");
-        const isPremium = !!bg.is_premium;
+        
+        // 🌟 التأكد إنها مش مفتوحة قبل كده
+        const isPremium = !!bg.is_premium && !unlockedItems.includes(bg.id);
         const locked    = isPremium && isGuestMode;
-
-        // لكل عنصر ID فريد عشان نقدر نوصله بعد الكوبون
         const thumbId = `bg-thumb-${bg.id}-${gridId}`;
 
         const clickFn = locked
@@ -281,30 +272,11 @@ async function _loadBackgrounds() {
               : `setAltBg(this,'${safeSrc}','${type === 'ready' ? 'ready' : 'batch'}')`;
 
         return `
-          <div id="${thumbId}" class="bgthumb${idx===0?' on':''}" onclick="${clickFn}"
-            style="position:relative">
-            <img src="${src}" loading="lazy" alt="${bg.name}"
-              onerror="this.parentElement.style.display='none'"/>
+          <div id="${thumbId}" class="bgthumb${idx===0?' on':''}" onclick="${clickFn}" style="position:relative">
+            <img src="${src}" loading="lazy" alt="${bg.name}" onerror="this.parentElement.style.display='none'"/>
             ${isPremium ? `
-              <div style="
-                position:absolute;bottom:0;left:0;right:0;
-                background:linear-gradient(transparent,rgba(0,0,0,.75));
-                padding:10px 5px 4px;
-                display:flex;justify-content:center;
-                pointer-events:none;
-              ">
-                <span style="
-                  background:linear-gradient(135deg,#D4A843,#B8860B);
-                  color:#0D1117;font-size:7px;font-weight:900;
-                  padding:2px 6px;border-radius:3px;
-                  display:flex;align-items:center;gap:2px;
-                  box-shadow:0 2px 6px rgba(212,168,67,.5);
-                ">
-                  <svg width="7" height="7" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M10 2l2.4 5h5.1l-4.1 3.1 1.5 5.2L10 12.2l-4.9 3.1 1.5-5.2L2.5 7h5.1z"/>
-                  </svg>
-                  كوبون
-                </span>
+              <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.75));padding:10px 5px 4px;display:flex;justify-content:center;pointer-events:none;">
+                <span style="background:linear-gradient(135deg,#D4A843,#B8860B);color:#0D1117;font-size:7px;font-weight:900;padding:2px 6px;border-radius:3px;display:flex;align-items:center;gap:2px;">★ كوبون</span>
               </div>` : ''}
           </div>`;
       }).join('');
@@ -667,20 +639,41 @@ async function _verifyCoupon(imageId, imageType) {
     btn.style.color = '#fff';
     btn.innerHTML = '✓ تم التحقق';
 
+    // 🌟 السحر هنا: نحفظ إن العنصر ده اتفتح عشان ميسألش عليه تاني
+    let unlockedItems = JSON.parse(localStorage.getItem('sallim_unlocked') || '[]');
+    if (imageId && !unlockedItems.includes(imageId)) {
+        unlockedItems.push(imageId);
+        localStorage.setItem('sallim_unlocked', JSON.stringify(unlockedItems));
+    }
+
     setTimeout(() => {
       document.getElementById('_coupon-popup')?.remove();
-      if (typeof window._couponSuccess === 'function') {
-        window._couponSuccess();
-        window._couponSuccess = null;
+      
+      // 🌟 تشغيل الصورة فوراً
+      if (typeof window._couponCallback === 'function') {
+        window._couponCallback();
+        window._couponCallback = null;
       }
+      
+      // 🌟 إخفاء التاج الذهبي وتعديل زرار الضغط عشان يفتح علطول بعد كده
+      document.querySelectorAll(`[onclick*="${imageId}"]`).forEach(el => {
+          const crown = el.querySelector('div[style*="linear-gradient"]');
+          if(crown) crown.remove(); 
+          
+          const oldClick = el.getAttribute('onclick');
+          if(oldClick && oldClick.includes('_showCouponPopup')) {
+              const match = oldClick.match(/function\(\)\{(.*?)\}/);
+              if(match) el.setAttribute('onclick', match[1]);
+          }
+      });
+
     }, 700);
 
   } catch(e) { 
-    console.error('Coupon verify error:', e);
+    console.error("Coupon Error: ", e); 
     _cpFail(btn,'خطأ، حاول مجدداً ⚠️'); 
   }
 }
-
 function _cpFail(btn, text) {
   _cpMsg(text,'err');
   btn.disabled = false; btn.innerHTML = 'تحقق من الكوبون';
