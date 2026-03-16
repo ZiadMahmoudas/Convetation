@@ -14,6 +14,8 @@ const PAGE_ACTIONS = {
   backgrounds:`<button class="btn-sm btn-primary" onclick="openBgModal()"><i class="fa-solid fa-upload"></i> رفع خلفية</button>`,
   categories:`<button class="btn-sm btn-primary" onclick="openCatModal()"><i class="fa-solid fa-plus"></i> تصنيف جديد</button>`,
   coupons:`<button class="btn-sm btn-primary" onclick="openGenerateModal()"><i class="fa-solid fa-wand-magic-sparkles"></i> توليد كوبونات</button>`,
+  users:`<button class="btn-sm btn-primary" onclick="openPromoteModal()"><i class="fa-solid fa-user-shield"></i> ترقية مستخدم</button>`,
+  featured:`<button class="btn-sm btn-primary" onclick="saveFeatured()"><i class="fa-solid fa-floppy-disk"></i> حفظ الاختيار</button>`,
 };
 
 // ══ INIT ══
@@ -28,6 +30,7 @@ const PAGE_ACTIONS = {
   }
   await loadOverview();
   await loadCategories();
+  _injectPromoteModal();
 })();
 
 // ══ NAV ══
@@ -44,6 +47,7 @@ async function navTo(btn) {
   if (page==='coupons')      await loadCoupons();
   if (page==='users')        await loadUsers();
   if (page==='activity')     await loadActivity();
+  if (page==='featured')     await loadFeatured();
 }
 
 // ══ OVERVIEW ══
@@ -141,8 +145,7 @@ function renderCalTable(items) {
       <td>
         ${c.is_premium
           ? `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(212,168,67,.12);color:var(--gold2);padding:3px 8px;border-radius:5px;font-size:10px;font-weight:800;border:1px solid rgba(212,168,67,.2)">
-              <svg width="9" height="9" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2l2.4 5h5.1l-4.1 3.1 1.5 5.2L10 12.2l-4.9 3.1 1.5-5.2L2.5 7h5.1z"/></svg>
-              كوبون
+              <svg width="9" height="9" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2l2.4 5h5.1l-4.1 3.1 1.5 5.2L10 12.2l-4.9 3.1 1.5-5.2L2.5 7h5.1z"/></svg>كوبون
              </span>`
           : '<span style="color:rgba(247,242,232,.2);font-size:11px">—</span>'}
       </td>
@@ -154,7 +157,7 @@ function renderCalTable(items) {
 }
 function renderCalGrid(items) {
   document.getElementById('cal-grid-inner').innerHTML=items.map(c=>`
-    <div class="img-card ${c.style==='white'?'dark-bg':''}">
+    <div class="img-card">
       <img src="${c.public_url||c.storage_path}" alt="${c.name}"/>
       <div class="img-card-foot">
         <span>${c.name}</span>
@@ -271,7 +274,7 @@ async function deleteBackground(id,path) {
   await loadBackgrounds(); await loadOverview(); toast('تم الحذف ✓','ok');
 }
 
-// ══ COUPONS ══════════════════════════════════════════
+// ══ COUPONS ══
 async function loadCoupons() {
   try {
     const { data: st } = await sb.from('coupon_stats').select('*').single();
@@ -280,68 +283,37 @@ async function loadCoupons() {
       document.getElementById('cp-used').textContent      = st.used??0;
       document.getElementById('cp-total').textContent     = st.total??0;
     }
-    const { data, error } = await sb.from('coupons')
-      .select('*').order('created_at',{ascending:false}).limit(500);
+    const { data, error } = await sb.from('coupons').select('*').order('created_at',{ascending:false}).limit(500);
     if (error) throw error;
     _allCoupons = data||[];
     _renderCoupons();
   } catch(e) { toast('خطأ: '+e.message,'err'); }
 }
-
 function _renderCoupons(search='') {
   let list = _allCoupons;
   if (_cpFilter==='unused') list=list.filter(c=>!c.is_used);
   if (_cpFilter==='used')   list=list.filter(c=> c.is_used);
   if (search) list=list.filter(c=>c.code.includes(search));
   const body=document.getElementById('coupons-body');
-  if (!list.length) {
-    body.innerHTML=`<tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-ticket"></i><p>لا توجد كوبونات</p></div></td></tr>`; return;
-  }
+  if (!list.length) { body.innerHTML=`<tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-ticket"></i><p>لا توجد كوبونات</p></div></td></tr>`; return; }
   body.innerHTML=list.map(c=>`
     <tr>
       <td><span class="coupon-code">${c.code}</span></td>
-      <td>
-        ${c.is_used
-          ? `<span class="badge badge-rose"><i class="fa-solid fa-check" style="font-size:9px"></i>مستخدم</span>`
-          : `<span class="badge badge-teal"><i class="fa-solid fa-circle" style="font-size:6px"></i>متاح</span>`}
-      </td>
+      <td>${c.is_used?`<span class="badge badge-rose"><i class="fa-solid fa-check" style="font-size:9px"></i>مستخدم</span>`:`<span class="badge badge-teal"><i class="fa-solid fa-circle" style="font-size:6px"></i>متاح</span>`}</td>
       <td style="font-size:11px;color:rgba(247,242,232,.35)">${c.used_by?c.used_by.slice(0,10)+'...':'—'}</td>
-      <td style="font-size:11px;color:rgba(247,242,232,.3)">
-        ${c.image_type==='calligraphy'
-          ? `<i class="fa-solid fa-pen-nib" style="color:var(--teal2);margin-left:4px"></i>مخطوطة`
-          : c.image_type==='background'
-            ? `<i class="fa-solid fa-image" style="color:var(--gold);margin-left:4px"></i>خلفية`
-            : '—'}
-      </td>
-      <td style="font-size:11px;color:rgba(247,242,232,.3)">
-        ${c.used_at?new Date(c.used_at).toLocaleDateString('ar-SA'):new Date(c.created_at).toLocaleDateString('ar-SA')}
-      </td>
+      <td style="font-size:11px;color:rgba(247,242,232,.3)">${c.image_type==='calligraphy'?'<i class="fa-solid fa-pen-nib" style="color:var(--teal2);margin-left:4px"></i>مخطوطة':c.image_type==='background'?'<i class="fa-solid fa-image" style="color:var(--gold);margin-left:4px"></i>خلفية':'—'}</td>
+      <td style="font-size:11px;color:rgba(247,242,232,.3)">${c.used_at?new Date(c.used_at).toLocaleDateString('ar-SA'):new Date(c.created_at).toLocaleDateString('ar-SA')}</td>
       <td style="font-size:11px;color:rgba(247,242,232,.3)">${c.note||'—'}</td>
-      <td>
-        <div class="row-actions">
-          ${!c.is_used?`<button class="ra-btn" style="color:var(--teal2);background:rgba(42,138,126,.1)" title="نسخ" onclick="navigator.clipboard.writeText('${c.code}');toast('تم النسخ ✓','ok')"><i class="fa-solid fa-copy"></i></button>`:''}
-          <button class="ra-btn ra-del" onclick="confirmDelete('حذف الكوبون ${c.code}؟',()=>_deleteCoupon('${c.id}'))"><i class="fa-solid fa-trash"></i></button>
-        </div>
-      </td>
+      <td><div class="row-actions">
+        ${!c.is_used?`<button class="ra-btn" style="color:var(--teal2);background:rgba(42,138,126,.1)" title="نسخ" onclick="navigator.clipboard.writeText('${c.code}');toast('تم النسخ ✓','ok')"><i class="fa-solid fa-copy"></i></button>`:''}
+        <button class="ra-btn ra-del" onclick="confirmDelete('حذف الكوبون ${c.code}؟',()=>_deleteCoupon('${c.id}'))"><i class="fa-solid fa-trash"></i></button>
+      </div></td>
     </tr>`).join('');
 }
-
-function filterCoupons(btn,val) {
-  document.querySelectorAll('.cp-pill').forEach(b=>b.classList.remove('on')); btn.classList.add('on');
-  _cpFilter=val; _renderCoupons(document.getElementById('cp-search')?.value||'');
-}
+function filterCoupons(btn,val) { document.querySelectorAll('.cp-pill').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); _cpFilter=val; _renderCoupons(document.getElementById('cp-search')?.value||''); }
 function searchCoupons(v) { _renderCoupons(v.trim()); }
-
 function _makeCode() { let c=String(Math.floor(Math.random()*9)+1); for(let i=0;i<8;i++) c+=Math.floor(Math.random()*10); return c; }
-
-function openGenerateModal() {
-  _pendingCodes=[];
-  document.getElementById('cp-count').value='10';
-  document.getElementById('cp-note').value='';
-  previewCouponCodes();
-  openModal('modal-coupons');
-}
-
+function openGenerateModal() { _pendingCodes=[]; document.getElementById('cp-count').value='10'; document.getElementById('cp-note').value=''; previewCouponCodes(); openModal('modal-coupons'); }
 function previewCouponCodes() {
   const n=Math.min(500,Math.max(1,parseInt(document.getElementById('cp-count').value)||10));
   const set=new Set(); let tries=0;
@@ -351,7 +323,6 @@ function previewCouponCodes() {
     _pendingCodes.slice(0,20).map(c=>`<span class="coupon-code" style="font-size:12px;padding:3px 8px">${c}</span>`).join('')+
     (_pendingCodes.length>20?`<span style="font-size:11px;color:rgba(247,242,232,.25);align-self:center;padding:3px 6px">... و${n-20} آخرين</span>`:'');
 }
-
 async function doGenerateCoupons() {
   if (!_pendingCodes.length) { previewCouponCodes(); return; }
   const note=document.getElementById('cp-note').value.trim()||null;
@@ -366,15 +337,12 @@ async function doGenerateCoupons() {
   } catch(e) { toast(e.message.includes('duplicate')?'بعض الكودات مكررة، أعد المحاولة':e.message,'err'); }
   finally { btn.disabled=false; btn.innerHTML='<i class="fa-solid fa-check"></i> حفظ وتوليد'; }
 }
-
 async function _deleteCoupon(id) { await sb.from('coupons').delete().eq('id',id); await loadCoupons(); toast('تم الحذف ✓','ok'); }
-
 function copyCoupons() {
   const av=_allCoupons.filter(c=>!c.is_used).map(c=>c.code);
   if (!av.length) { toast('لا توجد كوبونات متاحة','err'); return; }
   navigator.clipboard.writeText(av.join('\n')); toast(`تم نسخ ${av.length} كوبون ✓`,'ok');
 }
-
 function exportCoupons() {
   const h='code,is_used,used_by,image_type,created_at,note';
   const rows=_allCoupons.map(c=>[c.code,c.is_used,c.used_by||'',c.image_type||'',c.created_at,c.note||''].join(','));
@@ -382,9 +350,8 @@ function exportCoupons() {
   a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent([h,...rows].join('\n'));
   a.download='coupons.csv'; a.click();
 }
-// ════════════════════════════════════════════════════
 
-// ══ USERS ══
+// ══ USERS ══════════════════════════════════════════════
 async function loadUsers() {
   try { allUsers=await DB.getUsers(); renderUsers(allUsers); } catch(e) { toast('خطأ','err'); }
 }
@@ -398,18 +365,166 @@ function renderUsers(users) {
         <div><div style="font-weight:700">${u.full_name||'—'}</div><div style="font-size:11px;color:rgba(247,242,232,.35)">@${u.username||'—'}</div></div>
       </div></td>
       <td style="color:rgba(247,242,232,.5);font-size:12px">${u.id.slice(0,8)}...</td>
-      <td><span class="badge ${u.role==='admin'?'badge-rose':'badge-teal'}">${u.role==='admin'?'أدمن':'مستخدم'}</span></td>
+      <td>
+        <span class="badge ${u.role==='admin'?'badge-rose':'badge-teal'}">${u.role==='admin'?'⭐ أدمن':'مستخدم'}</span>
+      </td>
       <td style="font-size:11px;color:rgba(247,242,232,.4)">${new Date(u.created_at).toLocaleDateString('ar-SA')}</td>
       <td><div class="row-actions">
-        ${u.role!=='admin'?`<button class="ra-btn ra-edit" title="ترقية" onclick="promoteUser('${u.id}')"><i class="fa-solid fa-user-shield"></i></button>`:''}
+        ${u.role!=='admin'
+          ? `<button class="ra-btn ra-edit" title="ترقية لأدمن" onclick="promoteUser('${u.id}','${u.full_name||u.username||'هذا المستخدم'}')">
+               <i class="fa-solid fa-user-shield"></i>
+             </button>`
+          : `<button class="ra-btn" title="إلغاء الأدمن" style="background:rgba(192,112,90,.1);color:var(--rose2)"
+               onclick="demoteUser('${u.id}','${u.full_name||u.username||'هذا المستخدم'}')">
+               <i class="fa-solid fa-user-minus"></i>
+             </button>`}
       </div></td>
     </tr>`).join('');
 }
 function filterUsers(q) { renderUsers(allUsers.filter(u=>(u.full_name||'').includes(q)||(u.username||'').includes(q))); }
-async function promoteUser(id) {
-  if (!confirm('ترقية هذا المستخدم لأدمن؟')) return;
-  await sb.from('profiles').update({role:'admin'}).eq('id',id);
-  await loadUsers(); toast('تم الترقية ✓','ok');
+
+async function promoteUser(id, name) {
+  confirmDelete(
+    `ترقية "${name}" لأدمن؟ سيحصل على صلاحيات كاملة.`,
+    async () => {
+      try {
+        const { error } = await sb.from('profiles').update({role:'admin'}).eq('id',id);
+        if (error) throw error;
+        await loadUsers(); toast(`تم ترقية ${name} لأدمن ✓`,'ok');
+      } catch(e) { toast('خطأ: '+e.message,'err'); }
+    }
+  );
+  // تغيير نص زر التأكيد
+  setTimeout(()=>{
+    const btn = document.getElementById('btn-confirm-del');
+    if (btn) { btn.innerHTML = '<i class="fa-solid fa-user-shield"></i> تأكيد الترقية'; btn.style.background='rgba(42,138,126,.15)'; btn.style.color='var(--teal2)'; btn.style.borderColor='rgba(42,138,126,.25)'; }
+  },50);
+}
+
+async function demoteUser(id, name) {
+  confirmDelete(
+    `إلغاء صلاحيات أدمن "${name}"؟`,
+    async () => {
+      try {
+        const { error } = await sb.from('profiles').update({role:'user'}).eq('id',id);
+        if (error) throw error;
+        await loadUsers(); toast(`تم إلغاء صلاحيات ${name} ✓`,'ok');
+      } catch(e) { toast('خطأ: '+e.message,'err'); }
+    }
+  );
+}
+
+// ══ PROMOTE BY EMAIL — ترقية بالإيميل ══════════════════
+function _injectPromoteModal() {
+  const m = document.createElement('div');
+  m.className = 'modal-overlay'; m.id = 'modal-promote';
+  m.innerHTML = `
+    <div class="modal" style="max-width:420px">
+      <div class="modal-head">
+        <h3><i class="fa-solid fa-user-shield" style="color:var(--gold);margin-left:8px"></i>ترقية مستخدم لأدمن</h3>
+        <button class="modal-close" onclick="closeModal('modal-promote')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="color:rgba(247,242,232,.45);font-size:13px;line-height:1.7;margin-bottom:16px">
+          أدخل إيميل المستخدم أو اسمه للبحث عنه وترقيته
+        </p>
+        <div class="mfield">
+          <label>البحث بالإيميل أو الاسم</label>
+          <input type="text" id="promote-search" placeholder="example@email.com أو محمد علي"
+            oninput="_searchToPromote(this.value)"
+            style="margin-bottom:10px"/>
+        </div>
+        <div id="promote-results" style="display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto"></div>
+        <div id="promote-status" style="min-height:20px;font-size:12px;font-weight:700;margin-top:10px;text-align:center"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-sm btn-ghost" onclick="closeModal('modal-promote')">إغلاق</button>
+      </div>
+    </div>`;
+  document.body.appendChild(m);
+  m.addEventListener('click', e => { if(e.target===m) m.classList.remove('on'); });
+}
+
+function openPromoteModal() {
+  document.getElementById('promote-search').value='';
+  document.getElementById('promote-results').innerHTML='';
+  document.getElementById('promote-status').textContent='';
+  openModal('modal-promote');
+  // عرض كل المستخدمين أول ما يفتح
+  _renderPromoteList(allUsers);
+}
+
+function _searchToPromote(q) {
+  if (!q.trim()) { _renderPromoteList(allUsers); return; }
+  const filtered = allUsers.filter(u =>
+    (u.full_name||'').toLowerCase().includes(q.toLowerCase()) ||
+    (u.username||'').toLowerCase().includes(q.toLowerCase()) ||
+    (u.id||'').includes(q)
+  );
+  _renderPromoteList(filtered);
+}
+
+function _renderPromoteList(users) {
+  const res = document.getElementById('promote-results');
+  if (!users.length) {
+    res.innerHTML=`<div style="text-align:center;padding:20px;color:rgba(247,242,232,.25);font-size:13px">لا توجد نتائج</div>`;
+    return;
+  }
+  res.innerHTML = users.map(u => `
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;
+      background:var(--ink3);border:1px solid var(--border);border-radius:10px">
+      <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;
+        background:linear-gradient(135deg,var(--gold),var(--teal));
+        display:flex;align-items:center;justify-content:center;
+        font-weight:800;font-size:13px;color:var(--ink)">
+        ${(u.full_name||u.username||'?').charAt(0).toUpperCase()}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--ivory)">${u.full_name||'—'}</div>
+        <div style="font-size:10px;color:rgba(247,242,232,.3)">@${u.username||'—'} · ${u.id.slice(0,8)}...</div>
+      </div>
+      <span class="badge ${u.role==='admin'?'badge-rose':'badge-gray'}" style="flex-shrink:0">
+        ${u.role==='admin'?'⭐ أدمن':'مستخدم'}
+      </span>
+      ${u.role!=='admin'
+        ? `<button class="btn-sm btn-primary" style="padding:6px 12px;font-size:11px;flex-shrink:0"
+             onclick="_doPromote('${u.id}','${(u.full_name||u.username||'').replace(/'/g,'&#39;')}')">
+             <i class="fa-solid fa-user-shield"></i> ترقية
+           </button>`
+        : `<button class="btn-sm btn-ghost" style="padding:6px 12px;font-size:11px;flex-shrink:0;color:var(--rose2)"
+             onclick="_doDemote('${u.id}','${(u.full_name||u.username||'').replace(/'/g,'&#39;')}')">
+             <i class="fa-solid fa-user-minus"></i> إلغاء
+           </button>`}
+    </div>`).join('');
+}
+
+async function _doPromote(id, name) {
+  const status = document.getElementById('promote-status');
+  status.style.color = 'var(--gold)'; status.textContent = '⏳ جاري الترقية...';
+  try {
+    const { error } = await sb.from('profiles').update({role:'admin'}).eq('id',id);
+    if (error) throw error;
+    await loadUsers();
+    _renderPromoteList(allUsers);
+    status.style.color = 'var(--teal2)'; status.textContent = `✓ تم ترقية ${name} بنجاح!`;
+    toast(`تم ترقية ${name} لأدمن ✓`,'ok');
+  } catch(e) {
+    status.style.color = 'var(--rose2)'; status.textContent = 'خطأ: '+e.message;
+  }
+}
+async function _doDemote(id, name) {
+  const status = document.getElementById('promote-status');
+  status.style.color = 'var(--gold)'; status.textContent = '⏳ جاري الإلغاء...';
+  try {
+    const { error } = await sb.from('profiles').update({role:'user'}).eq('id',id);
+    if (error) throw error;
+    await loadUsers();
+    _renderPromoteList(allUsers);
+    status.style.color = 'var(--teal2)'; status.textContent = `✓ تم إلغاء صلاحيات ${name}`;
+    toast(`تم إلغاء صلاحيات ${name} ✓`,'ok');
+  } catch(e) {
+    status.style.color = 'var(--rose2)'; status.textContent = 'خطأ: '+e.message;
+  }
 }
 
 // ══ ACTIVITY ══
@@ -449,7 +564,10 @@ function openModal(id) { document.getElementById(id).classList.add('on'); }
 function closeModal(id) { document.getElementById(id).classList.remove('on'); }
 function confirmDelete(msg,fn) {
   document.getElementById('confirm-msg').textContent=msg;
-  document.getElementById('btn-confirm-del').onclick=()=>{ closeModal('modal-confirm'); fn(); };
+  const btn = document.getElementById('btn-confirm-del');
+  btn.innerHTML='<i class="fa-solid fa-trash"></i> تأكيد الحذف';
+  btn.style.cssText='';
+  btn.onclick=()=>{ closeModal('modal-confirm'); fn(); };
   openModal('modal-confirm');
 }
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('on'); }));
@@ -460,6 +578,409 @@ function toast(msg,type='') {
   t.textContent=msg; t.className='vis '+type;
   clearTimeout(t._t); t._t=setTimeout(()=>t.className=type,2800);
 }
+
+
+// ══════════════════════════════════════════════════════
+//  FEATURED TEMPLATES — أضف في admin.js
+//  + أضف في PAGE_LABELS: featured:'القوالب المميزة'
+//  + أضف في PAGE_ACTIONS: featured:`<button class="btn-sm btn-ghost" onclick="saveFeatured()"><i class="fa-solid fa-floppy-disk"></i> حفظ الترتيب</button>`
+//  + أضف في navTo: if (page==='featured') await loadFeatured();
+// ══════════════════════════════════════════════════════
+
+// ── STATE ──
+let _allFeatured   = [];  // السجلات المحفوظة في DB
+let _featuredPicks = [];  // الـ picks الحالية (max لا حد — بس ≤3 يظهروا في الـ home)
+let _featuredPool  = [];  // كل المخطوطات + الخلفيات
+let _featPoolSearch = '';
+let _featPoolPage   = 1;
+const FEAT_POOL_PER = 12;
+
+// ── LOAD ──
+async function loadFeatured() {
+  try {
+    // 1. جيب الـ pool (كل المخطوطات + خلفيات)
+    const [calRes, bgRes, featRes] = await Promise.all([
+      sb.from('calligraphy').select('id,name,public_url,style,is_premium').eq('is_active',true).order('sort_order'),
+      sb.from('backgrounds').select('id,name,public_url,is_premium').eq('is_active',true).order('sort_order'),
+      sb.from('featured_templates').select('*').order('sort_order')
+    ]);
+
+    _featuredPool = [
+      ...(calRes.data||[]).map(c=>({...c, itemType:'calligraphy'})),
+      ...(bgRes.data||[]).map(b=>({...b, itemType:'background'}))
+    ];
+    _allFeatured = featRes.data||[];
+
+    // 2. بناء الـ picks من الـ featured سجلات
+    _featuredPicks = _allFeatured.map(f => {
+      const item = _featuredPool.find(p => p.id === f.item_id && p.itemType === f.item_type);
+      return item ? { ...item, featId: f.id, sortOrder: f.sort_order } : null;
+    }).filter(Boolean).sort((a,b) => a.sortOrder - b.sortOrder);
+
+    _renderFeaturedPage();
+  } catch(e) { toast('خطأ في تحميل القوالب المميزة: ' + e.message, 'err'); }
+}
+
+// ── RENDER ──
+function _renderFeaturedPage() {
+  const container = document.getElementById('page-featured');
+  if (!container) return;
+
+  const picksCount = _featuredPicks.length;
+  const showInHome = Math.min(3, picksCount);
+
+  container.innerHTML = `
+    <!-- INFO BAR -->
+    <div style="
+      background:rgba(212,168,67,.06);border:1px solid rgba(212,168,67,.15);
+      border-right:3px solid var(--gold);border-radius:12px;
+      padding:14px 18px;margin-bottom:20px;
+      display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    ">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;color:var(--ivory)">
+          <i class="fa-solid fa-star" style="color:var(--gold);margin-left:6px"></i>
+          القوالب المميزة في الصفحة الرئيسية
+        </div>
+        <div style="font-size:11px;color:rgba(247,242,232,.4);margin-top:4px">
+          يُعرض أول 3 فقط في الصفحة الرئيسية — يمكنك اختيار أكثر للتنويع عبر pagination
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div style="
+          background:${picksCount>0?'rgba(42,138,126,.15)':'rgba(247,242,232,.06)'};
+          color:${picksCount>0?'var(--teal2)':'rgba(247,242,232,.3)'};
+          border:1px solid ${picksCount>0?'rgba(42,138,126,.25)':'var(--border)'};
+          padding:5px 14px;border-radius:20px;font-size:11px;font-weight:800;
+        ">
+          ${picksCount} مختار
+        </div>
+        <div style="
+          background:rgba(212,168,67,.12);color:var(--gold2);
+          border:1px solid rgba(212,168,67,.22);
+          padding:5px 14px;border-radius:20px;font-size:11px;font-weight:800;
+        ">
+          ${showInHome} يظهر في الرئيسية
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+      <!-- RIGHT: المختارة -->
+      <div class="section-card">
+        <div class="section-head" style="background:rgba(212,168,67,.05)">
+          <div>
+            <h3 style="color:var(--gold2)">
+              <i class="fa-solid fa-star" style="color:var(--gold);margin-left:8px"></i>
+              القوالب المختارة
+            </h3>
+            <p>أول 3 تظهر في الرئيسية — اسحب لإعادة الترتيب</p>
+          </div>
+          <div class="section-actions">
+            <button class="btn-sm btn-ghost" onclick="_clearFeatured()" ${picksCount===0?'disabled':''}>
+              <i class="fa-solid fa-trash"></i> مسح الكل
+            </button>
+            <button class="btn-sm btn-primary" onclick="saveFeatured()">
+              <i class="fa-solid fa-floppy-disk"></i> حفظ
+            </button>
+          </div>
+        </div>
+        <div style="padding:16px;min-height:200px">
+          ${picksCount === 0
+            ? `<div style="text-align:center;padding:48px 20px;color:rgba(247,242,232,.2)">
+                 <i class="fa-solid fa-star" style="font-size:32px;margin-bottom:12px;display:block;opacity:.2"></i>
+                 <p style="font-size:13px">لم تختر قوالب بعد<br><small>اضغط على أي قالب من اليمين لإضافته</small></p>
+               </div>`
+            : `<div id="feat-picks-list" style="display:flex;flex-direction:column;gap:10px">
+                 ${_featuredPicks.map((item, i) => `
+                   <div class="_feat-pick-item" data-idx="${i}" style="
+                     display:flex;align-items:center;gap:12px;
+                     padding:10px 12px;border-radius:10px;
+                     background:var(--ink3);border:1px solid var(--border);
+                     cursor:grab;transition:all .15s;position:relative;
+                   "
+                   draggable="true"
+                   ondragstart="_featDragStart(event,${i})"
+                   ondragover="_featDragOver(event,${i})"
+                   ondrop="_featDrop(event,${i})"
+                   >
+                     <!-- ترتيب -->
+                     <div style="
+                       width:26px;height:26px;border-radius:50%;
+                       background:${i<3?'rgba(212,168,67,.15)':'rgba(247,242,232,.06)'};
+                       color:${i<3?'var(--gold2)':'rgba(247,242,232,.3)'};
+                       display:flex;align-items:center;justify-content:center;
+                       font-size:11px;font-weight:900;flex-shrink:0;
+                       border:1px solid ${i<3?'rgba(212,168,67,.25)':'var(--border)'}
+                     ">${i+1}</div>
+
+                     <!-- صورة مصغرة -->
+                     <div style="width:42px;height:42px;border-radius:8px;overflow:hidden;flex-shrink:0;
+                       background:${item.style==='white'?'#1a1a2e':'var(--ink4)'};">
+                       ${item.public_url
+                         ? `<img src="${item.public_url}" style="width:100%;height:100%;object-fit:cover"
+                             onerror="this.parentElement.innerHTML='<i class=\\"fa-solid fa-image\\" style=\\"font-size:18px;color:rgba(247,242,232,.2)\\"></i>'"/>`
+                         : `<i class="fa-solid fa-image" style="font-size:18px;color:rgba(247,242,232,.2)"></i>`}
+                     </div>
+
+                     <!-- اسم + نوع -->
+                     <div style="flex:1;min-width:0">
+                       <div style="font-size:12px;font-weight:700;color:var(--ivory);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div>
+                       <div style="font-size:10px;color:rgba(247,242,232,.3);margin-top:2px;display:flex;align-items:center;gap:6px">
+                         <span style="display:flex;align-items:center;gap:3px">
+                           <i class="fa-solid ${item.itemType==='calligraphy'?'fa-pen-nib':'fa-image'}"
+                             style="color:${item.itemType==='calligraphy'?'var(--teal2)':'var(--gold)'}"></i>
+                           ${item.itemType==='calligraphy'?'مخطوطة':'خلفية'}
+                         </span>
+                         ${item.is_premium ? `<span style="color:var(--gold);font-size:9px">★ حصري</span>` : ''}
+                         ${i < 3 ? `<span style="background:rgba(42,138,126,.15);color:var(--teal2);padding:1px 6px;border-radius:10px;font-size:9px;font-weight:800">يظهر في الرئيسية</span>` : ''}
+                       </div>
+                     </div>
+
+                     <!-- زر حذف -->
+                     <button onclick="_removeFeaturedPick(${i})" style="
+                       width:26px;height:26px;border-radius:6px;border:none;
+                       background:rgba(192,112,90,.1);color:var(--rose2);
+                       cursor:pointer;font-size:11px;flex-shrink:0;
+                       display:flex;align-items:center;justify-content:center;
+                       transition:background .13s;
+                     " onmouseover="this.style.background='rgba(192,112,90,.22)'"
+                       onmouseout="this.style.background='rgba(192,112,90,.1)'">
+                       <i class="fa-solid fa-xmark"></i>
+                     </button>
+                   </div>`).join('')}
+               </div>`}
+        </div>
+      </div>
+
+      <!-- LEFT: المتاحة للاختيار -->
+      <div class="section-card">
+        <div class="section-head">
+          <div>
+            <h3><i class="fa-solid fa-grid-2" style="color:var(--gold);margin-left:8px"></i>جميع القوالب</h3>
+            <p>اضغط على أي قالب لإضافته للمختارة</p>
+          </div>
+        </div>
+        <div style="padding:14px">
+          <!-- search -->
+          <div class="search-bar" style="margin-bottom:12px">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" placeholder="ابحث عن قالب..."
+              oninput="_featPoolSearch=this.value;_featPoolPage=1;_renderFeaturedPage()"
+              value="${_featPoolSearch}"/>
+          </div>
+          <!-- tabs -->
+          <div style="display:flex;gap:4px;margin-bottom:12px">
+            <button onclick="_featTypeFilter='all';_featPoolPage=1;_renderFeaturedPage()" style="
+              flex:1;padding:6px;border-radius:7px;border:none;
+              background:${!window._featTypeFilter||window._featTypeFilter==='all'?'var(--ink2)':'transparent'};
+              color:${!window._featTypeFilter||window._featTypeFilter==='all'?'var(--gold2)':'rgba(247,242,232,.3)'};
+              font-family:'Tajawal',sans-serif;font-size:11px;font-weight:700;cursor:pointer;
+            ">الكل</button>
+            <button onclick="_featTypeFilter='calligraphy';_featPoolPage=1;_renderFeaturedPage()" style="
+              flex:1;padding:6px;border-radius:7px;border:none;
+              background:${window._featTypeFilter==='calligraphy'?'var(--ink2)':'transparent'};
+              color:${window._featTypeFilter==='calligraphy'?'var(--teal2)':'rgba(247,242,232,.3)'};
+              font-family:'Tajawal',sans-serif;font-size:11px;font-weight:700;cursor:pointer;
+            ">مخطوطات</button>
+            <button onclick="_featTypeFilter='background';_featPoolPage=1;_renderFeaturedPage()" style="
+              flex:1;padding:6px;border-radius:7px;border:none;
+              background:${window._featTypeFilter==='background'?'var(--ink2)':'transparent'};
+              color:${window._featTypeFilter==='background'?'var(--gold2)':'rgba(247,242,232,.3)'};
+              font-family:'Tajawal',sans-serif;font-size:11px;font-weight:700;cursor:pointer;
+            ">خلفيات</button>
+          </div>
+          ${_renderFeatPool()}
+        </div>
+      </div>
+
+    </div>`;
+
+  // إعادة attach drag events
+  _attachFeatDrag();
+}
+
+// ── POOL RENDER ──
+function _renderFeatPool() {
+  let pool = [..._featuredPool];
+
+  // فلتر type
+  const typeF = window._featTypeFilter;
+  if (typeF && typeF !== 'all') pool = pool.filter(p => p.itemType === typeF);
+
+  // فلتر search
+  if (_featPoolSearch) pool = pool.filter(p => p.name.toLowerCase().includes(_featPoolSearch.toLowerCase()));
+
+  const total = pool.length;
+  const totalPages = Math.ceil(total / FEAT_POOL_PER);
+  const start = (_featPoolPage - 1) * FEAT_POOL_PER;
+  const page  = pool.slice(start, start + FEAT_POOL_PER);
+
+  if (!page.length) return `<div class="empty-state vis"><i class="fa-solid fa-magnifying-glass"></i><p>لا توجد نتائج</p></div>`;
+
+  const alreadyPicked = new Set(_featuredPicks.map(p => p.itemType + '_' + p.id));
+
+  let html = `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">`;
+  page.forEach(item => {
+    const isPicked = alreadyPicked.has(item.itemType + '_' + item.id);
+    html += `
+      <div onclick="${isPicked ? '' : `_addFeaturedPick('${item.id}','${item.itemType}')`}"
+        style="
+          border-radius:10px;overflow:hidden;
+          border:2px solid ${isPicked ? 'var(--teal)' : 'var(--border)'};
+          background:var(--ink3);cursor:${isPicked?'default':'pointer'};
+          transition:all .15s;position:relative;opacity:${isPicked?.7:1};
+        "
+        onmouseover="this.style.borderColor='${isPicked?'var(--teal)':'var(--gold)'}'"
+        onmouseout="this.style.borderColor='${isPicked?'var(--teal)':'var(--border)'}'">
+        <div style="aspect-ratio:1;overflow:hidden;
+          background:${item.style==='white'?'#1a1a2e':'var(--ink4)'}">
+          ${item.public_url
+            ? `<img src="${item.public_url}" style="width:100%;height:100%;object-fit:cover;display:block"
+                onerror="this.style.display='none'"/>`
+            : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center">
+                 <i class="fa-solid fa-image" style="color:rgba(247,242,232,.1);font-size:20px"></i>
+               </div>`}
+        </div>
+        ${isPicked ? `<div style="
+          position:absolute;inset:0;background:rgba(42,138,126,.3);
+          display:flex;align-items:center;justify-content:center;
+          pointer-events:none;
+        "><i class="fa-solid fa-check-circle" style="font-size:22px;color:#fff"></i></div>` : ''}
+        ${item.is_premium ? `<div style="
+          position:absolute;top:4px;right:4px;
+          background:linear-gradient(135deg,#D4A843,#B8860B);color:#0D1117;
+          font-size:7px;font-weight:900;padding:2px 5px;border-radius:3px;
+          pointer-events:none
+        ">★</div>` : ''}
+        <div style="padding:5px 7px;background:rgba(0,0,0,.4)">
+          <div style="font-size:10px;font-weight:700;color:var(--ivory);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div>
+        </div>
+      </div>`;
+  });
+  html += '</div>';
+
+  // pagination
+  if (totalPages > 1) {
+    html += `<div style="display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap">`;
+    html += `<button class="pg-btn" onclick="_featPoolPage=${_featPoolPage-1};_renderFeaturedPage()" ${_featPoolPage===1?'disabled':''} style="min-width:32px;height:32px;font-size:12px"><i class="fa-solid fa-chevron-right fa-xs"></i></button>`;
+    const nums = [];
+    if (totalPages <= 5) { for(let i=1;i<=totalPages;i++) nums.push(i); }
+    else {
+      nums.push(1);
+      if (_featPoolPage > 3) nums.push('…');
+      for(let i=Math.max(2,_featPoolPage-1);i<=Math.min(totalPages-1,_featPoolPage+1);i++) nums.push(i);
+      if (_featPoolPage < totalPages-2) nums.push('…');
+      nums.push(totalPages);
+    }
+    nums.forEach(n => {
+      if (n==='…') html+=`<span style="color:rgba(247,242,232,.3);padding:0 4px">…</span>`;
+      else html+=`<button class="pg-btn${n===_featPoolPage?' active':''}" onclick="_featPoolPage=${n};_renderFeaturedPage()" style="min-width:32px;height:32px;font-size:12px">${n}</button>`;
+    });
+    html += `<button class="pg-btn" onclick="_featPoolPage=${_featPoolPage+1};_renderFeaturedPage()" ${_featPoolPage===totalPages?'disabled':''} style="min-width:32px;height:32px;font-size:12px"><i class="fa-solid fa-chevron-left fa-xs"></i></button>`;
+    html += `</div>`;
+  }
+
+  return html;
+}
+
+// ── ADD / REMOVE ──
+function _addFeaturedPick(id, itemType) {
+  if (_featuredPicks.find(p => p.id === id && p.itemType === itemType)) return;
+  const item = _featuredPool.find(p => p.id === id && p.itemType === itemType);
+  if (!item) return;
+  _featuredPicks.push({ ...item, sortOrder: _featuredPicks.length });
+  _renderFeaturedPage();
+}
+
+function _removeFeaturedPick(idx) {
+  _featuredPicks.splice(idx, 1);
+  _featuredPicks.forEach((p,i) => p.sortOrder = i);
+  _renderFeaturedPage();
+}
+
+function _clearFeatured() {
+  if (!confirm('مسح كل القوالب المختارة؟')) return;
+  _featuredPicks = [];
+  _renderFeaturedPage();
+}
+
+// ── DRAG & DROP (إعادة الترتيب) ──
+let _featDragIdx = null;
+
+function _featDragStart(e, idx) {
+  _featDragIdx = idx;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => {
+    const items = document.querySelectorAll('._feat-pick-item');
+    if (items[idx]) items[idx].style.opacity = '0.4';
+  }, 0);
+}
+
+function _featDragOver(e, idx) {
+  e.preventDefault();
+  document.querySelectorAll('._feat-pick-item').forEach((el,i) => {
+    el.style.borderColor = i === idx ? 'var(--gold)' : 'var(--border)';
+  });
+}
+
+function _featDrop(e, idx) {
+  e.preventDefault();
+  if (_featDragIdx === null || _featDragIdx === idx) return;
+  const picked = [..._featuredPicks];
+  const dragged = picked.splice(_featDragIdx, 1)[0];
+  picked.splice(idx, 0, dragged);
+  picked.forEach((p,i) => p.sortOrder = i);
+  _featuredPicks = picked;
+  _featDragIdx = null;
+  _renderFeaturedPage();
+  toast('تم إعادة الترتيب ✓', 'ok');
+}
+
+function _attachFeatDrag() {
+  document.querySelectorAll('._feat-pick-item').forEach(el => {
+    el.addEventListener('dragend', () => {
+      document.querySelectorAll('._feat-pick-item').forEach(e => {
+        e.style.opacity = '1'; e.style.borderColor = 'var(--border)';
+      });
+    });
+  });
+}
+
+// ── SAVE ──
+async function saveFeatured() {
+  const btn = document.querySelector('#page-featured .btn-primary');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<div class="spin"></div>'; }
+  try {
+    const me = await Auth.me();
+
+    // 1. احذف القديم
+    await sb.from('featured_templates').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+
+    // 2. أدخل الجديد
+    if (_featuredPicks.length) {
+      const rows = _featuredPicks.map((p, i) => ({
+        item_id: p.id, item_type: p.itemType,
+        sort_order: i, created_by: me?.id
+      }));
+      const { error } = await sb.from('featured_templates').insert(rows);
+      if (error) throw error;
+    }
+
+    _allFeatured = _featuredPicks.map((p,i) => ({
+      item_id: p.id, item_type: p.itemType, sort_order: i
+    }));
+
+    toast(`تم حفظ ${_featuredPicks.length} قالب مميز ✓`, 'ok');
+  } catch(e) { toast('خطأ: ' + e.message, 'err'); }
+  finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> حفظ'; }
+  }
+}
+
+window._featTypeFilter = 'all';
+
 (function() {
     'use strict';
     document.addEventListener('contextmenu', function(e) {

@@ -186,59 +186,14 @@
         <h2 class="sec-title">اختر <em>تصميمك</em></h2>
         <p class="sec-body">جميع القوالب مجانية — خصّص وحمّل الآن</p>
       </div>
-      <a href="/Templates.html" class="tpl-all">
+      <a href="/templates.html" class="tpl-all">
         استعرض كل القوالب <i class="fa-solid fa-arrow-left fa-sm"></i>
       </a>
     </div>
-
-    <div class="tpl-grid">
-
-      <div class="tc ai">
-        <div class="tc-img">
-          <img src="images/1.png" alt="تصميم ديواني"
-            onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#1a2840,#2a8a7e)'"/>
-          <div class="tc-tag free">مجاني</div>
-          <div class="tc-overlay">
-            <a href="/editor.html" class="tc-overlay-btn">ابدأ التصميم</a>
-          </div>
-        </div>
-        <div class="tc-foot">
-          <span class="tc-name">الخط الديواني الملكي</span>
-          <a href="/editor.html" class="tc-action"><i class="fa-solid fa-pen-nib"></i></a>
-        </div>
-      </div>
-
-      <div class="tc ai" style="transition-delay:.1s">
-        <div class="tc-img">
-          <img src="images/2.png" alt="بطاقة عيد"
-            onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#1a2030,#d4a843)'"/>
-          <div class="tc-tag free">مجاني</div>
-          <div class="tc-overlay">
-            <a href="/editor.html" class="tc-overlay-btn">ابدأ التصميم</a>
-          </div>
-        </div>
-        <div class="tc-foot">
-          <span class="tc-name">بطاقة العيد العصرية</span>
-          <a href="/editor.html" class="tc-action"><i class="fa-solid fa-pen-nib"></i></a>
-        </div>
-      </div>
-
-      <div class="tc ai" style="transition-delay:.2s">
-        <div class="tc-img">
-          <img src="images/11.png" alt="بطاقة زفاف"
-            onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#201520,#c0705a)'"/>
-          <div class="tc-tag free">مجاني</div>
-          <div class="tc-overlay">
-            <a href="/editor.html" class="tc-overlay-btn">ابدأ التصميم</a>
-          </div>
-        </div>
-        <div class="tc-foot">
-          <span class="tc-name">بطاقة الزفاف الفاخرة</span>
-          <a href="/editor.html" class="tc-action"><i class="fa-solid fa-pen-nib"></i></a>
-        </div>
-      </div>
-
-    </div>
+    <!-- يتملأ ديناميك من Supabase -->
+    <div class="tpl-grid" id="tpl-grid-dynamic"></div>
+    <!-- Pagination — تظهر فقط لو المختارة أكتر من 3 -->
+    <div id="tpl-pagination"></div>
   </div>
 </section>
 

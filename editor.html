@@ -194,7 +194,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
         gap: 16px;
         padding: 20px;
         overflow: auto;
@@ -1256,6 +1255,13 @@
               <polyline points="21,15 16,10 5,21" /></svg
             >خلفية
           </button>
+          <button class="stab" data-tab="lyr" onclick="switchTab(this);_refreshLayers()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <rect x="2" y="7" width="20" height="4" rx="1"/>
+    <rect x="2" y="13" width="20" height="4" rx="1"/>
+    <rect x="2" y="1"  width="20" height="4" rx="1"/>
+  </svg>طبقات
+</button>
         </div>
 
         <!-- PANEL: FORMAT -->
@@ -1731,6 +1737,8 @@
           <div class="bggrid" id="bggrid"></div>
         </div>
       </div>
+      <div class="spanel" id="panel-lyr"></div>
+
       <!-- /sidebar -->
     </div>
     <!-- /app-shell -->

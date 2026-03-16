@@ -191,6 +191,14 @@ function makeWrap(x, y) {
   w.appendChild(delBtn); w.appendChild(mvBtn); w.appendChild(rh);
   attachDrag(w, rh);
   CV.appendChild(w);
+  // assign z-index based on DOM order
+  _syncZIndex();
+  // refresh layers panel if visible
+  _refreshLayers();
+  // patch del-btn to also refresh layers
+  delBtn.addEventListener('click', () => {
+    setTimeout(() => { _syncZIndex(); _refreshLayers(); }, 0);
+  });
   return w;
 }
 
@@ -290,6 +298,8 @@ function select(el) {
   if (slOp) slOp.value = op;
   const vlOp = document.getElementById('vl-op');
   if (vlOp) vlOp.textContent = op + '%';
+  // refresh layers panel
+  setTimeout(_refreshLayers, 0);
 }
 
 function deselect() {
@@ -677,6 +687,221 @@ function notify(msg) {
   clearTimeout(n._t); n._t = setTimeout(() => n.classList.remove('vis'), 2600);
 }
 function showNotif(msg) { notify(msg); }
+
+
+// ══════════════════════════════════════════
+//  LAYER SYSTEM
+// ══════════════════════════════════════════
+
+// Sync z-index فعلي بناءً على ترتيب الـ DOM
+function _syncZIndex() {
+  const els = CV.querySelectorAll('.el');
+  els.forEach((el, i) => { el.style.zIndex = i + 1; });
+}
+
+// رفع layer للأمام (bring forward)
+function layerUp(id) {
+  const el = CV.querySelector(`.el[data-id="${id}"]`);
+  if (!el || !el.nextElementSibling) return;
+  CV.insertBefore(el.nextElementSibling, el);
+  _syncZIndex(); _refreshLayers();
+  notify('تم الرفع للأمام ✓');
+}
+
+// إرسال layer للخلف (send backward)
+function layerDown(id) {
+  const el = CV.querySelector(`.el[data-id="${id}"]`);
+  if (!el || !el.previousElementSibling) return;
+  CV.insertBefore(el, el.previousElementSibling);
+  _syncZIndex(); _refreshLayers();
+  notify('تم الإرسال للخلف ✓');
+}
+
+// bring to front (أعلى كل شيء)
+function layerFront(id) {
+  const el = CV.querySelector(`.el[data-id="${id}"]`);
+  if (!el) return;
+  CV.appendChild(el);
+  _syncZIndex(); _refreshLayers();
+  notify('للأمام تماماً ✓');
+}
+
+// send to back (خلف كل شيء)
+function layerBack(id) {
+  const el = CV.querySelector(`.el[data-id="${id}"]`);
+  if (!el) return;
+  CV.insertBefore(el, CV.firstChild);
+  _syncZIndex(); _refreshLayers();
+  notify('للخلف تماماً ✓');
+}
+
+// اسم العنصر
+function _layerName(el) {
+  const txt = el.querySelector('.el-text');
+  if (txt) {
+    const t = txt.textContent.trim();
+    return '📝 ' + (t.length > 14 ? t.slice(0, 14) + '…' : t || 'نص');
+  }
+  const img = el.querySelector('img');
+  if (img) {
+    const alt = img.alt || '';
+    return '🖼 ' + (alt.length > 14 ? alt.slice(0, 14) + '…' : alt || 'صورة');
+  }
+  return '⬜ عنصر';
+}
+
+// render layers panel
+function _refreshLayers() {
+  const panel = document.getElementById('panel-lyr');
+  if (!panel || !panel.classList.contains('on')) return;
+
+  const els = [...CV.querySelectorAll('.el')].reverse(); // أعلى أولاً
+  if (!els.length) {
+    panel.innerHTML = `
+      <div class="sec">الطبقات</div>
+      <div style="text-align:center;padding:32px 12px;color:var(--ink-faint);font-size:12px">
+        <div style="font-size:28px;margin-bottom:8px;opacity:.3">⬜</div>
+        لا توجد عناصر على الكانفاس بعد
+      </div>`;
+    return;
+  }
+
+  const allEls = [...CV.querySelectorAll('.el')];
+  const topIdx = allEls.length - 1;
+
+  panel.innerHTML = `
+    <div class="sec">الطبقات — <span style="color:var(--gold);font-weight:900">${els.length}</span> عنصر</div>
+    <div style="font-size:10px;color:var(--ink-faint);margin-bottom:8px;line-height:1.5">
+      الأعلى في القائمة = الأمام على الكانفاس
+    </div>
+    <div id="layer-list" style="display:flex;flex-direction:column;gap:4px">
+      ${els.map((el) => {
+        const id   = el.dataset.id;
+        const domI = allEls.indexOf(el);
+        const isTop    = domI === topIdx;
+        const isBottom = domI === 0;
+        const isSel    = selEl === el;
+        return `
+          <div class="_lyr-row" data-id="${id}" style="
+            display:flex;align-items:center;gap:7px;
+            padding:8px 10px;border-radius:8px;
+            background:${isSel ? 'rgba(247,175,60,.12)' : 'var(--surface)'};
+            border:1.5px solid ${isSel ? 'var(--gold)' : 'var(--border-m)'};
+            cursor:pointer;transition:all .13s;
+          "
+          onclick="_lyrSelect('${id}')"
+          draggable="true"
+          ondragstart="_lyrDragStart(event,'${id}')"
+          ondragover="_lyrDragOver(event,'${id}')"
+          ondrop="_lyrDrop(event,'${id}')">
+            <!-- drag handle -->
+            <div style="color:var(--ink-faint);font-size:12px;cursor:grab;padding:0 2px">⠿</div>
+            <!-- thumbnail -->
+            <div style="
+              width:32px;height:32px;border-radius:5px;overflow:hidden;flex-shrink:0;
+              background:${el.querySelector('.el-text') ? 'var(--navy)' : '#1a1a2e'};
+              display:flex;align-items:center;justify-content:center;
+            ">
+              ${el.querySelector('img')
+                ? `<img src="${el.querySelector('img').src}" style="width:100%;height:100%;object-fit:cover"/>`
+                : `<span style="font-size:10px;color:#aaa;padding:2px;text-align:center;overflow:hidden;line-height:1.2">${el.querySelector('.el-text')?.textContent?.slice(0,6)||'T'}</span>`}
+            </div>
+            <!-- name -->
+            <span style="flex:1;font-size:11px;font-weight:700;color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+              ${_layerName(el)}
+            </span>
+            <!-- z badge -->
+            <span style="
+              font-size:9px;font-weight:900;padding:1px 5px;border-radius:3px;flex-shrink:0;
+              background:${isTop?'rgba(247,175,60,.2)':isBottom?'rgba(42,58,77,.08)':'rgba(42,58,77,.06)'};
+              color:${isTop?'var(--gold)':'var(--ink-faint)'};
+            ">${isTop?'أمام':isBottom?'خلف':domI+1}</span>
+            <!-- up/down buttons -->
+            <div style="display:flex;gap:2px;flex-shrink:0">
+              <button onclick="event.stopPropagation();layerUp('${id}')" ${isTop?'disabled':''} style="
+                width:20px;height:20px;border-radius:4px;border:1px solid var(--border-m);
+                background:${isTop?'transparent':'var(--white)'};color:${isTop?'var(--ink-faint)':'var(--navy)'};
+                cursor:${isTop?'not-allowed':'pointer'};font-size:10px;display:flex;align-items:center;justify-content:center;
+                opacity:${isTop?.3:1};transition:all .12s;
+              " title="للأمام">▲</button>
+              <button onclick="event.stopPropagation();layerDown('${id}')" ${isBottom?'disabled':''} style="
+                width:20px;height:20px;border-radius:4px;border:1px solid var(--border-m);
+                background:${isBottom?'transparent':'var(--white)'};color:${isBottom?'var(--ink-faint)':'var(--navy)'};
+                cursor:${isBottom?'not-allowed':'pointer'};font-size:10px;display:flex;align-items:center;justify-content:center;
+                opacity:${isBottom?.3:1};transition:all .12s;
+              " title="للخلف">▼</button>
+            </div>
+          </div>`;
+      }).join('')}
+    </div>
+    <div style="display:flex;gap:5px;margin-top:10px;flex-wrap:wrap">
+      ${selEl ? `
+        <button onclick="layerFront('${selEl.dataset.id}')" style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid var(--border-m);background:rgba(247,175,60,.1);color:var(--gold);font-family:'Tajawal',sans-serif;font-size:11px;font-weight:700;cursor:pointer">
+          ▲▲ للأمام تماماً
+        </button>
+        <button onclick="layerBack('${selEl.dataset.id}')" style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid var(--border-m);background:rgba(42,58,77,.06);color:var(--ink-dim);font-family:'Tajawal',sans-serif;font-size:11px;font-weight:700;cursor:pointer">
+          ▼▼ للخلف تماماً
+        </button>
+      ` : `<div style="width:100%;text-align:center;color:var(--ink-faint);font-size:11px;padding:4px">اضغط على عنصر لتحديده</div>`}
+    </div>`;
+
+  // attach drag events
+  let _lyrDragId = null;
+  panel.querySelectorAll('._lyr-row').forEach(row => {
+    row.addEventListener('dragend', () => {
+      panel.querySelectorAll('._lyr-row').forEach(r => r.style.borderColor = '');
+    });
+  });
+}
+
+// select from layer panel
+function _lyrSelect(id) {
+  const el = CV.querySelector(`.el[data-id="${id}"]`);
+  if (el) { select(el); _refreshLayers(); }
+}
+
+// drag & drop in layers panel
+let _lyrDragId = null;
+
+function _lyrDragStart(e, id) {
+  _lyrDragId = id;
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function _lyrDragOver(e, id) {
+  e.preventDefault();
+  document.querySelectorAll('._lyr-row').forEach(r => {
+    r.style.borderColor = r.dataset.id === id ? 'var(--gold)' : '';
+  });
+}
+
+function _lyrDrop(e, targetId) {
+  e.preventDefault();
+  document.querySelectorAll('._lyr-row').forEach(r => r.style.borderColor = '');
+  if (!_lyrDragId || _lyrDragId === targetId) return;
+
+  // في الـ DOM: العنصر الأعلى (أمام) هو الأخير في DOM
+  // panel list مقلوب (أعلى = أول في القائمة = آخر في DOM)
+  const dragged = CV.querySelector(`.el[data-id="${_lyrDragId}"]`);
+  const target  = CV.querySelector(`.el[data-id="${targetId}"]`);
+  if (!dragged || !target) return;
+
+  const allEls = [...CV.querySelectorAll('.el')];
+  const di = allEls.indexOf(dragged);
+  const ti = allEls.indexOf(target);
+
+  if (di > ti) {
+    // dragged أعلى من target في DOM → حط قبل target
+    CV.insertBefore(dragged, target);
+  } else {
+    // dragged أقل → حط بعد target
+    target.after(dragged);
+  }
+
+  _syncZIndex(); _refreshLayers();
+  notify('تم تغيير الطبقة ✓');
+  _lyrDragId = null;
+}
 
 (function() {
     'use strict';

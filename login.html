@@ -7,6 +7,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <style>
+  /* ── Forgot Password ── */
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 7px;
+}
+.label-row label {
+  margin-bottom: 0 !important; /* لتوحيد المسافات مع التصميم الأصلي */
+}
+.forgot-link {
+  font-size: 11px;
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.forgot-link:hover {
+  color: var(--gold2);
+  text-decoration: underline;
+}
 :root {
   --ink:    #0D1117;
   --ink2:   #111922;
@@ -357,8 +378,11 @@ body{
         </div>
         <div class="field-err" id="l-email-err"></div>
       </div>
-      <div class="field">
-        <label>كلمة المرور</label>
+ <div class="field">
+        <div class="label-row">
+          <label>كلمة المرور</label>
+          <a href="forgetPassword.html" class="forgot-link" onclick="showForgotPassword()">نسيت كلمة المرور؟</a>
+        </div>
         <div class="field-wrap">
           <i class="fa-solid fa-lock field-icon"></i>
           <input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password"/>

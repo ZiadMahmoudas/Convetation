@@ -689,3 +689,4 @@ function _cpMsg(text, type) {
 window._showCouponPopup = _showCouponPopup;
 window._verifyCoupon    = _verifyCoupon;
 window._showLimitModal  = _showLimitModal;
+
