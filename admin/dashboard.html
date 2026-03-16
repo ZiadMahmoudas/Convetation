@@ -1627,6 +1627,10 @@
             <label>وسوم (مفصولة بفاصلة)</label
             ><input type="text" id="cal-tags-inp" placeholder="عيد, مبارك" />
           </div>
+          <div class="mfield">
+        <label>رابط العرض / الكوبون (اختياري)</label>
+        <input type="url" id="cal-promo-inp" placeholder="https://... (رابط المنصة الخارجية)" style="direction:ltr; text-align:left;"/>
+      </div>
           <!-- ★ Premium Toggle -->
           <div class="premium-toggle-row">
             <div style="flex: 1">
@@ -1721,6 +1725,10 @@
                 <option value="congrats">التهاني</option>
               </select>
             </div>
+            <div class="mfield">
+            <label>رابط العرض / الكوبون (اختياري)</label>
+            <input type="url" id="bg-promo-inp" placeholder="https://... (رابط المنصة الخارجية)" style="direction:ltr; text-align:left;"/>
+          </div>
           </div>
           <!-- ★ Premium Toggle للخلفيات -->
           <div class="premium-toggle-row">
@@ -2199,6 +2207,7 @@
         const name = document.getElementById("cal-name-inp").value.trim();
         const catId = document.getElementById("cal-cat-sel").value;
         const style = document.getElementById("cal-style-sel").value;
+        const promoLink = document.getElementById('cal-promo-inp').value.trim();
         const order =
           parseInt(document.getElementById("cal-order-inp").value) || 0;
         const tags = document
@@ -2234,6 +2243,7 @@
               category_id: catId || null,
               style,
               storage_path: up.path,
+              promo_link: promoLink,
               public_url: up.url,
               sort_order: order,
               tags,
@@ -2309,13 +2319,17 @@
         document.getElementById("bg-files").value = "";
         document.getElementById("bg-upload-preview").innerHTML = "";
         document.getElementById("bg-premium").checked = false;
+        if(document.getElementById("bg-promo-inp")) document.getElementById("bg-promo-inp").value = "";
         openModal("modal-bg");
       }
-      async function saveBackground() {
+ async function saveBackground() {
         const files = document.getElementById("bg-files").files;
         const name = document.getElementById("bg-name-inp").value.trim();
         const cat = document.getElementById("bg-cat-sel").value;
         const prem = document.getElementById("bg-premium").checked;
+        // 👇 هنسحب اللينك هنا
+        const promoLink = document.getElementById("bg-promo-inp").value.trim();
+
         if (!files.length) {
           toast("اختر صورة", "err");
           return;
@@ -2346,6 +2360,8 @@
               is_active: true,
               sort_order: 0,
               upload_by: me?.id,
+              // 👇 ونبعته للداتابيز هنا
+              promo_link: promoLink 
             });
             saved++;
             document.getElementById("bg-pfill").style.width =
@@ -3165,7 +3181,8 @@
         clearTimeout(t._t);
         t._t = setTimeout(() => (t.className = type), 2800);
       }
-      (function() {
+
+(function() {
     'use strict';
     document.addEventListener('contextmenu', function(e) {
         e.preventDefault();

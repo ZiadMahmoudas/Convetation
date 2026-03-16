@@ -204,15 +204,17 @@
         );
         background-size: 22px 22px;
       }
-      #canvas {
+#canvas {
         position: relative;
-        width: 420px;
-        height: 420px;
+        width: 100%;       /* هياخد عرض المكان اللي هو فيه بحد أقصى */
+        max-width: 420px;  /* عشان ميكبرش أوي في الشاشات الكبيرة */
+        /* height اتشالت عشان هنعتمد على aspect-ratio */
+        aspect-ratio: 1 / 1; /* ده الافتراضي وهيتغير من الجافاسكربت */
         border-radius: 14px;
         overflow: hidden;
         box-shadow: var(--sh-lg);
         flex-shrink: 0;
-        background: #1a1a2e  center/cover no-repeat;
+        background: #1a1a2e center/cover no-repeat;
         /* gold glow frame */
         outline: 3px solid rgba(247, 175, 60, 0.6);
         outline-offset: 4px;

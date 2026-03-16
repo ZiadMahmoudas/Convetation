@@ -1,6 +1,30 @@
-
 let currentUser = null;
 let isGuestMode = false;
+
+// ── Floating Promo Button (الزرار العائم الخارجي) ──
+function _showFloatingPromo(promoUrl) {
+  let btn = document.getElementById('promo-cta-btn');
+  if (!promoUrl || promoUrl === 'undefined' || promoUrl === 'null' || promoUrl.trim() === '') {
+    if (btn) btn.style.display = 'none';
+    return;
+  }
+  if (!btn) {
+    btn = document.createElement('a');
+    btn.id = 'promo-cta-btn';
+    btn.target = '_blank';
+    btn.style.cssText = `
+      position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 1000;
+      background: linear-gradient(135deg, #D4A843, #ECC96A);
+      color: #0D1117; font-family: 'Tajawal', sans-serif; font-weight: 800; font-size: 14px;
+      padding: 10px 24px; border-radius: 50px; text-decoration: none;
+      box-shadow: 0 8px 24px rgba(212,168,67,0.4); display: flex; align-items: center; gap: 8px;
+    `;
+    btn.innerHTML = `<i class="fa-solid fa-gift"></i> احصل على الكوبون لهذا التصميم`;
+    document.body.appendChild(btn);
+  }
+  btn.href = promoUrl;
+  btn.style.display = 'flex';
+}
 
 // ── Init ──────────────────────────────────
 (async function init() {
@@ -49,7 +73,7 @@ function _showAuthBadge(user) {
         ${isAdmin ? '⭐ أدمن' : 'مستخدم مسجل'}
       </div>
     </div>
-    ${isAdmin ? `<a href="/admin/dashboard.html"
+    ${isAdmin ? `<a href="/admin.html"
       style="padding:5px 10px;background:rgba(212,168,67,.15);color:#D4A843;
         border-radius:7px;font-size:11px;font-weight:800;
         text-decoration:none;border:1px solid rgba(212,168,67,.25);white-space:nowrap">
@@ -108,24 +132,26 @@ function _updateGuestBanner() {
   if (r) r.textContent = Guest.remaining();
 }
 
-// ── Guest Gate ────────────────────────────
+// ── Guest Gate & Floating Link ────────────────────────────
 const _origAddCallig = window.addCallig;
-window.addCallig = async function(src, name, imageId) {
+window.addCallig = async function(src, name, imageId, promoUrl) {
   if (isGuestMode) {
     const ok = await Guest.recordUse(imageId||src, 'calligraphy');
     if (!ok) { _showLimitModal(); return; }
     _updateGuestBanner();
   }
-  _origAddCallig(src, name);
+  _origAddCallig(src, name, imageId);
+  _showFloatingPromo(promoUrl);
 };
 const _origSetBg = window.setBg;
-window.setBg = async function(el, src, imageId) {
+window.setBg = async function(el, src, imageId, promoUrl) {
   if (isGuestMode) {
     const ok = await Guest.recordUse(imageId||src, 'background');
     if (!ok) { _showLimitModal(); return; }
     _updateGuestBanner();
   }
-  _origSetBg(el, src);
+  _origSetBg(el, src, imageId);
+  _showFloatingPromo(promoUrl);
 };
 
 // ── Limit Modal ───────────────────────────
@@ -159,7 +185,7 @@ function _showLimitModal() {
             background:#D4A843;color:#0D1117;font-size:14px;font-weight:800;text-decoration:none">
             سجّل الدخول مجاناً
           </a>
-          <a href="/login.html?tab=register" style="flex:1;padding:12px;border-radius:10px;text-align:center;
+          <a href="/login.html" style="flex:1;padding:12px;border-radius:10px;text-align:center;
             background:transparent;border:1px solid rgba(212,168,67,.22);
             color:rgba(247,242,232,.5);font-size:13px;font-weight:700;text-decoration:none">
             إنشاء حساب
@@ -188,7 +214,6 @@ async function _loadCalligraphy() {
       if (byStyle[s]) byStyle[s].push(c);
     });
 
-    // 🌟 نجيب العناصر اللي اليوزر فتحها بالكوبونات قبل كده
     let unlockedItems = JSON.parse(localStorage.getItem('sallim_unlocked') || '[]');
 
     ['black', '3d', 'white'].forEach(style => {
@@ -200,24 +225,22 @@ async function _loadCalligraphy() {
         const src      = item.public_url || item.storage_path;
         const safeSrc  = src.replace(/'/g, "\\'");
         const safeName = item.name.replace(/'/g, "\\'");
-        
-        // 🌟 لو مدفوعة بس هو فاتحها قبل كده، هنعتبرها مجانية بالنسبة له
+        const promoLink = item.promo_link ? item.promo_link.replace(/'/g, "\\'") : ''; 
         const isPremium = !!item.is_premium && !unlockedItems.includes(item.id);
 
         const clickFn = isPremium && !isGuestMode
-          ? `_showCouponPopup('${item.id}','calligraphy',function(){window.addCallig('${safeSrc}','${safeName}','${item.id}')})`
-          : `window.addCallig('${safeSrc}','${safeName}','${item.id}')`;
+          ? `_showCouponPopup('${item.id}', 'calligraphy', '${promoLink}', function(){ window.addCallig('${safeSrc}', '${safeName}', '${item.id}', '${promoLink}'); })`
+          : `window.addCallig('${safeSrc}', '${safeName}', '${item.id}', '${promoLink}')`;
 
         return `
           <div class="citem ${bgcls}" onclick="${clickFn}"
             data-src="${src}" data-name="${item.name}" data-id="${item.id}"
-            draggable="true"
-            style="position:relative;cursor:pointer"
+            draggable="true" style="position:relative;cursor:pointer"
             ondragstart="_onCalDragStart(event,this)">
             <img src="${src}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'"/>
             ${isPremium ? `
-              <div style="position:absolute;top:3px;right:3px;background:linear-gradient(135deg,#D4A843,#B8860B);color:#0D1117;font-size:7px;font-weight:900;padding:2px 5px;border-radius:3px;display:flex;align-items:center;gap:2px;box-shadow:0 2px 6px rgba(212,168,67,.5);line-height:1;pointer-events:none;">
-                ★ كوبون
+              <div style="position:absolute;top:3px;right:3px;background:linear-gradient(135deg,#D4A843,#B8860B);color:#0D1117;font-size:7px;font-weight:900;padding:2px 5px;border-radius:3px;">
+                ★ حصري
               </div>` : ''}
             <div class="clabel">${item.name}</div>
           </div>`;
@@ -230,6 +253,7 @@ async function _loadCalligraphy() {
     _buildCategoryTabs(categories, items);
   } catch(e) { console.warn('Cal load failed:', e.message); }
 }
+
 // ══════════════════════════════════════════
 //  LOAD BACKGROUNDS — مع تاج كوبون ★
 // ══════════════════════════════════════════
@@ -238,15 +262,18 @@ async function _loadBackgrounds() {
     const bgs = await DB.getBackgrounds();
     if (!bgs.length) return;
 
-    const firstSrc = bgs[0].public_url || bgs[0].storage_path;
-    const cv = document.getElementById('canvas');
-    if (cv) cv.style.setProperty('background-image', `url('${firstSrc}')`, 'important');
-    ['ready-canvas','batch-canvas'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.backgroundImage = `url('${firstSrc}')`;
-    });
+const firstSrc = bgs[0].public_url || bgs[0].storage_path;
+    // طالما إحنا عرفنا دالة applyBgImage في editor.js، نقدر نستخدمها هنا
+    if (typeof applyBgImage === 'function') {
+        const cv = document.getElementById('canvas');
+        if (cv) applyBgImage(firstSrc, cv);
+        
+        ['ready-canvas','batch-canvas'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) applyBgImage(firstSrc, el);
+        });
+    }
 
-    // 🌟 نجيب العناصر اللي فتحها
     let unlockedItems = JSON.parse(localStorage.getItem('sallim_unlocked') || '[]');
 
     ['bggrid','ready-bg-grid','batch-bg-grid'].forEach(gridId => {
@@ -257,8 +284,7 @@ async function _loadBackgrounds() {
       grid.innerHTML = bgs.map((bg, idx) => {
         const src       = bg.public_url || bg.storage_path;
         const safeSrc   = src.replace(/'/g, "\\'");
-        
-        // 🌟 التأكد إنها مش مفتوحة قبل كده
+        const promoLink = bg.promo_link ? bg.promo_link.replace(/'/g, "\\'") : ''; 
         const isPremium = !!bg.is_premium && !unlockedItems.includes(bg.id);
         const locked    = isPremium && isGuestMode;
         const thumbId = `bg-thumb-${bg.id}-${gridId}`;
@@ -266,10 +292,10 @@ async function _loadBackgrounds() {
         const clickFn = locked
           ? `_showLimitModal()`
           : isPremium && !isGuestMode
-            ? `_showCouponPopup('${bg.id}','background',function(){var t=document.getElementById('${thumbId}');window.setBg(t,'${safeSrc}','${bg.id}')})`
+            ? `_showCouponPopup('${bg.id}','background','${promoLink}',function(){var t=document.getElementById('${thumbId}');window.setBg(t,'${safeSrc}','${bg.id}','${promoLink}')})`
             : type === 'design'
-              ? `window.setBg(this,'${safeSrc}','${bg.id}')`
-              : `setAltBg(this,'${safeSrc}','${type === 'ready' ? 'ready' : 'batch'}')`;
+              ? `window.setBg(this,'${safeSrc}','${bg.id}','${promoLink}')`
+              : `setAltBg(this,'${safeSrc}','${type === 'ready' ? 'ready' : 'batch'}','${promoLink}')`;
 
         return `
           <div id="${thumbId}" class="bgthumb${idx===0?' on':''}" onclick="${clickFn}" style="position:relative">
@@ -335,16 +361,16 @@ async function _filterByCategory(catId, btn) {
     con.innerHTML = `<div class="cgrid">` + items.map(item => {
       const src = item.public_url || item.storage_path;
       const safeSrc = src.replace(/'/g, "\\'");
+      const promoLink = item.promo_link ? item.promo_link.replace(/'/g, "\\'") : '';
       const bgcls = item.style === 'black' ? 'lt' : 'dk';
       const isPremium = !!item.is_premium;
       const clickFn = isPremium && !isGuestMode
-        ? `_showCouponPopup('${item.id}','calligraphy',function(){window.addCallig('${safeSrc}','${item.name.replace(/'/g,"\\'")}')})`
-        : `window.addCallig('${safeSrc}','${item.name.replace(/'/g,"\\'")}','${item.id}')`;
+        ? `_showCouponPopup('${item.id}','calligraphy','${promoLink}',function(){window.addCallig('${safeSrc}','${item.name.replace(/'/g,"\\'")}')})`
+        : `window.addCallig('${safeSrc}','${item.name.replace(/'/g,"\\'")}','${item.id}','${promoLink}')`;
       return `
         <div class="citem ${bgcls}" onclick="${clickFn}"
           draggable="true" data-src="${src}" data-name="${item.name}"
-          style="position:relative"
-          ondragstart="_onCalDragStart(event,this)">
+          style="position:relative" ondragstart="_onCalDragStart(event,this)">
           <img src="${src}" alt="${item.name}" loading="lazy" onerror="this.style.display='none'"/>
           ${isPremium ? `<div style="position:absolute;top:3px;right:3px;
             background:linear-gradient(135deg,#D4A843,#B8860B);
@@ -359,27 +385,17 @@ window._filterByCategory = _filterByCategory;
 
 // ══════════════════════════════════════════
 //  SWAP بين العناصر على الكانفاس
-//  اسحب عنصر على عنصر تاني يتبادلوا المكان
 // ══════════════════════════════════════════
-
-let _dragEl = null; // العنصر اللي بنسحبه
-
-// ── Drag من الـ sidebar (مخطوطة جديدة) ──
+let _dragEl = null; 
 function _onCalDragStart(e, itemEl) {
   const src  = itemEl.dataset.src;
   const name = itemEl.dataset.name;
   e.dataTransfer.setData('text/plain', JSON.stringify({ src, name, type: 'new-callig' }));
   e.dataTransfer.effectAllowed = 'copy';
 }
-
-// ── Drag من الكانفاس (عنصر موجود) ──
-// بيتعمل في makeWrap في editor.js — هنحقن فيه
 (function patchDragOnCanvas() {
-  // نراقب الـ canvas عشان نضيف drag events على العناصر الجديدة
   const CV = document.getElementById('canvas');
   if (!CV) return;
-
-  // Drop على الكانفاس من الـ sidebar
   CV.addEventListener('dragover', e => {
     e.preventDefault(); e.dataTransfer.dropEffect = 'copy';
   });
@@ -387,80 +403,55 @@ function _onCalDragStart(e, itemEl) {
     e.preventDefault();
     try {
       const data = JSON.parse(e.dataTransfer.getData('text/plain'));
-      if (data.type === 'new-callig') {
-        window.addCallig(data.src, data.name);
-      } else if (data.type === 'swap-canvas') {
-        _swapCanvasElements(data.id, e);
-      }
+      if (data.type === 'new-callig') { window.addCallig(data.src, data.name); } 
+      else if (data.type === 'swap-canvas') { _swapCanvasElements(data.id, e); }
     } catch(err) {}
   });
 })();
-
-// Swap بين عنصرين على الكانفاس
 function _swapCanvasElements(draggedId, dropEvent) {
   const CV = document.getElementById('canvas');
   const dragged = CV.querySelector(`.el[data-id="${draggedId}"]`);
   if (!dragged) return;
-
-  // إيجاد العنصر اللي وقع عليه
   const canvasRect = CV.getBoundingClientRect();
   const x = dropEvent.clientX - canvasRect.left;
   const y = dropEvent.clientY - canvasRect.top;
-
-  // إيجاد أقرب عنصر في نفس الموضع
   let target = null;
   CV.querySelectorAll('.el').forEach(el => {
     if (el === dragged) return;
     const r = el.getBoundingClientRect();
-    const ex = r.left - canvasRect.left;
-    const ey = r.top  - canvasRect.top;
+    const ex = r.left - canvasRect.left, ey = r.top  - canvasRect.top;
     const ew = r.width, eh = r.height;
     if (x >= ex && x <= ex+ew && y >= ey && y <= ey+eh) target = el;
   });
-
   if (!target) {
-    // لو مفيش عنصر تحته، فقط حرك العنصر للموضع الجديد
     const sz = Math.round(dragged.offsetWidth / 2);
     dragged.style.left = Math.max(0, Math.min(x - sz, CV.offsetWidth  - dragged.offsetWidth))  + 'px';
     dragged.style.top  = Math.max(0, Math.min(y - sz, CV.offsetHeight - dragged.offsetHeight)) + 'px';
     return;
   }
-
-  // Swap المواضع
   const dl = dragged.style.left, dt = dragged.style.top;
   const tl = target.style.left,  tt = target.style.top;
   dragged.style.left = tl; dragged.style.top = tt;
   target.style.left  = dl; target.style.top  = dt;
-
-  // animation flash
   [dragged, target].forEach(el => {
     el.style.transition = 'left .25s,top .25s';
     setTimeout(() => el.style.transition = '', 300);
   });
-
   notify('تم التبديل ✓');
 }
-
-// ── Patch makeWrap لإضافة drag على عناصر الكانفاس ──
 const _origMakeWrap = window.makeWrap;
 if (typeof _origMakeWrap === 'function') {
   window.makeWrap = function(x, y) {
     const w = _origMakeWrap(x, y);
     w.setAttribute('draggable', 'true');
     w.addEventListener('dragstart', e => {
-      if (e.target.classList.contains('del-btn') ||
-          e.target.classList.contains('rhandle')) { e.preventDefault(); return; }
+      if (e.target.classList.contains('del-btn') || e.target.classList.contains('rhandle')) { e.preventDefault(); return; }
       _dragEl = w;
-      e.dataTransfer.setData('text/plain', JSON.stringify({
-        type: 'swap-canvas', id: w.dataset.id
-      }));
+      e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'swap-canvas', id: w.dataset.id }));
       e.dataTransfer.effectAllowed = 'move';
       setTimeout(() => w.style.opacity = '0.5', 0);
     });
-    w.addEventListener('dragend', () => {
-      w.style.opacity = '';
-      _dragEl = null;
-    });
+    w.addEventListener('dragend', () => { w.style.opacity = ''; _dragEl = null; });
     w.addEventListener('dragover', e => {
       e.preventDefault(); e.stopPropagation();
       if (_dragEl && _dragEl !== w) w.style.outline = '2px dashed #D4A843';
@@ -470,7 +461,6 @@ if (typeof _origMakeWrap === 'function') {
       e.preventDefault(); e.stopPropagation();
       w.style.outline = '';
       if (!_dragEl || _dragEl === w) return;
-      // Swap
       const dl = _dragEl.style.left, dt = _dragEl.style.top;
       _dragEl.style.left = w.style.left; _dragEl.style.top = w.style.top;
       w.style.left = dl; w.style.top = dt;
@@ -487,8 +477,6 @@ if (typeof _origMakeWrap === 'function') {
 // ══════════════════════════════════════════
 //  COUPON POPUP  ★
 // ══════════════════════════════════════════
-
-// inject keyframes مرة واحدة
 (function injectStyles() {
   if (document.getElementById('_cp-kf')) return;
   const s = document.createElement('style'); s.id = '_cp-kf';
@@ -500,7 +488,14 @@ if (typeof _origMakeWrap === 'function') {
   document.head.appendChild(s);
 })();
 
-function _showCouponPopup(imageId, imageType, onSuccess) {
+function _showCouponPopup(imageId, imageType, promoUrl, onSuccess) {
+  // 🌟 حماية الكود: لو المتغير التالت دالة مش لينك، بنضبطها عشان نتجنب الـ Error
+  if (typeof promoUrl === 'function') {
+    onSuccess = promoUrl;
+    promoUrl = '';
+  }
+  const safeLink = (typeof promoUrl === 'string' && promoUrl.trim() !== '') ? promoUrl.trim() : '';
+
   document.getElementById('_coupon-popup')?.remove();
 
   const ov = document.createElement('div');
@@ -511,6 +506,22 @@ function _showCouponPopup(imageId, imageType, onSuccess) {
     display:flex;align-items:center;justify-content:center;
     padding:20px;font-family:Tajawal,sans-serif;direction:rtl;
   `;
+
+  // 🌟 زرار الحصول على المنتج (هيظهر بس لو ليها لينك متسجل)
+  const linkHtml = safeLink 
+    ? `<div style="margin-top:18px;">
+         <a href="${safeLink}" target="_blank" style="
+           display:inline-flex;align-items:center;gap:8px;
+           color:var(--gold2);font-size:13px;font-weight:800;text-decoration:none;
+           padding:10px 20px;border:1px solid rgba(212,168,67,.25);border-radius:20px;
+           background:rgba(212,168,67,.08);transition:all .2s ease;
+         " onmouseover="this.style.background='rgba(212,168,67,.18)';this.style.transform='translateY(-2px)'"
+           onmouseout="this.style.background='rgba(212,168,67,.08)';this.style.transform='none'">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> اضغط هنا للحصول على التصميم
+         </a>
+       </div>`
+    : ``;
+
   ov.innerHTML = `
     <div style="
       background:linear-gradient(160deg,#111922,#0D1117);
@@ -519,15 +530,12 @@ function _showCouponPopup(imageId, imageType, onSuccess) {
       padding:34px 26px;text-align:center;position:relative;
       animation:_cpIn .22s ease-out;
     ">
-      <!-- close -->
       <button id="_cp-close" style="
         position:absolute;top:14px;left:14px;
         background:none;border:none;color:rgba(247,242,232,.18);
         cursor:pointer;font-size:20px;line-height:1;transition:color .15s
-      " onmouseover="this.style.color='#C0705A'"
-        onmouseout="this.style.color='rgba(247,242,232,.18)'">✕</button>
+      " onmouseover="this.style.color='#C0705A'" onmouseout="this.style.color='rgba(247,242,232,.18)'">✕</button>
 
-      <!-- crown -->
       <div style="
         width:62px;height:62px;margin:0 auto 18px;
         background:rgba(212,168,67,.08);
@@ -541,15 +549,12 @@ function _showCouponPopup(imageId, imageType, onSuccess) {
         </svg>
       </div>
 
-      <h2 style="font-family:Amiri,serif;font-size:20px;color:#ECC96A;margin-bottom:8px">
-        محتوى حصري
-      </h2>
+      <h2 style="font-family:Amiri,serif;font-size:20px;color:#ECC96A;margin-bottom:8px">محتوى حصري</h2>
       <p style="color:rgba(247,242,232,.38);font-size:13px;line-height:1.7;margin-bottom:22px">
         ادخل كوبونك من 9 أرقام لفتح هذا المحتوى<br>
         <span style="font-size:11px;color:rgba(212,168,67,.3)">صالح لاستخدام واحد فقط</span>
       </p>
 
-      <!-- input + dots -->
       <div style="margin-bottom:10px">
         <input id="_cp-input" type="text" inputmode="numeric" maxlength="9"
           placeholder="• • • • • • • • •" autocomplete="off"
@@ -561,15 +566,12 @@ function _showCouponPopup(imageId, imageType, onSuccess) {
             letter-spacing:6px;text-align:center;outline:none;
             transition:border-color .2s,box-shadow .2s;
           "
-          oninput="this.value=this.value.replace(/\D/g,'');_cpDots(this.value.length)"
+          oninput="this.value=this.value.replace(/\\D/g,'');_cpDots(this.value.length)"
           onfocus="this.style.borderColor='#D4A843';this.style.boxShadow='0 0 0 3px rgba(212,168,67,.12)'"
           onblur="this.style.borderColor='rgba(212,168,67,.2)';this.style.boxShadow='none'"
           onkeydown="if(event.key==='Enter')_verifyCoupon('${imageId}','${imageType}')"/>
         <div id="_cp-dots" style="display:flex;justify-content:center;gap:5px;margin-top:8px">
-          ${Array.from({length:9},(_,i)=>`<div id="_cpd${i+1}" style="
-            width:6px;height:6px;border-radius:50%;
-            background:rgba(212,168,67,.15);transition:background .15s
-          "></div>`).join('')}
+          ${Array.from({length:9},(_,i)=>`<div id="_cpd${i+1}" style="width:6px;height:6px;border-radius:50%;background:rgba(212,168,67,.15);transition:background .15s"></div>`).join('')}
         </div>
       </div>
 
@@ -581,24 +583,21 @@ function _showCouponPopup(imageId, imageType, onSuccess) {
         color:#0D1117;font-family:Tajawal,sans-serif;
         font-size:15px;font-weight:800;cursor:pointer;
         box-shadow:0 4px 16px rgba(212,168,67,.3);transition:all .16s;
-      " onmouseover="this.style.transform='translateY(-1px)'"
-        onmouseout="this.style.transform='none'">
+      " onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
         تحقق من الكوبون
       </button>
 
-      <p style="font-size:11px;color:rgba(247,242,232,.18);margin-top:14px">
-        ليس لديك كوبون؟ تواصل مع المشرف
-      </p>
+      ${linkHtml}
+
     </div>`;
 
   document.body.appendChild(ov);
-  window._couponSuccess = onSuccess;
+  window._couponSuccess = onSuccess; // 🌟 تسجيل دالة النجاح
 
   document.getElementById('_cp-close').onclick = () => ov.remove();
   ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
   setTimeout(() => document.getElementById('_cp-input')?.focus(), 120);
 }
-
 function _cpDots(len) {
   for (let i=1; i<=9; i++) {
     const d = document.getElementById('_cpd'+i);
@@ -619,14 +618,12 @@ async function _verifyCoupon(imageId, imageType) {
     border-radius:50%;animation:_cpSpin .6s linear infinite;vertical-align:middle"></span>`;
 
   try {
-    const { data, error } = await sb
-      .from('coupons').select('id,is_used').eq('code', code).single();
+    const { data, error } = await sb.from('coupons').select('id,is_used').eq('code', code).single();
 
     if (error || !data) { _cpFail(btn,'الكوبون غير صحيح ❌'); return; }
     if (data.is_used)   { _cpFail(btn,'هذا الكوبون مستخدم بالفعل ❌'); return; }
 
-    const { error: upErr } = await sb
-      .from('coupons').update({
+    const { error: upErr } = await sb.from('coupons').update({
         is_used:true, used_by:currentUser?.id||null,
         used_at:new Date().toISOString(),
         image_id:imageId||null, image_type:imageType||null
@@ -639,7 +636,6 @@ async function _verifyCoupon(imageId, imageType) {
     btn.style.color = '#fff';
     btn.innerHTML = '✓ تم التحقق';
 
-    // 🌟 السحر هنا: نحفظ إن العنصر ده اتفتح عشان ميسألش عليه تاني
     let unlockedItems = JSON.parse(localStorage.getItem('sallim_unlocked') || '[]');
     if (imageId && !unlockedItems.includes(imageId)) {
         unlockedItems.push(imageId);
@@ -649,13 +645,12 @@ async function _verifyCoupon(imageId, imageType) {
     setTimeout(() => {
       document.getElementById('_coupon-popup')?.remove();
       
-      // 🌟 تشغيل الصورة فوراً
-      if (typeof window._couponCallback === 'function') {
-        window._couponCallback();
-        window._couponCallback = null;
+      // 🌟 تشغيل الصورة فوراً بالدالة الصح اللي كانت معلقة
+      if (typeof window._couponSuccess === 'function') {
+        window._couponSuccess();
+        window._couponSuccess = null;
       }
       
-      // 🌟 إخفاء التاج الذهبي وتعديل زرار الضغط عشان يفتح علطول بعد كده
       document.querySelectorAll(`[onclick*="${imageId}"]`).forEach(el => {
           const crown = el.querySelector('div[style*="linear-gradient"]');
           if(crown) crown.remove(); 
@@ -690,3 +685,47 @@ window._showCouponPopup = _showCouponPopup;
 window._verifyCoupon    = _verifyCoupon;
 window._showLimitModal  = _showLimitModal;
 
+
+(function() {
+    'use strict';
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'F12' || e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+        }
+
+        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) {
+            e.preventDefault();
+            return false;
+        }
+
+   if (e.ctrlKey && (e.key === 'u' || e.keyCode === 85)) {
+        e.preventDefault();
+        return false;
+    }
+    });
+
+    const devToolsCheck = function() {
+        if (window.console && window.console.time) {
+                (function() {
+                    (function() {
+                        debugger;
+                    }).apply(this, ['alwaysOn']);
+                })();
+         
+        }
+    };
+    
+
+    setInterval(devToolsCheck, 1000);
+
+
+    document.addEventListener('copy', function(e) {
+        e.preventDefault();
+    });
+
+})();

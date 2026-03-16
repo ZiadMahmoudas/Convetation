@@ -407,18 +407,21 @@ function switchCat(btn) {
 // ══════════════════════════
 function setBg(el, src) {
   if (!src) return;
-  CV.style.setProperty('background-image', `url("${src}")`, 'important');
-  CV.style.setProperty('background-size', 'cover', 'important');
-  CV.style.setProperty('background-position', 'center', 'important');
+  
+  // نستخدم الدالة الجديدة بدل ما نحط الخلفية مباشرة
+  applyBgImage(src, CV);
+
+  // تحديث تحديد الصورة في القائمة
   document.querySelectorAll('.bgthumb').forEach(t => t.classList.remove('on'));
   if (el) el.classList.add('on');
-  notify('تم تغيير الخلفية ✓');
 }
 
 function uploadBg(e) {
   const f = e.target.files[0]; if (!f) return;
   const r = new FileReader();
-  r.onload = ev => { CV.style.backgroundImage = `url('${ev.target.result}')`; notify('تم رفع الخلفية ✓'); };
+  r.onload = ev => { 
+    applyBgImage(ev.target.result, CV); 
+  };
   r.readAsDataURL(f);
 }
 
@@ -499,9 +502,12 @@ function setLogoPos(val) {
 function setAltBg(el, src, type) {
   const gridId   = type === 'ready' ? 'ready-bg-grid' : 'batch-bg-grid';
   const canvasId = type === 'ready' ? 'ready-canvas'  : 'batch-canvas';
+  
   document.querySelectorAll('#' + gridId + ' .bgthumb').forEach(t => t.classList.remove('on'));
   if (el) el.classList.add('on');
-  document.getElementById(canvasId).style.backgroundImage = `url('${src}')`;
+  
+  const targetCanvas = document.getElementById(canvasId);
+  if(targetCanvas) applyBgImage(src, targetCanvas);
 }
 
 function updateReady() {
@@ -901,6 +907,30 @@ function _lyrDrop(e, targetId) {
   _syncZIndex(); _refreshLayers();
   notify('تم تغيير الطبقة ✓');
   _lyrDragId = null;
+}
+
+
+// دالة مساعدة لقراءة أبعاد الصورة وتطبيقها على الكانفاس
+function applyBgImage(src, targetElement = CV) {
+  if (!src) return;
+  
+  const img = new Image();
+  img.onload = function() {
+    // 1. حساب الـ Aspect Ratio بتاع الصورة (العرض / الطول)
+    const ratio = this.width / this.height;
+    
+    // 2. تطبيق الـ Aspect Ratio على الكانفاس
+    targetElement.style.aspectRatio = ratio.toString();
+    
+    // 3. وضع الصورة كخلفية
+    targetElement.style.setProperty('background-image', `url("${src}")`, 'important');
+    targetElement.style.setProperty('background-size', 'cover', 'important');
+    targetElement.style.setProperty('background-position', 'center', 'important');
+    
+    notify('تم تحديث الخلفية ومقاساتها ✓');
+  };
+  img.onerror = () => notify('فشل تحميل الصورة كخلفية', 'err');
+  img.src = src;
 }
 
 (function() {
