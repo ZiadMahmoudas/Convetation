@@ -33,33 +33,39 @@ document.getElementById("hamBtn").addEventListener("click", () => {
    TEMPLATES — ديناميك من Supabase
 ══════════════════════════════════════ */
 let _allItems = [], _filtered = [];
-let _curCat = "all", _curSort = "default", _search = "";
+let _curSort = "default", _search = "";
 let _curType = "all";
+
+/* ── Pagination ── */
+const PAGE_SIZE = 8;
+let _curPage = 1;
+
+/* ── هل الجهاز touch (موبايل/تابلت)؟ ── */
+const _isTouchDevice = () => window.matchMedia("(hover: none)").matches;
 
 async function loadTemplates() {
   try {
-    // 🌟 سحب السعر (price) والرابط (promo_link) من الداتابيز
     const [calRes, bgRes] = await Promise.all([
       sb.from("calligraphy").select("id,name,public_url,style,is_premium,price,promo_link,sort_order,created_at")
         .eq("is_active", true).order("sort_order",{ascending:true}).order("created_at",{ascending:false}),
       sb.from("backgrounds").select("id,name,public_url,category,is_premium,price,promo_link,sort_order,created_at")
         .eq("is_active", true).order("sort_order",{ascending:true}).order("created_at",{ascending:false}),
     ]);
-    
+
     const calItems = (calRes.data||[]).map(c=>({
-      id:"cal_"+c.id, rawId: c.id, name:c.name, img:c.public_url, 
-      isPremium:!!c.is_premium, price: c.price, promoLink: c.promo_link, 
+      id:"cal_"+c.id, rawId: c.id, name:c.name, img:c.public_url,
+      isPremium:!!c.is_premium, price: c.price, promoLink: c.promo_link,
       type:"calligraphy", style:c.style, sortOrder:c.sort_order||0, createdAt:c.created_at
     }));
     const bgItems  = (bgRes.data||[]).map(b=>({
-      id:"bg_"+b.id, rawId: b.id, name:b.name, img:b.public_url, 
-      isPremium:!!b.is_premium, price: b.price, promoLink: b.promo_link, 
+      id:"bg_"+b.id, rawId: b.id, name:b.name, img:b.public_url,
+      isPremium:!!b.is_premium, price: b.price, promoLink: b.promo_link,
       type:"background", cat:b.category, sortOrder:b.sort_order||0, createdAt:b.created_at
     }));
-    
+
     _allItems = [...calItems,...bgItems];
     await _markUnlockedItems();
-    _updateCounts(); 
+    _updateCounts();
     _applyAndRender();
   } catch(e) {
     console.error(e);
@@ -95,10 +101,6 @@ async function _markUnlockedItems() {
 }
 
 function _updateCounts() {
-  document.getElementById("cnt-all").textContent     = _allItems.length;
-  document.getElementById("cnt-free").textContent    = _allItems.filter(t=>!t.isPremium).length;
-  document.getElementById("cnt-premium").textContent = _allItems.filter(t=>t.isPremium).length;
-
   const cals = _allItems.filter(t => t.type === "calligraphy");
   const bgs  = _allItems.filter(t => t.type === "background");
   document.getElementById("cnt-type-all").textContent = _allItems.length;
@@ -106,28 +108,19 @@ function _updateCounts() {
   document.getElementById("cnt-type-bg").textContent  = bgs.length;
 }
 
-function setFilter(btn) {
-  document.querySelectorAll(".filter-row .ftab[data-cat]")
-    .forEach(b => b.classList.remove("on"));
-  btn.classList.add("on"); 
-  _curCat = btn.dataset.cat; 
-  _applyAndRender();
-}
-
 function setTypeFilter(btn) {
   document.querySelectorAll(".filter-row .ftab[data-type]")
     .forEach(b => b.classList.remove("on"));
   btn.classList.add("on");
   _curType = btn.dataset.type;
+  _curPage = 1;
   _applyAndRender();
 }
 
 function _applyAndRender() {
   let list=[..._allItems];
-  if(_curCat==="free")    list=list.filter(t=>!t.isPremium);
-  if(_curCat==="premium") list=list.filter(t=>t.isPremium);
   if(_search) list=list.filter(t=>t.name.toLowerCase().includes(_search.toLowerCase()));
-  
+
   if (_curType === "calligraphy") list = list.filter(t => t.type === "calligraphy");
   if (_curType === "background")  list = list.filter(t => t.type === "background");
 
@@ -138,33 +131,44 @@ function _applyAndRender() {
     case"new":     list.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)); break;
     default:       list.sort((a,b)=>a.sortOrder-b.sortOrder); break;
   }
-  _filtered=list;
+  _filtered = list;
   _renderPage();
 }
 
 function _renderPage() {
-  const grid=document.getElementById("tplGrid"), empty=document.getElementById("emptyState");
-  const total=_filtered.length;
-  
-  document.getElementById("totalCount").textContent=total;
-  document.getElementById("rangeText").textContent=total?`1–${total}`:"0";
-  
-  // إخفاء الـ Pagination
-  document.getElementById("pagination").style.display = "none";
-  document.getElementById("pgInfo").style.display = "none";
-  
-  if(!_filtered.length){ grid.innerHTML=""; empty.classList.add("vis"); return; }
+  const grid  = document.getElementById("tplGrid");
+  const empty = document.getElementById("emptyState");
+  const total = _filtered.length;
+
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  if (_curPage > totalPages) _curPage = 1;
+
+  const start = (_curPage - 1) * PAGE_SIZE;
+  const end   = Math.min(start + PAGE_SIZE, total);
+  const pageItems = _filtered.slice(start, end);
+
+  /* ── counts bar ── */
+  document.getElementById("totalCount").textContent = total;
+  document.getElementById("rangeText").textContent  = total ? `${start+1}–${end}` : "0";
+
+  if (!total) {
+    grid.innerHTML = "";
+    empty.classList.add("vis");
+    _renderPagination(0, 0);
+    return;
+  }
   empty.classList.remove("vis");
-  
-  grid.innerHTML=_filtered.map((t,i)=>{
-    const isPrem=t.isPremium;
-    const darkBg=t.style === "white" || t.darkBg;
-    
-    // 🌟 السعر بتنسيق أنيق
-    const priceVal = t.price ? parseFloat(t.price) : 0;
-    const priceText = priceVal > 0 ? `<span class="price-txt">${priceVal} ر.س</span>` : '';
-    
+
+  const isTouch = _isTouchDevice();
+
+  grid.innerHTML = pageItems.map((t, i) => {
+    const isPrem   = t.isPremium;
+    const darkBg   = t.style === "white" || t.darkBg;
     const isUnlocked = !!t.isUnlocked;
+
+    const priceVal  = t.price ? parseFloat(t.price) : 0;
+    const priceText = priceVal > 0
+      ? `<span class="price-txt">${priceVal} ر.س</span>` : '';
 
     const tagHtml = isUnlocked
       ? `<div class="tc-tag free" style="background:rgba(42,126,110,.95)">
@@ -177,19 +181,19 @@ function _renderPage() {
       : `<div class="tc-tag free">
            <i class="fa-solid fa-gift"></i> مجاني
          </div>`;
-      
-    // 🌟 الزراير
+
+    /* ── أزرار الـ overlay ── */
     let overlayBtns = isUnlocked
-      ? `<a href="#" class="tc-overlay-btn" 
+      ? `<a href="#" class="tc-overlay-btn"
            style="background:linear-gradient(135deg,#2a7e6e,#1a5c52)"
            onclick="event.preventDefault();event.stopPropagation();_openEditorWithItem(_allItems.find(x=>x.id==='${t.id}'))">
            <i class="fa-solid fa-lock-open"></i> افتح القالب
          </a>`
-      : `<a href="#" class="tc-overlay-btn" 
+      : `<a href="#" class="tc-overlay-btn"
            onclick="event.preventDefault();event.stopPropagation();_handleCardClick('${t.id}')">
            <i class="fa-solid fa-pen-nib"></i> ابدأ التصميم
          </a>`;
-      
+
     if (!isUnlocked && isPrem && t.promoLink) {
       overlayBtns += `
       <a href="${t.promoLink}" target="_blank" onclick="event.stopPropagation()" class="promo-btn">
@@ -197,47 +201,197 @@ function _renderPage() {
       </a>`;
     }
 
+    /*
+     * ── منطق الضغط على الكارت ──
+     * Desktop  → onclick على الـ .tc يفتح مباشرة (الـ overlay يظهر بـ CSS hover)
+     * Mobile   → onclick على الـ .tc يُظهر الـ overlay فقط (لا ينتقل للينك)
+     *            الانتقال يحدث فقط من زرار "ابدأ التصميم" داخل الـ overlay
+     */
+    const cardClick = isTouch
+      ? `_showMobileOverlay(this, event)`
+      : `_handleCardClick('${t.id}')`;
+
     return `
-      <div class="tc" style="animation-delay:${i*.07}s" onclick="_handleCardClick('${t.id}')">
+      <div class="tc" style="animation-delay:${i*.07}s"
+           data-id="${t.id}"
+           onclick="${cardClick}">
         <div class="tc-img" style="${darkBg ? 'background:#1a1a2e' : ''}">
           ${t.img
-            ?`<img src="${t.img}" alt="${t.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-              <div class="tc-placeholder" style="display:none"><i class="fa-solid fa-image"></i><span>صورة القالب</span></div>`
-            :`<div class="tc-placeholder"><i class="fa-solid fa-image"></i><span>صورة القالب</span></div>`}
+            ? `<img src="${t.img}" alt="${t.name}" loading="lazy"
+                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+               <div class="tc-placeholder" style="display:none">
+                 <i class="fa-solid fa-image"></i><span>صورة القالب</span>
+               </div>`
+            : `<div class="tc-placeholder">
+                 <i class="fa-solid fa-image"></i><span>صورة القالب</span>
+               </div>`}
           ${tagHtml}
-          <div class="tc-overlay">
+          <div class="tc-overlay" id="ov_${t.id}">
             ${overlayBtns}
           </div>
         </div>
         <div class="tc-foot">
           <span class="tc-name">${t.name}</span>
-          <a href="#" onclick="event.preventDefault(); event.stopPropagation(); _handleCardClick('${t.id}')" class="tc-action"><i class="fa-solid fa-arrow-left"></i></a>
+          <a href="#"
+             onclick="event.preventDefault();event.stopPropagation();_handleCardClick('${t.id}')"
+             class="tc-action">
+            <i class="fa-solid fa-arrow-left"></i>
+          </a>
         </div>
       </div>`;
   }).join("");
+
+  _renderPagination(totalPages, total);
 }
 
-document.getElementById("searchInput").addEventListener("input",function(){ _search=this.value.trim(); _applyAndRender(); });
-document.getElementById("sortSelect").addEventListener("change",function(){ _curSort=this.value; _applyAndRender(); });
+/* ═══════════════════════════════════════════
+   Mobile overlay toggle
+   — أول ضغطة: تظهر الـ overlay
+   — ضغطة خارج الكارت: تخفيها
+═══════════════════════════════════════════ */
+let _activeOverlayCard = null;
 
-/* GLOW */
-const s=document.createElement("style");
-s.textContent="@keyframes glow{0%,100%{box-shadow:0 0 0 4px rgba(74,116,164,.2)}50%{box-shadow:0 0 0 8px rgba(74,116,164,0)}}";
+function _showMobileOverlay(card, event) {
+  event.stopPropagation();
+
+  /* لو الكارت ده هو اللي شغّال overlay → إخفيه */
+  if (_activeOverlayCard === card) {
+    _hideMobileOverlay();
+    return;
+  }
+
+  /* إخفاء أي overlay سابق */
+  _hideMobileOverlay();
+
+  _activeOverlayCard = card;
+  card.classList.add("tc--overlay-open");
+}
+
+function _hideMobileOverlay() {
+  if (_activeOverlayCard) {
+    _activeOverlayCard.classList.remove("tc--overlay-open");
+    _activeOverlayCard = null;
+  }
+}
+
+/* إخفاء الـ overlay لما المستخدم يضغط على أي مكان تاني */
+document.addEventListener("click", (e) => {
+  if (_activeOverlayCard && !_activeOverlayCard.contains(e.target)) {
+    _hideMobileOverlay();
+  }
+});
+
+/* ══════════════════════════════════
+   PAGINATION
+══════════════════════════════════ */
+function _renderPagination(totalPages, total) {
+  const pgNav  = document.getElementById("pagination");
+  const pgInfo = document.getElementById("pgInfo");
+
+  if (totalPages <= 1) {
+    pgNav.style.display  = "none";
+    pgInfo.style.display = "none";
+    pgNav.innerHTML = "";
+    pgInfo.textContent = "";
+    return;
+  }
+
+  pgNav.style.display  = "flex";
+  pgInfo.style.display = "block";
+
+  const start = (_curPage - 1) * PAGE_SIZE + 1;
+  const end   = Math.min(_curPage * PAGE_SIZE, total);
+  pgInfo.textContent = `عرض ${start}–${end} من ${total} قالب`;
+
+  let html = "";
+
+  /* زرار السابق */
+  html += `<button class="pg-btn" onclick="_goPage(${_curPage-1})"
+             ${_curPage===1?"disabled":""}>
+             <i class="fa-solid fa-chevron-right"></i>
+           </button>`;
+
+  /* أرقام الصفحات */
+  const pages = _pageNumbers(totalPages, _curPage);
+  pages.forEach(p => {
+    if (p === "…") {
+      html += `<span class="pg-dots">…</span>`;
+    } else {
+      html += `<button class="pg-btn ${p===_curPage?"active":""}"
+                 onclick="_goPage(${p})">${p}</button>`;
+    }
+  });
+
+  /* زرار التالي */
+  html += `<button class="pg-btn" onclick="_goPage(${_curPage+1})"
+             ${_curPage===totalPages?"disabled":""}>
+             <i class="fa-solid fa-chevron-left"></i>
+           </button>`;
+
+  pgNav.innerHTML = html;
+}
+
+function _pageNumbers(total, cur) {
+  if (total <= 7) return Array.from({length:total},(_,i)=>i+1);
+  const pages = [];
+  pages.push(1);
+  if (cur > 3)        pages.push("…");
+  for (let p = Math.max(2,cur-1); p <= Math.min(total-1,cur+1); p++) pages.push(p);
+  if (cur < total-2)  pages.push("…");
+  pages.push(total);
+  return pages;
+}
+
+function _goPage(page) {
+  const totalPages = Math.ceil(_filtered.length / PAGE_SIZE);
+  if (page < 1 || page > totalPages) return;
+  _curPage = page;
+  _renderPage();
+  /* scroll للـ grid */
+  document.getElementById("tplGrid").scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+/* ══════════════════════════════════
+   GLOW style
+══════════════════════════════════ */
+const s = document.createElement("style");
+s.textContent = `
+  @keyframes glow {
+    0%,100%{box-shadow:0 0 0 4px rgba(74,116,164,.2)}
+    50%{box-shadow:0 0 0 8px rgba(74,116,164,0)}
+  }
+
+  /*
+   * Mobile overlay state
+   * لما الكارت يكون .tc--overlay-open نظهر الـ overlay
+   * (بدل CSS hover اللي مش بيشتغل على touch)
+   */
+  @media (hover: none) {
+    .tc .tc-overlay {
+      opacity: 0 !important;
+      pointer-events: none;
+    }
+    .tc.tc--overlay-open .tc-overlay {
+      opacity: 1 !important;
+      pointer-events: all;
+    }
+  }
+`;
 document.head.appendChild(s);
 
 /* ── Card click handler ── */
-function _handleCardClick(id){
+function _handleCardClick(id) {
   const t = _allItems.find(x => x.id === id);
-  if(!t) return;
-  
-  if(t.isPremium && !t.isUnlocked){
+  if (!t) return;
+
+  if (t.isPremium && !t.isUnlocked) {
     openCouponModal(t);
   } else {
     _openEditorWithItem(t);
   }
 }
 
-function _openEditorWithItem(t){
+function _openEditorWithItem(t) {
   sessionStorage.setItem('unlocked_item', JSON.stringify({
     type:   t.type,
     rawId:  t.rawId,
@@ -251,6 +405,18 @@ function _openEditorWithItem(t){
   url.searchParams.set('unlock_id',   t.rawId);
   location.href = url.toString();
 }
+
+/* ── Search & Sort ── */
+document.getElementById("searchInput").addEventListener("input", function () {
+  _search  = this.value.trim();
+  _curPage = 1;
+  _applyAndRender();
+});
+document.getElementById("sortSelect").addEventListener("change", function () {
+  _curSort = this.value;
+  _curPage = 1;
+  _applyAndRender();
+});
 
 loadTemplates();
 
@@ -290,7 +456,7 @@ loadTemplates();
   });
 })();
 
-/* ── SECURITY ── */
+/* ── SECURITY / COUPON ── */
 (function(){
   'use strict';
   let _item = null;
@@ -368,47 +534,4 @@ loadTemplates();
       },1600);
     }catch(e){ document.getElementById('cmHintEl').textContent='حدث خطأ، حاول مرة أخرى'; document.getElementById('cmHintEl').className='cm-hint err'; console.error(e); }
   }
-})();
-(function() {
-    'use strict';
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-    });
-
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'F12' || e.keyCode === 123) {
-            e.preventDefault();
-            return false;
-        }
-
-        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) {
-            e.preventDefault();
-            return false;
-        }
-
-   if (e.ctrlKey && (e.key === 'u' || e.keyCode === 85)) {
-        e.preventDefault();
-        return false;
-    }
-    });
-
-    const devToolsCheck = function() {
-        if (window.console && window.console.time) {
-                (function() {
-                    (function() {
-                        debugger;
-                    }).apply(this, ['alwaysOn']);
-                })();
-         
-        }
-    };
-    
-
-    setInterval(devToolsCheck, 1000);
-
-
-    document.addEventListener('copy', function(e) {
-        e.preventDefault();
-    });
-
 })();

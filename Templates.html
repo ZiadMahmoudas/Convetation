@@ -13,7 +13,6 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
-
     <link rel="stylesheet" href="css/template.css">
   </head>
   <body>
@@ -67,39 +66,21 @@
       </div>
     </div>
 
-<div class="filter-row" id="filterRow">
-  <!-- فلتر النوع (مجاني / حصري) -->
-  <button class="ftab on" data-cat="all" onclick="setFilter(this)">
-    <i class="fa-solid fa-layer-group"></i> الكل
-    <span class="cnt" id="cnt-all">0</span>
-  </button>
-  <button class="ftab" data-cat="free" onclick="setFilter(this)">
-    <i class="fa-solid fa-gift"></i> مجاني
-    <span class="cnt" id="cnt-free">0</span>
-  </button>
-  <button class="ftab" data-cat="premium" onclick="setFilter(this)"
-    style="border-color:rgba(74,116,164,.3);color:rgba(74,116,164,.7)">
-    <i class="fa-solid fa-crown"></i> حصري
-    <span class="cnt" id="cnt-premium">0</span>
-  </button>
-
-  <!-- فاصل -->
-  <div style="width:1px;height:28px;background:var(--border);margin:0 4px;align-self:center"></div>
-
-  <!-- فلتر النوع (مخطوطات / خلفيات) -->
-  <button class="ftab" data-type="all" onclick="setTypeFilter(this)">
-    <i class="fa-solid fa-border-all"></i> الكل
-    <span class="cnt" id="cnt-type-all">0</span>
-  </button>
-  <button class="ftab" data-type="calligraphy" onclick="setTypeFilter(this)">
-    <i class="fa-solid fa-pen-nib"></i> مخطوطات
-    <span class="cnt" id="cnt-type-cal">0</span>
-  </button>
-  <button class="ftab" data-type="background" onclick="setTypeFilter(this)">
-    <i class="fa-solid fa-image"></i> خلفيات
-    <span class="cnt" id="cnt-type-bg">0</span>
-  </button>
-</div>
+    <!-- فلتر مبسّط: الكل / مخطوطات / خلفيات فقط -->
+    <div class="filter-row" id="filterRow">
+      <button class="ftab on" data-type="all" onclick="setTypeFilter(this)">
+        <i class="fa-solid fa-border-all"></i> الكل
+        <span class="cnt" id="cnt-type-all">0</span>
+      </button>
+      <button class="ftab" data-type="calligraphy" onclick="setTypeFilter(this)">
+        <i class="fa-solid fa-pen-nib"></i> مخطوطات
+        <span class="cnt" id="cnt-type-cal">0</span>
+      </button>
+      <button class="ftab" data-type="background" onclick="setTypeFilter(this)">
+        <i class="fa-solid fa-image"></i> خلفيات
+        <span class="cnt" id="cnt-type-bg">0</span>
+      </button>
+    </div>
 
     <div class="tpl-page">
       <div class="results-bar">
@@ -162,9 +143,7 @@
             <h4>تواصل</h4>
             <ul>
               <li>
-                <a href="https://sabir5-1-1.com/" target="_blank"
-                  >مكتبة المعلمين</a
-                >
+                <a href="https://sabir5-1-1.com/" target="_blank">مكتبة المعلمين</a>
               </li>
               <li>
                 <a href="https://sabir511.com/" target="_blank">منصة العلوم</a>
@@ -175,9 +154,7 @@
         </div>
         <div class="f-bottom">
           <p>© 2026 مكتبة المعلمين — جميع الحقوق محفوظة</p>
-          <p>
-            صُنع بكل <span class="heart">♥</span> في المملكة العربية السعودية
-          </p>
+          <p>صُنع بكل <span class="heart">♥</span> في المملكة العربية السعودية</p>
         </div>
       </div>
     </footer>
@@ -264,13 +241,9 @@
       </div>
     </div>
 
-    <script
-      data-cfasync="false"
-      src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
-    ></script>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="/js/supabase-config.js"></script>
-
-<script src="js/template.js"></script>
+    <script src="js/template.js"></script>
   </body>
 </html>
