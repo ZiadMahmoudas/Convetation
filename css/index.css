@@ -1,8 +1,4 @@
-/* ═══════════════════════════════════════
-   index.css — Light Mode
-   الألوان الجديدة: أزرق داكن + أبيض
-   بنفس الـ structure الأصلي
-═══════════════════════════════════════ */
+
 :root {
   /* ── ألوان النظام الجديد ── */
   --color-primary:         #223147;
@@ -40,7 +36,9 @@
   --text-sec: #48576d;
   --font-main: 'PingARLT', sans-serif;
 }
-
+body{
+  overflow-x: hidden;
+}
 /* ─── NEW HERO RIGHT SIDE (STACKED CARDS) ─── */
 .hr {
   position: relative;
@@ -890,3 +888,111 @@ body {
     }
     .tpl-carousel-track { gap: 14px; }
   }
+      .cats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+.cat-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 16px 20px;
+  border-radius: 18px;
+  border: 1.5px solid var(--border);
+  background: var(--color-primary);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .25s, border-color .25s, box-shadow .25s;
+  position: relative;
+  overflow: hidden;
+}
+.cat-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity .25s;
+}
+.cat-pill:hover {
+  transform: translateY(-5px);
+  border-color: rgba(74,116,164,.45);
+  box-shadow: 0 14px 40px rgba(0,0,0,.35);
+}
+.cat-pill:hover::before { opacity: 1; }
+.cat-pill-icon {
+  width: 54px; height: 54px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  transition: transform .25s;
+  flex-shrink: 0;
+}
+.cat-pill:hover .cat-pill-icon { transform: scale(1.12) rotate(-4deg); }
+.cat-pill-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dark-text-sec);
+  text-align: center;
+  line-height: 1.3;
+}
+.cat-pill-count {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+}
+      .tc-overlay-btn {
+        background: #D4A843;
+        color: #0D1117;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 800;
+        font-family: 'Tajawal', sans-serif;
+        width: 85%;
+        text-align: center;
+        transition: all 0.2s ease;
+      }
+      .tc-overlay-btn:hover {
+        background: #ecc96a;
+        transform: translateY(-2px);
+      }
+      .promo-btn {
+        background: transparent;
+        border: 1.5px solid #D4A843;
+        color: #D4A843;
+        padding: 8px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
+        font-family: 'Tajawal', sans-serif;
+        width: 85%;
+        text-align: center;
+        font-size: 12px;
+        margin-top: 8px;
+        transition: all 0.2s ease;
+      }
+      .promo-btn:hover {
+        background: rgba(212, 168, 67, 0.15);
+        color: #ecc96a;
+        border-color: #ecc96a;
+      }
+      .marquee-track {
+        animation: scroll-rtl 35s linear infinite;
+      }
+      .marquee-track:hover {
+        animation-play-state: paused;
+      }
+      .tc:hover {
+        transform: translateY(-5px) !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      }
+      .tc:hover .tc-overlay {
+        opacity: 1 !important;
+      }
+      @keyframes scroll-rtl {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(50%); } 
+      }

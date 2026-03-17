@@ -15,1133 +15,19 @@
     />
 
     <!-- ══ PingARLT ══ -->
-    <style>
-      @font-face {
-        font-family: "PingARLT";
-        src:
-          url("/fonts/PingARLT.woff2") format("woff2"),
-          url("/fonts/PingARLT.woff") format("woff");
-        font-weight: normal;
-        font-style: normal;
-        font-display: swap;
-      }
-    </style>
-
-    <style>
-      /* ══════════════════════════════════════
-   TOKENS — Light Mode (الألوان الجديدة)
-══════════════════════════════════════ */
-      :root {
-        /* ── ألوان النظام الجديد ── */
-        --color-primary: #223147;
-        --color-primary-dark: #000b21;
-        --color-primary-light: #48576d;
-        --accent: #4a74a4;
-        --accent-dark: #223147;
-        --accent-hover: #3a77b0;
-
-        /* ── ربط المتغيرات القديمة بالجديدة ── */
-        --navy: #4a74a4; /* كان #2a3a4d → accent الأزرق */
-        --gold: #4a74a4; /* كان #f7af3c → accent الأزرق */
-        --gold-hi: #3a77b0; /* للـ hover */
-        --ember: #c0705a; /* rose — للأزرار الحمراء */
-        --azure: #48576d; /* للـ hover الثانوي */
-        --jade: #2a7e6e; /* للأزرار الخضراء */
-
-        /* Light Mode surfaces */
-        --bg: #f5f8fc;
-        --surface: #ffffff;
-        --white: #ffffff;
-
-        /* حدود */
-        --border: rgba(74, 116, 164, 0.12);
-        --border-m: rgba(74, 116, 164, 0.2);
-
-        /* نصوص */
-        --ink-dim: #48576d;
-        --ink-faint: #7a9ab5;
-
-        /* متفرقات */
-        --r: 6px;
-        --ease: cubic-bezier(0.4, 0, 0.2, 1);
-        --sh-sm: 0 2px 10px rgba(34, 49, 71, 0.08);
-        --sh-md: 0 6px 24px rgba(34, 49, 71, 0.12);
-        --sh-lg: 0 14px 48px rgba(34, 49, 71, 0.16);
-      }
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        height: 100%;
-        overflow: hidden;
-      }
-      body {
-        font-family: "PingARLT", "Tajawal", sans-serif;
-        background: var(--bg);
-        color: var(--color-primary);
-      }
-
-      /* ══ زر نقل للركن ↗ ══ */
-      .el .mv-btn {
-        position: absolute;
-        top: -11px;
-        right: 18px;
-        width: 22px;
-        height: 22px;
-        background: #2a8a7e;
-        color: #fff;
-        border-radius: 4px;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        font-weight: 900;
-        cursor: pointer;
-        z-index: 20;
-        box-shadow: 0 2px 8px rgba(42, 138, 126, 0.4);
-        transition: all 0.16s;
-        user-select: none;
-      }
-      .el.selected .mv-btn {
-        display: flex;
-      }
-      .el .mv-btn:hover {
-        background: #1a6b61;
-        transform: scale(1.12);
-      }
-
-      /* ══════════════════════════════════════
-   TOPBAR — أزرق داكن + شريط accent
-══════════════════════════════════════ */
-      #topbar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 700;
-        height: 56px;
-        background: var(--color-primary-dark);
-        border-bottom: 3px solid var(--accent);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 20px;
-        box-shadow: var(--sh-md);
-      }
-      .logo {
-        width: 120px;
-        display: flex;
-        align-items: center;
-      }
-      .logo img {
-        width: 100%;
-        height: auto;
-        filter: brightness(0) invert(1);
-      }
-      .top-actions {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-      }
-
-      /* ══════════════════════════════════════
-   MODE BAR
-══════════════════════════════════════ */
-      #modebar {
-        position: fixed;
-        top: 56px;
-        left: 0;
-        right: 0;
-        z-index: 699;
-        height: 44px;
-        background: var(--surface);
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 6px 16px;
-        gap: 4px;
-        box-shadow: var(--sh-sm);
-      }
-      .mode-seg {
-        display: flex;
-        background: var(--bg);
-        border: 1.5px solid var(--border-m);
-        border-radius: 8px;
-        padding: 3px;
-        gap: 2px;
-      }
-      .mode-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 5px 18px;
-        border-radius: 5px;
-        font-family: "PingARLT", "Tajawal", sans-serif;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-        border: none;
-        background: transparent;
-        color: var(--ink-dim);
-        transition: all 0.18s var(--ease);
-      }
-      .mode-btn:hover {
-        color: var(--color-primary);
-      }
-      .mode-btn.active {
-        background: var(--color-primary-dark);
-        color: #fff;
-        box-shadow: var(--sh-sm);
-      }
-      .mode-btn.active::after {
-        display: none;
-      }
-
-      /* ══════════════════════════════════════
-   MAIN LAYOUT
-══════════════════════════════════════ */
-      #app-shell {
-        position: fixed;
-        top: 100px;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-      }
-
-      /* ══════════════════════════════════════
-   CANVAS ZONE
-══════════════════════════════════════ */
-      #canvas-zone {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 16px;
-        padding: 20px;
-        overflow: auto;
-        background-image: radial-gradient(
-          circle,
-          rgba(74, 116, 164, 0.07) 1px,
-          transparent 1px
-        );
-        background-size: 22px 22px;
-      }
-      #canvas {
-        position: relative;
-        width: 100%;
-        max-width: 420px;
-        aspect-ratio: 1 / 1;
-        border-radius: 14px;
-        overflow: hidden;
-        box-shadow: var(--sh-lg);
-        flex-shrink: 0;
-        background: #1a1a2e center/cover no-repeat;
-        outline: 3px solid rgba(74, 116, 164, 0.6);
-        outline-offset: 4px;
-      }
-
-      /* ══════════════════════════════════════
-   DRAGGABLE ELEMENTS
-══════════════════════════════════════ */
-      .el {
-        position: absolute;
-        cursor: grab;
-        user-select: none;
-        touch-action: none;
-      }
-      .el:active {
-        cursor: grabbing;
-      }
-      .el.selected::after {
-        content: "";
-        position: absolute;
-        inset: -5px;
-        border: 2px dashed var(--accent);
-        border-radius: var(--r);
-        pointer-events: none;
-        animation: sel-pulse 2s infinite;
-      }
-      @keyframes sel-pulse {
-        0%,
-        100% {
-          border-color: rgba(74, 116, 164, 0.9);
-        }
-        50% {
-          border-color: rgba(74, 116, 164, 0.3);
-        }
-      }
-      .el-text {
-        font-family: "PingARLT", "Tajawal", sans-serif;
-        font-size: 26px;
-        font-weight: 700;
-        color: #fff;
-        direction: rtl;
-        text-align: right;
-        padding: 3px 6px;
-        white-space: pre-wrap;
-        line-height: 1.4;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-        outline: none;
-        cursor: inherit;
-      }
-      .el-img {
-        display: block;
-      }
-      .rhandle {
-        position: absolute;
-        bottom: -8px;
-        left: -8px;
-        width: 16px;
-        height: 16px;
-        background: var(--accent);
-        border: 2.5px solid var(--color-primary-dark);
-        border-radius: 3px;
-        cursor: se-resize;
-        z-index: 5;
-        display: none;
-        box-shadow: var(--sh-sm);
-      }
-      .el.selected .rhandle {
-        display: block;
-      }
-      .el .del-btn {
-        position: absolute;
-        top: -11px;
-        right: -11px;
-        width: 22px;
-        height: 22px;
-        background: var(--ember);
-        color: #fff;
-        border-radius: 4px;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: 900;
-        cursor: pointer;
-        z-index: 20;
-        box-shadow: 0 2px 8px rgba(192, 112, 90, 0.4);
-        transition: all 0.16s var(--ease);
-      }
-      .el.selected .del-btn {
-        display: flex;
-      }
-      .el .del-btn:hover {
-        background: #a0503d;
-        transform: scale(1.12) rotate(5deg);
-      }
-
-      /* ══════════════════════════════════════
-   EXPORT BAR
-══════════════════════════════════════ */
-      #export-bar {
-        width: 360px;
-        background: var(--white);
-        border-radius: 12px;
-        border: 1.5px solid var(--border-m);
-        border-top: 3px solid var(--accent);
-        padding: 12px;
-        box-shadow: var(--sh-sm);
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      #export-label {
-        font-size: 10px;
-        font-weight: 900;
-        letter-spacing: 0.6px;
-        text-transform: uppercase;
-        color: var(--accent);
-        margin-bottom: 2px;
-      }
-      #export-row1 {
-        display: flex;
-        gap: 8px;
-      }
-      #export-row1 .btn {
-        flex: 1;
-      }
-      #export-row2 {
-        display: flex;
-        gap: 6px;
-      }
-      #export-row2 .btn {
-        flex: 1;
-        font-size: 12px;
-        padding: 7px;
-      }
-
-      /* ══════════════════════════════════════
-   SIDEBAR
-══════════════════════════════════════ */
-      #sidebar {
-        width: 292px;
-        flex-shrink: 0;
-        background: var(--white);
-        border-left: 1px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        box-shadow: -4px 0 16px rgba(34, 49, 71, 0.05);
-      }
-
-      /* TABS */
-      #stabs {
-        display: flex;
-        border-bottom: 1px solid var(--border);
-        background: var(--color-primary-dark);
-        overflow-x: auto;
-      }
-      #stabs::-webkit-scrollbar {
-        display: none;
-      }
-      .stab {
-        flex: 1;
-        min-width: 40px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 3px;
-        padding: 9px 4px 8px;
-        cursor: pointer;
-        border: none;
-        background: transparent;
-        color: rgba(255, 255, 255, 0.4);
-        font-family: "PingARLT", "Tajawal", sans-serif;
-        font-size: 9px;
-        font-weight: 800;
-        letter-spacing: 0.3px;
-        position: relative;
-        transition: all 0.14s var(--ease);
-      }
-      .stab svg {
-        width: 14px;
-        height: 14px;
-      }
-      .stab::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 25%;
-        right: 25%;
-        height: 2px;
-        background: var(--accent);
-        border-radius: 2px 2px 0 0;
-        transform: scaleX(0);
-        transition: transform 0.16s var(--ease);
-      }
-      .stab:hover {
-        color: rgba(255, 255, 255, 0.75);
-        background: rgba(255, 255, 255, 0.06);
-      }
-      .stab.on {
-        color: #fff;
-        background: rgba(74, 116, 164, 0.18);
-      }
-      .stab.on::after {
-        transform: scaleX(1);
-      }
-
-      /* PANELS */
-      .spanel {
-        display: none;
-        flex-direction: column;
-        flex: 1;
-        overflow-y: auto;
-        padding: 14px;
-        gap: 11px;
-      }
-      .spanel.on {
-        display: flex;
-      }
-      .spanel::-webkit-scrollbar {
-        width: 3px;
-      }
-      .spanel::-webkit-scrollbar-thumb {
-        background: var(--border-m);
-        border-radius: 3px;
-      }
-
-      /* ══════════════════════════════════════
-   BUTTONS
-══════════════════════════════════════ */
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 9px 14px;
-        border-radius: var(--r);
-        font-family: "PingARLT", "Tajawal", sans-serif;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-        border: none;
-        transition: all 0.18s var(--ease);
-        white-space: nowrap;
-        position: relative;
-        overflow: hidden;
-      }
-      .btn::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          105deg,
-          transparent 40%,
-          rgba(255, 255, 255, 0.2) 50%,
-          transparent 60%
-        );
-        transform: translateX(-100%);
-        transition: transform 0.4s;
-      }
-      .btn:hover::before {
-        transform: translateX(100%);
-      }
-
-      .btn-black {
-        background: var(--color-primary-dark);
-        color: #fff;
-        box-shadow: var(--sh-sm);
-      }
-      .btn-black:hover {
-        background: var(--color-primary);
-        transform: translateY(-1px);
-        box-shadow: var(--sh-md);
-      }
-
-      .btn-green {
-        background: var(--jade);
-        color: #fff;
-        box-shadow: 0 3px 12px rgba(42, 126, 110, 0.25);
-      }
-      .btn-green:hover {
-        background: #1f6b5e;
-        transform: translateY(-1px);
-      }
-
-      .btn-gray {
-        background: var(--surface);
-        color: var(--color-primary);
-        border: 1.5px solid var(--border-m);
-      }
-      .btn-gray:hover {
-        background: rgba(74, 116, 164, 0.08);
-        border-color: var(--accent);
-      }
-
-      .btn-red {
-        background: rgba(192, 112, 90, 0.1);
-        color: var(--ember);
-        border: 1.5px solid rgba(192, 112, 90, 0.25);
-      }
-      .btn-red:hover {
-        background: rgba(192, 112, 90, 0.18);
-        border-color: var(--ember);
-      }
-
-      .bfull {
-        width: 100%;
-      }
-
-      /* ══════════════════════════════════════
-   BOX — accent left border
-══════════════════════════════════════ */
-      .box {
-        background: var(--surface);
-        border-radius: 10px;
-        padding: 12px;
-        display: flex;
-        flex-direction: column;
-        gap: 9px;
-        border: 1px solid var(--border);
-        border-right: 3px solid var(--accent);
-      }
-      .lbl {
-        font-size: 10px;
-        font-weight: 900;
-        color: var(--ink-dim);
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-      }
-      .sec {
-        font-size: 10px;
-        font-weight: 800;
-        color: var(--ink-faint);
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
-      }
-
-      /* ══════════════════════════════════════
-   INPUTS
-══════════════════════════════════════ */
-      textarea.tinp,
-      input[type="text"].tinp {
-        width: 100%;
-        padding: 8px 10px;
-        border-radius: var(--r);
-        border: 1.5px solid var(--border-m);
-        background: var(--bg);
-        font-family: "PingARLT", "Tajawal", sans-serif;
-        font-size: 13px;
-        resize: none;
-        outline: none;
-        direction: rtl;
-        line-height: 1.5;
-        color: var(--color-primary);
-        transition:
-          border-color 0.15s,
-          box-shadow 0.15s;
-      }
-      textarea.tinp:focus,
-      input[type="text"].tinp:focus {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(74, 116, 164, 0.12);
-        background: var(--white);
-      }
-      select.sinp {
-        width: 100%;
-        padding: 7px 10px;
-        border-radius: var(--r);
-        border: 1.5px solid var(--border-m);
-        background: var(--white);
-        font-family: "PingARLT", "Tajawal", sans-serif;
-        font-size: 13px;
-        outline: none;
-        cursor: pointer;
-        color: var(--color-primary);
-        transition: border-color 0.15s;
-      }
-      select.sinp:focus {
-        border-color: var(--accent);
-      }
-
-      /* ══════════════════════════════════════
-   SLIDERS
-══════════════════════════════════════ */
-      .slrow {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .slrow span {
-        font-size: 11px;
-        color: var(--ink-faint);
-        white-space: nowrap;
-      }
-      .slrow input[type="range"] {
-        flex: 1;
-        accent-color: var(--accent);
-        cursor: pointer;
-      }
-      .slval {
-        font-size: 11px;
-        font-weight: 900;
-        color: var(--color-primary);
-        min-width: 34px;
-        text-align: center;
-        background: rgba(74, 116, 164, 0.1);
-        border-radius: 4px;
-        padding: 1px 5px;
-      }
-
-      /* ══════════════════════════════════════
-   BUTTON GROUP
-══════════════════════════════════════ */
-      .bgrp {
-        display: flex;
-        gap: 3px;
-      }
-      .gbtn {
-        flex: 1;
-        padding: 5px 4px;
-        border-radius: var(--r);
-        border: 1.5px solid var(--border-m);
-        background: var(--white);
-        font-family: "PingARLT", "Tajawal", sans-serif;
-        font-size: 11px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.12s var(--ease);
-        color: var(--ink-dim);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .gbtn:hover {
-        border-color: var(--accent);
-        color: var(--color-primary);
-        background: rgba(74, 116, 164, 0.08);
-      }
-      .gbtn.on {
-        background: var(--accent);
-        color: #fff;
-        border-color: var(--accent);
-      }
-
-      /* ══════════════════════════════════════
-   COLOR SWATCHES
-══════════════════════════════════════ */
-      .cdots {
-        display: flex;
-        gap: 5px;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-      .cdot {
-        width: 22px;
-        height: 22px;
-        border-radius: 5px;
-        cursor: pointer;
-        border: 2px solid transparent;
-        transition: all 0.12s var(--ease);
-        flex-shrink: 0;
-      }
-      .cdot:hover,
-      .cdot.on {
-        border-color: var(--color-primary);
-        transform: scale(1.18);
-        box-shadow: 0 0 0 3px rgba(74, 116, 164, 0.2);
-      }
-
-      /* ══════════════════════════════════════
-   CALLIGRAPHY GRID
-══════════════════════════════════════ */
-      .cgrid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 6px;
-      }
-      .citem {
-        border-radius: 8px;
-        border: 1.5px solid var(--border-m);
-        cursor: pointer;
-        min-height: 56px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.14s var(--ease);
-        overflow: hidden;
-        padding: 5px;
-        background: var(--surface);
-      }
-      .citem:hover {
-        border-color: var(--accent);
-        transform: scale(1.04) translateY(-1px);
-        box-shadow: var(--sh-sm);
-      }
-      .citem.dk {
-        background: #1a1a2e;
-      }
-      .citem.lt {
-        background: var(--surface);
-      }
-      .citem img {
-        width: 100%;
-        height: auto;
-        max-height: 40px;
-        object-fit: contain;
-        display: block;
-      }
-      .citem img.failed {
-        display: none;
-      }
-      .citem .clabel {
-        font-size: 9px;
-        font-weight: 700;
-        color: var(--ink-faint);
-        text-align: center;
-        display: none;
-        word-break: break-all;
-        padding: 2px;
-      }
-      .citem img.failed + .clabel {
-        display: block;
-      }
-
-      /* ══════════════════════════════════════
-   SHOW MORE
-══════════════════════════════════════ */
-      .showmore {
-        width: 100%;
-        padding: 8px;
-        border-radius: var(--r);
-        border: 1.5px dashed var(--border-m);
-        background: var(--white);
-        font-family: "PingARLT", "Tajawal", sans-serif;
-        font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
-        color: var(--ink-faint);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        margin-top: 4px;
-        transition: all 0.13s var(--ease);
-      }
-      .showmore:hover {
-        border-color: var(--accent);
-        color: var(--color-primary);
-        background: rgba(74, 116, 164, 0.06);
-      }
-      .showmore.vis {
-        display: flex;
-      }
-
-      /* ══════════════════════════════════════
-   BG GRID
-══════════════════════════════════════ */
-      .bggrid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 7px;
-      }
-      .bgthumb {
-        position: relative;
-        aspect-ratio: 1;
-        border-radius: 8px;
-        overflow: hidden;
-        cursor: pointer;
-        border: 2px solid transparent;
-        transition: all 0.14s var(--ease);
-      }
-      .bgthumb:hover,
-      .bgthumb.on {
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(74, 116, 164, 0.25);
-        transform: scale(1.02);
-      }
-      .bgthumb img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-      .bgbadge {
-        position: absolute;
-        top: 4px;
-        right: 4px;
-        background: var(--accent);
-        color: #fff;
-        padding: 2px 6px;
-        border-radius: 3px;
-        font-size: 8px;
-        font-weight: 900;
-      }
-
-      /* ══════════════════════════════════════
-   CATEGORY TABS
-══════════════════════════════════════ */
-      .cattabs {
-        display: flex;
-        gap: 5px;
-        flex-wrap: wrap;
-      }
-      .catbtn {
-        padding: 5px 12px;
-        border-radius: 20px;
-        border: 1.5px solid var(--border-m);
-        background: var(--white);
-        font-family: "PingARLT", "Tajawal", sans-serif;
-        font-size: 11px;
-        font-weight: 700;
-        cursor: pointer;
-        color: var(--ink-dim);
-        transition: all 0.12s var(--ease);
-      }
-      .catbtn:hover {
-        border-color: var(--accent);
-        color: var(--color-primary);
-      }
-      .catbtn.on {
-        background: var(--accent);
-        color: #fff;
-        border-color: var(--accent);
-      }
-
-      /* ══════════════════════════════════════
-   READY TEXT LIST
-══════════════════════════════════════ */
-      .rlist {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        max-height: 200px;
-        overflow-y: auto;
-      }
-      .rlist::-webkit-scrollbar {
-        width: 3px;
-      }
-      .ritem {
-        padding: 7px 10px;
-        border-radius: var(--r);
-        border: 1.5px solid var(--border);
-        background: var(--white);
-        font-family: "PingARLT", "Tajawal", sans-serif;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-        text-align: right;
-        color: var(--color-primary);
-        transition: all 0.12s var(--ease);
-        border-right: 3px solid transparent;
-      }
-      .ritem:hover {
-        border-right-color: var(--accent);
-        background: rgba(74, 116, 164, 0.06);
-      }
-
-      /* ══════════════════════════════════════
-   UPLOAD AREA
-══════════════════════════════════════ */
-      .uarea {
-        width: 100%;
-        padding: 18px;
-        border-radius: 10px;
-        border: 2px dashed var(--border-m);
-        background: var(--surface);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 7px;
-        cursor: pointer;
-        transition: all 0.16s var(--ease);
-        color: var(--ink-faint);
-      }
-      .uarea:hover {
-        border-color: var(--accent);
-        color: var(--color-primary);
-        background: rgba(74, 116, 164, 0.05);
-        transform: translateY(-1px);
-        box-shadow: var(--sh-sm);
-      }
-      .uarea svg {
-        width: 28px;
-        height: 28px;
-      }
-      .uarea span {
-        font-size: 12px;
-        font-weight: 800;
-      }
-      .uarea small {
-        font-size: 10px;
-        color: var(--ink-faint);
-      }
-
-      /* ══════════════════════════════════════
-   ALT VIEWS
-══════════════════════════════════════ */
-      .alt-view {
-        position: fixed;
-        top: 100px;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        overflow-y: auto;
-        padding: 24px 20px;
-        background: var(--bg);
-        background-image: radial-gradient(
-          circle,
-          rgba(74, 116, 164, 0.05) 1px,
-          transparent 1px
-        );
-        background-size: 22px 22px;
-        display: none;
-      }
-      .alt-container {
-        max-width: 860px;
-        margin: 0 auto;
-        display: grid;
-        gap: 20px;
-        grid-template-columns: 1fr;
-      }
-      @media (min-width: 768px) {
-        .alt-container {
-          grid-template-columns: 1fr 1fr;
-        }
-      }
-
-      .alt-box {
-        background: var(--white);
-        border-radius: 14px;
-        padding: 20px;
-        box-shadow: var(--sh-sm);
-        border: 1.5px solid var(--border);
-        border-top: 3px solid var(--accent);
-      }
-      .alt-box-title {
-        font-size: 10px;
-        font-weight: 900;
-        color: var(--ink-faint);
-        text-transform: uppercase;
-        letter-spacing: 0.7px;
-        margin-bottom: 14px;
-      }
-      .preview-window {
-        position: relative;
-        width: 100%;
-        aspect-ratio: 1;
-        border-radius: 12px;
-        overflow: hidden;
-        background-size: cover;
-        background-position: center;
-        box-shadow: var(--sh-lg);
-        flex-shrink: 0;
-        outline: 3px solid var(--accent);
-        outline-offset: 3px;
-      }
-      .preview-text {
-        position: absolute;
-        width: 100%;
-        text-align: center;
-        left: 0;
-        transform: translateY(-50%);
-        font-family: "PingARLT", "Tajawal", sans-serif;
-        font-weight: bold;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
-        padding: 0 12px;
-        line-height: 1.3;
-      }
-
-      /* ══════════════════════════════════════
-   NOTIFICATION
-══════════════════════════════════════ */
-      #notif {
-        position: fixed;
-        bottom: 24px;
-        left: 24px;
-        background: var(--color-primary-dark);
-        color: #fff;
-        padding: 11px 22px;
-        border-radius: var(--r);
-        font-size: 13px;
-        font-weight: 700;
-        z-index: 9999;
-        opacity: 0;
-        transition:
-          opacity 0.22s,
-          transform 0.22s var(--ease);
-        pointer-events: none;
-        border-left: 3px solid var(--accent);
-        box-shadow: var(--sh-md);
-        transform: translateY(8px);
-      }
-      #notif.vis {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      /* ══════════════════════════════════════
-   FOOTER
-══════════════════════════════════════ */
-      #editor-footer {
-        background: var(--color-primary-dark);
-        color: rgba(255, 255, 255, 0.4);
-        font-size: 12px;
-        font-weight: 600;
-        padding: 18px 32px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-top: 2px solid var(--accent);
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-      #editor-footer a {
-        color: rgba(255, 255, 255, 0.5);
-        text-decoration: none;
-        transition: color 0.15s;
-      }
-      #editor-footer a:hover {
-        color: #fff;
-      }
-      .footer-links {
-        display: flex;
-        gap: 20px;
-      }
-      .footer-heart {
-        color: var(--ember);
-      }
-
-      /* ══════════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════════ */
-      @media (max-width: 768px) {
-        html,
-        body {
-          overflow: auto;
-        }
-        #app-shell {
-          position: relative;
-          top: 0;
-          flex-direction: column;
-          margin-top: 100px;
-          overflow: visible;
-          height: auto;
-        }
-        #canvas-zone {
-          padding: 20px 16px;
-          background-size: 18px 18px;
-          /* overflow-x: auto; */
-          justify-content: flex-start;
-          min-height: auto;
-        }
-        #canvas {
-         min-width: 337px;
-          margin: 0 auto;
-        }
-        #export-bar {
-          width: 360px !important;
-          margin: 0 auto;
-        }
-        #sidebar {
-          width: 100% !important;
-          height: auto;
-          overflow: visible;
-          border-left: none;
-          border-top: 2px solid var(--accent);
-        }
-        #editor-footer {
-          display: none;
-        }
-      }
-    </style>
+<link rel="stylesheet" href="/css/editor.css">
   </head>
   <body>
     <!-- ══════════ TOPBAR ══════════ -->
     <div id="topbar">
-      <a href="/index.html" class="logo"
-        ><img src="images/logo.webp" alt=""
-      /></a>
+      <a href="/index.html" class="logo"><img src="images/logo.webp" alt=""/></a>
       <div class="top-actions">
         <button class="btn btn-gray" onclick="clearAll()">
           <i class="fa-solid fa-trash-can" style="font-size: 12px"></i> مسح الكل
         </button>
-        <button
-          class="btn btn-green"
-          onclick="shareWA()"
-          style="padding: 9px 14px"
-        >
-          <i class="fa-brands fa-whatsapp"></i>
-        </button>
-        <button
-          class="btn btn-black"
-          onclick="dlPNG()"
-          style="
-            background: var(--accent);
-            color: #fff;
-            border-bottom: 2px solid var(--color-primary);
-          "
-        >
+
+        <button class="btn btn-black" onclick="dlPNG()"
+          style="background: var(--accent); color: #fff; border-bottom: 2px solid var(--color-primary);">
           <i class="fa-solid fa-download" style="font-size: 12px"></i> تحميل
         </button>
       </div>
@@ -1153,11 +39,7 @@
         <button class="mode-btn" id="btn-ready" onclick="switchMode('ready')">
           <i class="fa-solid fa-check" style="font-size: 12px"></i> جاهز
         </button>
-        <button
-          class="mode-btn active"
-          id="btn-design"
-          onclick="switchMode('design')"
-        >
+        <button class="mode-btn active" id="btn-design" onclick="switchMode('design')">
           <i class="fa-solid fa-pen-nib" style="font-size: 12px"></i> صمّم
         </button>
         <button class="mode-btn" id="btn-group" onclick="switchMode('group')">
@@ -1187,12 +69,10 @@
               <i class="fa-solid fa-file-pdf" style="font-size: 11px"></i> PDF
             </button>
             <button class="btn btn-gray" onclick="copyImg()">
-              <i class="fa-regular fa-clipboard" style="font-size: 11px"></i>
-              نسخ
+              <i class="fa-regular fa-clipboard" style="font-size: 11px"></i> نسخ
             </button>
             <button class="btn btn-gray" onclick="shareNative()">
-              <i class="fa-solid fa-share-nodes" style="font-size: 11px"></i>
-              مشاركة
+              <i class="fa-solid fa-share-nodes" style="font-size: 11px"></i> مشاركة
             </button>
           </div>
         </div>
@@ -1203,89 +83,25 @@
         <!-- TABS -->
         <div id="stabs">
           <button class="stab on" data-tab="fmt" onclick="switchTab(this)">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <path d="M12 20h9" />
-              <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4z" /></svg
-            >تنسيق
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4z"/></svg>تنسيق
           </button>
           <button class="stab" data-tab="txt" onclick="switchTab(this)">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <path d="M4 7V4h16v3M9 20h6M12 4v16" /></svg
-            >نصوص
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>نصوص
           </button>
           <button class="stab" data-tab="cal" onclick="switchTab(this)">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <path d="M12 19l7-7 3 3-7 7-3-3z" />
-              <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z" /></svg
-            >مخطوطات
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/></svg>مخطوطات
           </button>
           <button class="stab" data-tab="pho" onclick="switchTab(this)">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" /></svg
-            >صورة
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.582-7 8-7s8 3 8 7"/></svg>صورة
           </button>
           <button class="stab" data-tab="lgp" onclick="switchTab(this)">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <rect x="3" y="3" width="18" height="18" rx="3" />
-              <path d="M9 12l2 2 4-4" /></svg
-            >شعار
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/></svg>شعار
           </button>
           <button class="stab" data-tab="bg" onclick="switchTab(this)">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <circle cx="8.5" cy="8.5" r="1.5" />
-              <polyline points="21,15 16,10 5,21" /></svg
-            >خلفية
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>خلفية
           </button>
-          <button
-            class="stab"
-            data-tab="lyr"
-            onclick="
-              switchTab(this);
-              _refreshLayers();
-            "
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-            >
-              <rect x="2" y="7" width="20" height="4" rx="1" />
-              <rect x="2" y="13" width="20" height="4" rx="1" />
-              <rect x="2" y="1" width="20" height="4" rx="1" /></svg
-            >طبقات
+          <button class="stab" data-tab="lyr" onclick="switchTab(this);_refreshLayers()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="4" rx="1"/><rect x="2" y="13" width="20" height="4" rx="1"/><rect x="2" y="1" width="20" height="4" rx="1"/></svg>طبقات
           </button>
         </div>
 
@@ -1310,136 +126,50 @@
           <div class="box">
             <div class="lbl">الحجم</div>
             <div class="slrow">
-              <input
-                type="range"
-                min="10"
-                max="90"
-                value="26"
-                id="sl-size"
-                oninput="
-                  A('size', this.value);
-                  document.getElementById('vl-size').textContent = this.value;
-                "
-              />
+              <input type="range" min="10" max="90" value="26" id="sl-size"
+                oninput="A('size', this.value); document.getElementById('vl-size').textContent = this.value;"/>
               <span class="slval" id="vl-size">26</span>
             </div>
             <div class="lbl">الشفافية</div>
             <div class="slrow">
-              <input
-                type="range"
-                min="10"
-                max="100"
-                value="100"
-                id="sl-op"
-                oninput="
-                  A('opacity', this.value);
-                  document.getElementById('vl-op').textContent =
-                    this.value + '%';
-                "
-              />
+              <input type="range" min="10" max="100" value="100" id="sl-op"
+                oninput="A('opacity', this.value); document.getElementById('vl-op').textContent = this.value + '%';"/>
               <span class="slval" id="vl-op">100%</span>
             </div>
             <div class="lbl">ظل النص</div>
             <div class="slrow">
-              <input
-                type="range"
-                min="0"
-                max="25"
-                value="5"
-                id="sl-sh"
-                oninput="
-                  A('shadow', this.value);
-                  document.getElementById('vl-sh').textContent = this.value;
-                "
-              />
+              <input type="range" min="0" max="25" value="5" id="sl-sh"
+                oninput="A('shadow', this.value); document.getElementById('vl-sh').textContent = this.value;"/>
               <span class="slval" id="vl-sh">5</span>
             </div>
           </div>
           <div class="box">
             <div class="lbl">لون النص</div>
             <div class="cdots" id="cdots-text">
-              <div
-                class="cdot on"
-                style="background: #fff; border: 1px solid #ddd"
-                data-color="#ffffff"
-              ></div>
-              <div
-                class="cdot"
-                style="background: #111"
-                data-color="#111111"
-              ></div>
-              <div
-                class="cdot"
-                style="background: #4a74a4"
-                data-color="#4A74A4"
-              ></div>
-              <div
-                class="cdot"
-                style="background: #c0705a"
-                data-color="#C0705A"
-              ></div>
-              <div
-                class="cdot"
-                style="background: #48576d"
-                data-color="#48576D"
-              ></div>
-              <div
-                class="cdot"
-                style="background: #2a7e6e"
-                data-color="#2A7E6E"
-              ></div>
-              <div
-                class="cdot"
-                style="background: #223147"
-                data-color="#223147"
-              ></div>
-              <div
-                class="cdot"
-                style="background: #f97316"
-                data-color="#f97316"
-              ></div>
-              <div
-                class="cdot"
-                style="background: #8b5cf6"
-                data-color="#8b5cf6"
-              ></div>
-              <div
-                class="cdot"
-                style="background: #ec4899"
-                data-color="#ec4899"
-              ></div>
-              <input
-                type="color"
-                value="#ffffff"
-                id="custom-color"
-                style="
-                  width: 22px;
-                  height: 22px;
-                  border-radius: 5px;
-                  border: 1.5px solid var(--border-m);
-                  cursor: pointer;
-                  padding: 0;
-                "
-                oninput="A('color', this.value)"
-              />
+              <div class="cdot on" style="background:#fff;border:1px solid #ddd" data-color="#ffffff"></div>
+              <div class="cdot" style="background:#111" data-color="#111111"></div>
+              <div class="cdot" style="background:#4a74a4" data-color="#4A74A4"></div>
+              <div class="cdot" style="background:#c0705a" data-color="#C0705A"></div>
+              <div class="cdot" style="background:#48576d" data-color="#48576D"></div>
+              <div class="cdot" style="background:#2a7e6e" data-color="#2A7E6E"></div>
+              <div class="cdot" style="background:#223147" data-color="#223147"></div>
+              <div class="cdot" style="background:#f97316" data-color="#f97316"></div>
+              <div class="cdot" style="background:#8b5cf6" data-color="#8b5cf6"></div>
+              <div class="cdot" style="background:#ec4899" data-color="#ec4899"></div>
+              <input type="color" value="#ffffff" id="custom-color"
+                style="width:22px;height:22px;border-radius:5px;border:1.5px solid var(--border-m);cursor:pointer;padding:0;"
+                oninput="A('color', this.value)"/>
             </div>
           </div>
           <div class="box">
             <div class="lbl">نص سريع</div>
-            <textarea
-              class="tinp"
-              id="fmt-quick"
-              rows="2"
-              placeholder="اكتب نصاً وأضفه..."
-            ></textarea>
+            <textarea class="tinp" id="fmt-quick" rows="2" placeholder="اكتب نصاً وأضفه..."></textarea>
             <button class="btn btn-black bfull" onclick="addQuick()">
-              <i class="fa-solid fa-plus" style="font-size: 11px"></i> إضافة
-              للبطاقة
+              <i class="fa-solid fa-plus" style="font-size: 11px"></i> إضافة للبطاقة
             </button>
           </div>
           <button class="btn btn-red bfull" onclick="delSelected()">
-            <i class="fa-solid fa-trash" style="font-size: 11px"></i> حذف العنصر
-            المحدد
+            <i class="fa-solid fa-trash" style="font-size: 11px"></i> حذف العنصر المحدد
           </button>
         </div>
 
@@ -1448,56 +178,28 @@
           <div class="sec">النصوص</div>
           <div class="box">
             <div class="lbl">النص الرئيسي</div>
-            <textarea
-              class="tinp"
-              id="main-txt"
-              rows="3"
-              placeholder="اكتب نصك الرئيسي..."
-            ></textarea>
+            <textarea class="tinp" id="main-txt" rows="3" placeholder="اكتب نصك الرئيسي..."></textarea>
             <div class="slrow">
               <span>الحجم</span>
-              <input
-                type="range"
-                min="14"
-                max="70"
-                value="26"
-                oninput="
-                  mainSz = +this.value;
-                  document.getElementById('vl-ms').textContent = this.value;
-                "
-              />
+              <input type="range" min="14" max="70" value="26"
+                oninput="mainSz = +this.value; document.getElementById('vl-ms').textContent = this.value;"/>
               <span class="slval" id="vl-ms">26</span>
             </div>
             <button class="btn btn-black bfull" onclick="addMain()">
-              <i class="fa-solid fa-plus" style="font-size: 11px"></i> أضف
-              للبطاقة
+              <i class="fa-solid fa-plus" style="font-size: 11px"></i> أضف للبطاقة
             </button>
           </div>
           <div class="box">
             <div class="lbl">النص الفرعي</div>
-            <textarea
-              class="tinp"
-              id="sub-txt"
-              rows="3"
-              placeholder="اكتب نصاً فرعياً..."
-            ></textarea>
+            <textarea class="tinp" id="sub-txt" rows="3" placeholder="اكتب نصاً فرعياً..."></textarea>
             <div class="slrow">
               <span>الحجم</span>
-              <input
-                type="range"
-                min="10"
-                max="40"
-                value="16"
-                oninput="
-                  subSz = +this.value;
-                  document.getElementById('vl-ss').textContent = this.value;
-                "
-              />
+              <input type="range" min="10" max="40" value="16"
+                oninput="subSz = +this.value; document.getElementById('vl-ss').textContent = this.value;"/>
               <span class="slval" id="vl-ss">16</span>
             </div>
             <button class="btn btn-gray bfull" onclick="addSub()">
-              <i class="fa-solid fa-plus" style="font-size: 11px"></i> أضف
-              للبطاقة
+              <i class="fa-solid fa-plus" style="font-size: 11px"></i> أضف للبطاقة
             </button>
           </div>
           <div class="box">
@@ -1510,62 +212,29 @@
         <div class="spanel" id="panel-cal">
           <div class="sec">المخطوطات</div>
           <div class="cattabs">
-            <button
-              class="catbtn on"
-              data-cat="black"
-              onclick="switchCat(this)"
-            >
-              سوداء
-            </button>
-            <button class="catbtn" data-cat="3d" onclick="switchCat(this)">
-              ثلاثية أبعاد
-            </button>
-            <button class="catbtn" data-cat="white" onclick="switchCat(this)">
-              بيضاء
-            </button>
+            <button class="catbtn on" data-cat="black" onclick="switchCat(this)">سوداء</button>
+            <button class="catbtn" data-cat="3d" onclick="switchCat(this)">ثلاثية أبعاد</button>
+            <button class="catbtn" data-cat="white" onclick="switchCat(this)">بيضاء</button>
           </div>
           <div class="box">
             <div class="slrow">
               <span>الحجم</span>
-              <input
-                type="range"
-                min="60"
-                max="380"
-                value="180"
-                id="sl-csz"
-                oninput="
-                  document.getElementById('vl-csz').textContent =
-                    this.value + 'px'
-                "
-              />
+              <input type="range" min="60" max="380" value="180" id="sl-csz"
+                oninput="document.getElementById('vl-csz').textContent = this.value + 'px'"/>
               <span class="slval" id="vl-csz">180px</span>
             </div>
           </div>
           <div id="cat-black">
             <div class="cgrid" id="cg-black"></div>
-            <button
-              class="showmore"
-              id="sm-black"
-              onclick="moreCallig('black')"
-            >
-              ▼ عرض المزيد
-            </button>
+            <button class="showmore" id="sm-black" onclick="moreCallig('black')">▼ عرض المزيد</button>
           </div>
-          <div id="cat-3d" style="display: none">
+          <div id="cat-3d" style="display:none">
             <div class="cgrid" id="cg-3d"></div>
-            <button class="showmore" id="sm-3d" onclick="moreCallig('3d')">
-              ▼ عرض المزيد
-            </button>
+            <button class="showmore" id="sm-3d" onclick="moreCallig('3d')">▼ عرض المزيد</button>
           </div>
-          <div id="cat-white" style="display: none">
+          <div id="cat-white" style="display:none">
             <div class="cgrid" id="cg-white"></div>
-            <button
-              class="showmore"
-              id="sm-white"
-              onclick="moreCallig('white')"
-            >
-              ▼ عرض المزيد
-            </button>
+            <button class="showmore" id="sm-white" onclick="moreCallig('white')">▼ عرض المزيد</button>
           </div>
         </div>
 
@@ -1573,39 +242,16 @@
         <div class="spanel" id="panel-pho">
           <div class="sec">الصورة الشخصية</div>
           <label class="uarea" for="pho-inp">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-            >
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" />
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.582-7 8-7s8 3 8 7"/></svg>
             <span>اضغط لرفع صورتك الشخصية</span>
             <small>PNG · JPG · WEBP</small>
           </label>
-          <input
-            type="file"
-            id="pho-inp"
-            accept="image/*"
-            style="display: none"
-            onchange="uploadPhoto(event)"
-          />
-          <div class="box" id="pho-ctrl" style="display: none">
+          <input type="file" id="pho-inp" accept="image/*" style="display:none" onchange="uploadPhoto(event)"/>
+          <div class="box" id="pho-ctrl" style="display:none">
             <div class="lbl">الحجم</div>
             <div class="slrow">
-              <input
-                type="range"
-                min="40"
-                max="250"
-                value="100"
-                id="sl-phsz"
-                oninput="
-                  resizePhoto(this.value);
-                  document.getElementById('vl-phsz').textContent = this.value;
-                "
-              />
+              <input type="range" min="40" max="250" value="100" id="sl-phsz"
+                oninput="resizePhoto(this.value); document.getElementById('vl-phsz').textContent = this.value;"/>
               <span class="slval" id="vl-phsz">100</span>
             </div>
             <div class="lbl">الشكل</div>
@@ -1616,31 +262,11 @@
             </div>
             <div class="lbl">إطار</div>
             <div class="cdots" id="cdots-photo">
-              <div
-                class="cdot on"
-                style="background: #fff; border: 1px solid #ddd"
-                data-color="#fff"
-              ></div>
-              <div
-                class="cdot"
-                style="background: #4a74a4"
-                data-color="#4A74A4"
-              ></div>
-              <div
-                class="cdot"
-                style="background: #48576d"
-                data-color="#48576D"
-              ></div>
-              <div
-                class="cdot"
-                style="background: #2a7e6e"
-                data-color="#2A7E6E"
-              ></div>
-              <div
-                class="cdot"
-                style="background: transparent; border: 1.5px dashed #aaa"
-                data-color="transparent"
-              ></div>
+              <div class="cdot on" style="background:#fff;border:1px solid #ddd" data-color="#fff"></div>
+              <div class="cdot" style="background:#4a74a4" data-color="#4A74A4"></div>
+              <div class="cdot" style="background:#48576d" data-color="#48576D"></div>
+              <div class="cdot" style="background:#2a7e6e" data-color="#2A7E6E"></div>
+              <div class="cdot" style="background:transparent;border:1.5px dashed #aaa" data-color="transparent"></div>
             </div>
           </div>
         </div>
@@ -1649,57 +275,19 @@
         <div class="spanel" id="panel-lgp">
           <div class="sec">شعار الشركة / العلامة التجارية</div>
           <label class="uarea" for="lgp-inp">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-            >
-              <rect x="3" y="3" width="18" height="18" rx="3" />
-              <path d="M9 12l2 2 4-4" />
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12l2 2 4-4"/></svg>
             <span>ارفع شعارك هنا</span>
             <small>PNG · SVG · JPG</small>
           </label>
-          <input
-            type="file"
-            id="lgp-inp"
-            accept="image/*"
-            style="display: none"
-            onchange="uploadLogo(event)"
-          />
-          <div
-            id="lgp-preview"
-            style="
-              background: var(--surface);
-              border-radius: 10px;
-              padding: 14px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              min-height: 70px;
-              border: 1.5px solid var(--border);
-            "
-          >
-            <span style="font-size: 12px; color: var(--ink-faint)"
-              >لم يُرفع شعار بعد</span
-            >
+          <input type="file" id="lgp-inp" accept="image/*" style="display:none" onchange="uploadLogo(event)"/>
+          <div id="lgp-preview" style="background:var(--surface);border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:center;min-height:70px;border:1.5px solid var(--border);">
+            <span style="font-size:12px;color:var(--ink-faint)">لم يُرفع شعار بعد</span>
           </div>
-          <div class="box" id="lgp-ctrl" style="display: none">
+          <div class="box" id="lgp-ctrl" style="display:none">
             <div class="lbl">الحجم</div>
             <div class="slrow">
-              <input
-                type="range"
-                min="30"
-                max="250"
-                value="100"
-                id="sl-lgsz"
-                oninput="
-                  resizeLogo(this.value);
-                  document.getElementById('vl-lgsz').textContent =
-                    this.value + 'px';
-                "
-              />
+              <input type="range" min="30" max="250" value="100" id="sl-lgsz"
+                oninput="resizeLogo(this.value); document.getElementById('vl-lgsz').textContent = this.value + 'px';"/>
               <span class="slval" id="vl-lgsz">100px</span>
             </div>
             <div class="lbl">الموضع</div>
@@ -1707,7 +295,7 @@
               <button class="gbtn" data-val="tr">↗ أعلى يمين</button>
               <button class="gbtn" data-val="tl">↖ أعلى يسار</button>
             </div>
-            <div class="bgrp" data-grp="lgpos" style="margin-top: 4px">
+            <div class="bgrp" data-grp="lgpos" style="margin-top:4px">
               <button class="gbtn" data-val="br">↘ أسفل يمين</button>
               <button class="gbtn" data-val="bl">↙ أسفل يسار</button>
             </div>
@@ -1718,26 +306,11 @@
         <div class="spanel" id="panel-bg">
           <div class="sec">الخلفية</div>
           <label class="uarea" for="bg-inp">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-            >
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-              <polyline points="17,8 12,3 7,8" />
-              <line x1="12" y1="3" x2="12" y2="15" />
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             <span>ارفع صورة خاصة كخلفية</span>
           </label>
-          <input
-            type="file"
-            id="bg-inp"
-            accept="image/*"
-            style="display: none"
-            onchange="uploadBg(event)"
-          />
-          <div class="sec" style="margin-top: 4px">خلفيات جاهزة</div>
+          <input type="file" id="bg-inp" accept="image/*" style="display:none" onchange="uploadBg(event)"/>
+          <div class="sec" style="margin-top:4px">خلفيات جاهزة</div>
           <div class="bggrid" id="bggrid"></div>
         </div>
       </div>
@@ -1750,160 +323,58 @@
       <div class="alt-container">
         <div class="alt-box">
           <div class="alt-box-title">تخصيص البطاقة السريعة</div>
-          <div class="box" style="margin-bottom: 12px">
+          <div class="box" style="margin-bottom:12px">
             <div class="lbl">اختر الخلفية</div>
             <div class="bggrid" id="ready-bg-grid"></div>
           </div>
-          <div class="box" style="margin-bottom: 12px">
+          <div class="box" style="margin-bottom:12px">
             <div class="lbl">الاسم (النص الرئيسي)</div>
-            <input
-              type="text"
-              id="r-main"
-              class="tinp"
-              value="عائلة محمد"
-              oninput="updateReady()"
-            />
-            <div class="slrow" style="margin-top: 8px">
+            <input type="text" id="r-main" class="tinp" value="عائلة محمد" oninput="updateReady()"/>
+            <div class="slrow" style="margin-top:8px">
               <span>حجم</span>
-              <input
-                type="range"
-                id="r-msize"
-                min="20"
-                max="80"
-                value="48"
-                oninput="updateReady()"
-              />
+              <input type="range" id="r-msize" min="20" max="80" value="48" oninput="updateReady()"/>
               <span class="slval" id="vl-rms">48</span>
             </div>
             <div class="slrow">
               <span>موضع</span>
-              <input
-                type="range"
-                id="r-mpos"
-                min="10"
-                max="90"
-                value="40"
-                oninput="updateReady()"
-              />
+              <input type="range" id="r-mpos" min="10" max="90" value="40" oninput="updateReady()"/>
               <span class="slval" id="vl-rmp">40%</span>
             </div>
           </div>
-          <div class="box" style="margin-bottom: 12px">
+          <div class="box" style="margin-bottom:12px">
             <div class="lbl">المرسل (النص الفرعي)</div>
-            <input
-              type="text"
-              id="r-sub"
-              class="tinp"
-              value="محبكم أحمد"
-              oninput="updateReady()"
-            />
-            <div class="slrow" style="margin-top: 8px">
+            <input type="text" id="r-sub" class="tinp" value="محبكم أحمد" oninput="updateReady()"/>
+            <div class="slrow" style="margin-top:8px">
               <span>حجم</span>
-              <input
-                type="range"
-                id="r-ssize"
-                min="14"
-                max="50"
-                value="24"
-                oninput="updateReady()"
-              />
+              <input type="range" id="r-ssize" min="14" max="50" value="24" oninput="updateReady()"/>
               <span class="slval" id="vl-rss">24</span>
             </div>
             <div class="slrow">
               <span>موضع</span>
-              <input
-                type="range"
-                id="r-spos"
-                min="10"
-                max="90"
-                value="78"
-                oninput="updateReady()"
-              />
+              <input type="range" id="r-spos" min="10" max="90" value="78" oninput="updateReady()"/>
               <span class="slval" id="vl-rsp">78%</span>
             </div>
           </div>
           <div class="box">
             <div class="lbl">الخط واللون</div>
-            <div
-              style="
-                display: flex;
-                gap: 10px;
-                align-items: center;
-                margin-top: 5px;
-              "
-            >
-              <select
-                class="sinp"
-                id="r-font"
-                onchange="updateReady()"
-                style="flex: 1"
-              >
+            <div style="display:flex;gap:10px;align-items:center;margin-top:5px">
+              <select class="sinp" id="r-font" onchange="updateReady()" style="flex:1">
                 <option value="Tajawal">Tajawal</option>
                 <option value="Cairo">Cairo</option>
                 <option value="Amiri">Amiri</option>
               </select>
-              <input
-                type="color"
-                id="r-color"
-                value="#ffffff"
-                oninput="updateReady()"
-                style="
-                  width: 34px;
-                  height: 34px;
-                  border-radius: 6px;
-                  border: 1.5px solid var(--border-m);
-                  cursor: pointer;
-                  padding: 2px;
-                "
-              />
+              <input type="color" id="r-color" value="#ffffff" oninput="updateReady()"
+                style="width:34px;height:34px;border-radius:6px;border:1.5px solid var(--border-m);cursor:pointer;padding:2px;"/>
             </div>
           </div>
         </div>
-        <div
-          class="alt-box"
-          style="
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-          "
-        >
-          <div class="alt-box-title" style="width: 100%">المعاينة المباشرة</div>
-          <div
-            id="ready-canvas"
-            class="preview-window"
-            style="background-image: none"
-          >
-            <div
-              id="r-text-main"
-              class="preview-text"
-              style="
-                top: 40%;
-                font-size: 48px;
-                color: #fff;
-                font-family: Tajawal;
-              "
-            >
-              عائلة محمد
-            </div>
-            <div
-              id="r-text-sub"
-              class="preview-text"
-              style="
-                top: 78%;
-                font-size: 24px;
-                color: #fff;
-                font-family: Tajawal;
-              "
-            >
-              محبكم أحمد
-            </div>
+        <div class="alt-box" style="display:flex;flex-direction:column;align-items:center;gap:16px">
+          <div class="alt-box-title" style="width:100%">المعاينة المباشرة</div>
+          <div id="ready-canvas" class="preview-window" style="background-image:none">
+            <div id="r-text-main" class="preview-text" style="top:40%;font-size:48px;color:#fff;font-family:Tajawal;">عائلة محمد</div>
+            <div id="r-text-sub"  class="preview-text" style="top:78%;font-size:24px;color:#fff;font-family:Tajawal;">محبكم أحمد</div>
           </div>
-          <button
-            class="btn btn-green bfull"
-            style="padding: 13px; font-size: 15px"
-            onclick="dlReady()"
-          >
+          <button class="btn btn-green bfull" style="padding:13px;font-size:15px" onclick="dlReady()">
             <i class="fa-solid fa-download"></i> تحميل البطاقة
           </button>
           <button class="btn btn-gray bfull" onclick="shareReadyWA()">
@@ -1918,132 +389,49 @@
       <div class="alt-container">
         <div class="alt-box">
           <div class="alt-box-title">نظام التهنئة الجماعية</div>
-          <div class="box" style="margin-bottom: 12px">
+          <div class="box" style="margin-bottom:12px">
             <div class="lbl">اختر الخلفية</div>
             <div class="bggrid" id="batch-bg-grid"></div>
           </div>
-          <div class="box" style="margin-bottom: 12px">
+          <div class="box" style="margin-bottom:12px">
             <div class="lbl">قائمة الأسماء (اسم في كل سطر)</div>
-            <textarea
-              id="b-names"
-              class="tinp"
-              rows="7"
+            <textarea id="b-names" class="tinp" rows="7"
               placeholder="محمد علي&#10;عائلة السعيد&#10;أحمد خالد&#10;سارة محمود"
-              oninput="updateBatch()"
-            ></textarea>
-            <div
-              style="
-                font-size: 11px;
-                color: var(--ink-faint);
-                text-align: right;
-              "
-              id="b-count"
-            >
-              0 أسماء
-            </div>
+              oninput="updateBatch()"></textarea>
+            <div style="font-size:11px;color:var(--ink-faint);text-align:right" id="b-count">0 أسماء</div>
           </div>
           <div class="box">
             <div class="lbl">تنسيق الأسماء</div>
-            <div class="slrow" style="margin-top: 5px">
+            <div class="slrow" style="margin-top:5px">
               <span>حجم</span>
-              <input
-                type="range"
-                id="b-size"
-                min="20"
-                max="80"
-                value="44"
-                oninput="updateBatch()"
-              />
+              <input type="range" id="b-size" min="20" max="80" value="44" oninput="updateBatch()"/>
               <span class="slval" id="vl-bs">44</span>
             </div>
             <div class="slrow">
               <span>موضع</span>
-              <input
-                type="range"
-                id="b-pos"
-                min="10"
-                max="90"
-                value="50"
-                oninput="updateBatch()"
-              />
+              <input type="range" id="b-pos" min="10" max="90" value="50" oninput="updateBatch()"/>
               <span class="slval" id="vl-bp">50%</span>
             </div>
-            <div
-              style="
-                display: flex;
-                gap: 10px;
-                align-items: center;
-                margin-top: 8px;
-              "
-            >
-              <select
-                class="sinp"
-                id="b-font"
-                onchange="updateBatch()"
-                style="flex: 1"
-              >
+            <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
+              <select class="sinp" id="b-font" onchange="updateBatch()" style="flex:1">
                 <option value="Tajawal">Tajawal</option>
                 <option value="Cairo">Cairo</option>
                 <option value="Amiri">Amiri</option>
               </select>
-              <input
-                type="color"
-                id="b-color"
-                value="#4a74a4"
-                oninput="updateBatch()"
-                style="
-                  width: 34px;
-                  height: 34px;
-                  border-radius: 6px;
-                  border: 1.5px solid var(--border-m);
-                  cursor: pointer;
-                  padding: 2px;
-                "
-              />
+              <input type="color" id="b-color" value="#4a74a4" oninput="updateBatch()"
+                style="width:34px;height:34px;border-radius:6px;border:1.5px solid var(--border-m);cursor:pointer;padding:2px;"/>
             </div>
           </div>
         </div>
-        <div
-          class="alt-box"
-          style="
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-          "
-        >
-          <div class="alt-box-title" style="width: 100%">معاينة + تحميل</div>
-          <div
-            id="batch-canvas"
-            class="preview-window"
-            style="background-image: none"
-          >
-            <div
-              id="b-text-name"
-              class="preview-text"
-              style="
-                top: 50%;
-                font-size: 44px;
-                color: #4a74a4;
-                font-family: Tajawal;
-              "
-            >
-              الاسم يظهر هنا
-            </div>
+        <div class="alt-box" style="display:flex;flex-direction:column;align-items:center;gap:16px">
+          <div class="alt-box-title" style="width:100%">معاينة + تحميل</div>
+          <div id="batch-canvas" class="preview-window" style="background-image:none">
+            <div id="b-text-name" class="preview-text" style="top:50%;font-size:44px;color:#4a74a4;font-family:Tajawal;">الاسم يظهر هنا</div>
           </div>
-          <button
-            class="btn btn-black bfull"
-            style="padding: 13px; font-size: 15px"
-            id="btn-batch"
-            onclick="dlBatchZip()"
-          >
+          <button class="btn btn-black bfull" style="padding:13px;font-size:15px" id="btn-batch" onclick="dlBatchZip()">
             <i class="fa-solid fa-box-archive"></i> إنشاء وتحميل ملف ZIP
           </button>
-          <p
-            style="font-size: 11px; color: var(--ink-faint); text-align: center"
-          >
-            سيتم إنشاء بطاقة منفصلة لكل اسم
-          </p>
+          <p style="font-size:11px;color:var(--ink-faint);text-align:center">سيتم إنشاء بطاقة منفصلة لكل اسم</p>
         </div>
       </div>
     </div>
@@ -2055,9 +443,7 @@
     <footer id="editor-footer">
       <span>© 2026 منصة مكتبة المعلمين — جميع الحقوق محفوظة</span>
       <div class="footer-links">
-        <a href="/index.html"
-          ><i class="fa-solid fa-house" style="font-size: 11px"></i> الرئيسية</a
-        >
+        <a href="/index.html"><i class="fa-solid fa-house" style="font-size:11px"></i> الرئيسية</a>
         <a href="#">شروط الاستخدام</a>
         <a href="#">تواصل معنا</a>
         <span>صُنع بـ <span class="footer-heart">♥</span> في السعودية</span>
@@ -2073,5 +459,6 @@
     <script src="/js/supabase-config.js"></script>
     <script src="js/editor.js"></script>
     <script src="js/Editorauth.js"></script>
+    <script src="js/editor_unlock.js"></script>
   </body>
 </html>

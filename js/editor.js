@@ -932,7 +932,157 @@ function applyBgImage(src, targetElement = CV) {
   img.onerror = () => notify('فشل تحميل الصورة كخلفية', 'err');
   img.src = src;
 }
+/* ══════════════════════════════════════════════════════
+   EDITOR UNLOCK — يحمّل الصورة المختارة من templates ويسجلها كملكية
+══════════════════════════════════════════════════════ */
+(async function editorUnlock(){
+  /* 1. اقرأ الـ params من الرابط */
+  const params = new URLSearchParams(location.search);
+  const uType  = params.get('unlock_type');   // 'calligraphy' | 'background'
+  const uId    = params.get('unlock_id');     // UUID في Supabase
 
+  if(!uType || !uId) return; /* لو مفيش حاجة مبعوتة — يكمل عادي */
+
+  /* 🌟 2. السر هنا: نسجل إن العنصر ده بقى بتاعنا (عشان الـ Sidebar يفتح القفل) */
+  let unlockedItems = JSON.parse(localStorage.getItem('sallim_unlocked') || '[]');
+  if (!unlockedItems.includes(uId)) {
+    unlockedItems.push(uId);
+    localStorage.setItem('sallim_unlocked', JSON.stringify(unlockedItems));
+  }
+
+  /* 3. نظّف الرابط فوراً عشان يبقى شكله نضيف */
+  window.history.replaceState({}, '', location.pathname);
+
+  /* 4. انتظر المحرر يخلص تحميل */
+  await _waitReady();
+
+  /* 🌟 5. نفتح التاب المناسب في القائمة الجانبية تلقائياً */
+  const tabToOpen = uType === 'background' ? 'bg' : 'cal';
+  const tabBtn = document.querySelector(`.stab[data-tab="${tabToOpen}"]`);
+  if (tabBtn && typeof switchTab === 'function') {
+      switchTab(tabBtn); 
+  }
+
+  /* 6. جيب بيانات الصورة عشان نحطها في الكانفاس */
+  let imgUrl = null, itemName = '', isDark = false;
+
+  try {
+    if(uType === 'calligraphy'){
+      const { data, error } = await sb.from('calligraphy').select('public_url, name, style').eq('id', uId).single();
+      if(!error && data){ imgUrl = data.public_url; itemName = data.name || ''; isDark = data.style === 'white'; }
+    } else {
+      const { data, error } = await sb.from('backgrounds').select('public_url, name').eq('id', uId).single();
+      if(!error && data){ imgUrl = data.public_url; itemName = data.name || ''; }
+    }
+  } catch(e) {
+    /* لو فشل، يحاول يجيبها من الجلسة المؤقتة */
+    try {
+      const saved = JSON.parse(sessionStorage.getItem('unlocked_item') || '{}');
+      imgUrl = saved.img || null; itemName = saved.name || ''; isDark = !!saved.darkBg;
+    } catch(_){}
+  }
+
+  sessionStorage.removeItem('unlocked_item');
+  if(!imgUrl){ _notify('لم يُعثر على الصورة'); return; }
+
+  /* 7. حمّل الصورة على الكانفاس فوراً */
+  if(uType === 'background'){
+    _applyBackground(imgUrl);
+  } else {
+    _applyCalligraphy(imgUrl, itemName);
+  }
+
+  _notify('✓ تم تجهيز: ' + itemName);
+})();
+
+/* ══════════════════════════════════════════════════════
+   HELPERS — دوال مساعدة
+══════════════════════════════════════════════════════ */
+
+/* انتظر حتى يكون الكانفاس جاهزاً */
+function _waitReady(){
+  return new Promise(resolve => {
+    let tries = 0;
+    const check = setInterval(() => {
+      const canvas = document.getElementById('canvas');
+      if(canvas || ++tries > 30){ clearInterval(check); resolve(); }
+    }, 100);
+  });
+}
+
+/* تطبيق خلفية */
+function _applyBackground(url){
+  const canvas = document.getElementById('canvas');
+  if(!canvas) return;
+  
+  // استخدام الدالة الأصلية للمحرر لو موجودة عشان المقاسات تتظبط
+  if(typeof applyBgImage === 'function') { applyBgImage(url, canvas); return; }
+  if(typeof setBg === 'function') { setBg(null, url); return; }
+  
+  canvas.style.backgroundImage = `url('${url}')`;
+  canvas.style.backgroundSize = 'cover';
+  canvas.style.backgroundPosition = 'center';
+}
+
+/* تطبيق مخطوطة */
+function _applyCalligraphy(url, name){
+  // استخدام دالة المحرر الأصلية لو موجودة عشان تنزل صح
+  if(typeof addCallig === 'function') { 
+    addCallig(url, name || 'مخطوطة'); 
+    return; 
+  }
+
+  const canvas = document.getElementById('canvas');
+  if(!canvas) return;
+
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = function(){
+    const w = canvas.offsetWidth * 0.7;
+    const h = (img.naturalHeight / img.naturalWidth) * w;
+    const x = (canvas.offsetWidth  - w) / 2;
+    const y = (canvas.offsetHeight - h) / 2;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'el el-img-wrap';
+    wrap.style.cssText = `position:absolute;left:${x}px;top:${y}px;width:${w}px;cursor:grab;user-select:none;touch-action:none`;
+
+    const i = document.createElement('img');
+    i.src = url; i.className = 'el-img'; i.style.cssText = `width:100%;display:block;pointer-events:none`; i.crossOrigin = 'anonymous';
+
+    const rh = document.createElement('div'); rh.className = 'rhandle';
+    const db = document.createElement('div'); db.className = 'del-btn'; db.innerHTML = '✕'; db.onclick = () => wrap.remove();
+
+    wrap.appendChild(i); wrap.appendChild(rh); wrap.appendChild(db);
+    canvas.appendChild(wrap);
+    _makeDraggable(wrap, canvas);
+  };
+  img.src = url;
+}
+
+/* السحب لو الدالة الأصلية مش موجودة */
+function _makeDraggable(el, container){
+  let ox=0, oy=0, sx=0, sy=0;
+  el.addEventListener('pointerdown', e => {
+    if(e.target.classList.contains('del-btn') || e.target.classList.contains('rhandle')) return;
+    e.preventDefault();
+    sx = e.clientX; sy = e.clientY; ox = el.offsetLeft; oy = el.offsetTop;
+    el.setPointerCapture(e.pointerId);
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerup', () => el.removeEventListener('pointermove', onMove), {once:true});
+  });
+  function onMove(e){
+    el.style.left = (ox + e.clientX - sx) + 'px'; el.style.top  = (oy + e.clientY - sy) + 'px';
+  }
+}
+
+/* إشعار */
+function _notify(msg){
+  if(typeof notify === 'function') { notify(msg); return; }
+  if(typeof showNotif === 'function') { showNotif(msg); return; }
+  const n = document.getElementById('notif');
+  if(n){ n.textContent = msg; n.classList.add('vis'); setTimeout(() => n.classList.remove('vis'), 3000); }
+}
 (function() {
     'use strict';
     document.addEventListener('contextmenu', function(e) {
