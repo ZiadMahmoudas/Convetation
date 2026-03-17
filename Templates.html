@@ -67,28 +67,39 @@
       </div>
     </div>
 
-    <div class="filter-row" id="filterRow">
-      <button class="ftab on" data-cat="all" onclick="setFilter(this)">
-        <i class="fa-solid fa-layer-group"></i> الكل
-        <span class="cnt" id="cnt-all">0</span>
-      </button>
-      <button class="ftab" data-cat="free" onclick="setFilter(this)">
-        <i class="fa-solid fa-gift"></i> مجاني
-        <span class="cnt" id="cnt-free">0</span>
-      </button>
-      <button
-        class="ftab"
-        data-cat="premium"
-        onclick="setFilter(this)"
-        style="
-          border-color: rgba(74, 116, 164, 0.3);
-          color: rgba(74, 116, 164, 0.7);
-        "
-      >
-        <i class="fa-solid fa-crown"></i> حصري
-        <span class="cnt" id="cnt-premium">0</span>
-      </button>
-    </div>
+<div class="filter-row" id="filterRow">
+  <!-- فلتر النوع (مجاني / حصري) -->
+  <button class="ftab on" data-cat="all" onclick="setFilter(this)">
+    <i class="fa-solid fa-layer-group"></i> الكل
+    <span class="cnt" id="cnt-all">0</span>
+  </button>
+  <button class="ftab" data-cat="free" onclick="setFilter(this)">
+    <i class="fa-solid fa-gift"></i> مجاني
+    <span class="cnt" id="cnt-free">0</span>
+  </button>
+  <button class="ftab" data-cat="premium" onclick="setFilter(this)"
+    style="border-color:rgba(74,116,164,.3);color:rgba(74,116,164,.7)">
+    <i class="fa-solid fa-crown"></i> حصري
+    <span class="cnt" id="cnt-premium">0</span>
+  </button>
+
+  <!-- فاصل -->
+  <div style="width:1px;height:28px;background:var(--border);margin:0 4px;align-self:center"></div>
+
+  <!-- فلتر النوع (مخطوطات / خلفيات) -->
+  <button class="ftab" data-type="all" onclick="setTypeFilter(this)">
+    <i class="fa-solid fa-border-all"></i> الكل
+    <span class="cnt" id="cnt-type-all">0</span>
+  </button>
+  <button class="ftab" data-type="calligraphy" onclick="setTypeFilter(this)">
+    <i class="fa-solid fa-pen-nib"></i> مخطوطات
+    <span class="cnt" id="cnt-type-cal">0</span>
+  </button>
+  <button class="ftab" data-type="background" onclick="setTypeFilter(this)">
+    <i class="fa-solid fa-image"></i> خلفيات
+    <span class="cnt" id="cnt-type-bg">0</span>
+  </button>
+</div>
 
     <div class="tpl-page">
       <div class="results-bar">
