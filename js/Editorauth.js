@@ -73,7 +73,7 @@ function _showAuthBadge(user) {
         ${isAdmin ? '⭐ أدمن' : 'مستخدم مسجل'}
       </div>
     </div>
-    ${isAdmin ? `<a href="/admin.html"
+    ${isAdmin ? `<a href="./admin/dashboard.html"
       style="padding:5px 10px;background:rgba(212,168,67,.15);color:#D4A843;
         border-radius:7px;font-size:11px;font-weight:800;
         text-decoration:none;border:1px solid rgba(212,168,67,.25);white-space:nowrap">
