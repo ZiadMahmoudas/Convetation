@@ -905,7 +905,6 @@
             <td><span class="badge ${u.role === "admin" ? "badge-rose" : "badge-teal"}">${u.role === "admin" ? "أدمن" : "مستخدم"}</span></td>
             <td style="font-size:11px;color:rgba(247,242,232,.4)">${new Date(u.created_at).toLocaleDateString("ar-SA")}</td>
             <td><div class="row-actions">
-// الجديد — بيعرض زرين:
 ${
   u.role !== "admin"
     ? `<button class="ra-btn ra-edit" title="ترقية لأدمن"
