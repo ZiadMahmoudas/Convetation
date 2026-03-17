@@ -1,5 +1,4 @@
 function _showCouponPopup(imageId, imageType, onSuccess) {
-  // إزالة أي popup قديم
   const old = document.getElementById('_coupon-popup');
   if (old) old.remove();
 
@@ -70,16 +69,12 @@ function _showCouponPopup(imageId, imageType, onSuccess) {
 
   document.body.appendChild(ov);
 
-  // حفظ الـ callback
   window._couponCallback = onSuccess;
   window._couponImageId   = imageId;
   window._couponImageType = imageType;
 
-  // إغلاق بالـ X أو click خارج
   document.getElementById('_cp-close').onclick = () => ov.remove();
   ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
-
-  // focus على الـ input
   setTimeout(() => document.getElementById('_cp-input')?.focus(), 100);
 }
 
@@ -116,7 +111,6 @@ async function _verifyCoupon(imageId, imageType) {
     btn.style.color = '#fff';
     btn.innerHTML = '✓ تم التحقق';
 
-    // 🌟 السحر هنا: نحفظ إن العنصر ده اتفتح عشان ميسألش عليه تاني للأبد
    let unlockedItems = JSON.parse(localStorage.getItem('sallim_unlocked') || '[]');
 const isPremium = !!bg.is_premium && !unlockedItems.includes(bg.id);
     if (imageId && !unlockedItems.includes(imageId)) {
@@ -127,18 +121,15 @@ const isPremium = !!bg.is_premium && !unlockedItems.includes(bg.id);
     setTimeout(() => {
       document.getElementById('_coupon-popup')?.remove();
       
-      // 🌟 التصليح هنا: استخدمنا _couponCallback الصح
       if (typeof window._couponCallback === 'function') {
         window._couponCallback();
         window._couponCallback = null;
       }
       
-      // 🌟 دي حركة صياعة عشان تخفي التاج الذهبي من الصورة فوراً بدون ريفريش
       document.querySelectorAll(`[onclick*="${imageId}"]`).forEach(el => {
           const crown = el.querySelector('div[style*="linear-gradient"]');
-          if(crown) crown.remove(); // شيل التاج
+          if(crown) crown.remove();
           
-          // عدل زرار الضغط عشان لو داس عليها تاني تفتح علطول
           const oldClick = el.getAttribute('onclick');
           if(oldClick.includes('_showCouponPopup')) {
               const newClick = oldClick.match(/function\(\)\{(.*?)\}/)[1];
@@ -160,6 +151,5 @@ function _showCouponMsg(text, type) {
   msg.style.color = type === 'ok' ? '#2A8A7E' : '#C0705A';
 }
 
-// إتاحة globally
 window._showCouponPopup = _showCouponPopup;
 window._verifyCoupon    = _verifyCoupon;

@@ -911,7 +911,7 @@ ${
       onclick="promoteUser('${u.id}')">
       <i class="fa-solid fa-user-shield"></i>
     </button>`
-    : u.id !== currentAdminId // لا يقدر يقلل نفسه
+    : u.id !== currentAdminId 
       ? `<button class="ra-btn ra-del" title="تقليل لمستخدم عادي"
       onclick="demoteAdmin('${u.id}','${u.full_name || u.username}')">
       <i class="fa-solid fa-user-minus"></i>

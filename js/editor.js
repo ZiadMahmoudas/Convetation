@@ -1,6 +1,3 @@
-// ══════════════════════════
-// DATA — نصوص جاهزة فقط (الصور من Supabase)
-// ══════════════════════════
 const READY_TEXTS = {
   all: ["كل عام وأنتم بخير 💛","عيد مبارك وكل عام وأنتم بأفضل حال",
     "تقبل الله منا ومنكم","عساكم من عواده","أعادها الله عليكم وأنتم بخير",
@@ -23,12 +20,8 @@ let selEl = null, photoEl = null, logoEl = null;
 let mainSz = 26, subSz = 16, eid = 0;
 const CV = document.getElementById('canvas');
 
-// ══════════════════════════
-// INIT — يشتغل بعد تحميل الصفحة
-// ══════════════════════════
 (function init() {
   buildReady('all');
-  // الـ grids فاضية — editor-auth.js هيملأها من Supabase
   addText("عيد مبارك", 38, "#FFD700", 90, 50);
   addText("كل عام وأنتم بخير", 20, "#ffffff", 70, 115);
   document.addEventListener('click', onGrpClick);
@@ -160,7 +153,6 @@ function makeWrap(x, y) {
     notify('تم الحذف ✓');
   });
 
-  // زر نقل للركن
   const mvBtn = document.createElement('div');
   mvBtn.className = 'mv-btn'; mvBtn.innerHTML = '↗';
   mvBtn.title = 'نقل لركن فاضي';
@@ -359,7 +351,6 @@ function addQuick() {
   notify('تمت الإضافة ✓');
 }
 
-// الدالة الرئيسية لإضافة مخطوطة — editor-auth.js بيستدعيها
 function addCallig(src, name) {
   const sz = parseInt(document.getElementById('sl-csz')?.value) || 180;
   const x  = Math.max(0, CV.offsetWidth / 2 - sz / 2);
@@ -384,10 +375,6 @@ function clearAll() {
   document.querySelectorAll('.el').forEach(e => e.remove()); selEl = null;
 }
 
-// ══════════════════════════
-// CALLIGRAPHY — tabs الأنواع
-// (الـ grids بتتملأ من editor-auth.js)
-// ══════════════════════════
 function switchCat(btn) {
   document.querySelectorAll('.catbtn').forEach(b => b.classList.remove('on'));
   btn.classList.add('on');
@@ -396,22 +383,16 @@ function switchCat(btn) {
     const el = document.getElementById('cat-' + c);
     if (el) el.style.display = c === cat ? 'block' : 'none';
   });
-  // إخفاء الـ custom grid لو موجود
   const custom = document.getElementById('_cat-custom');
   if (custom) custom.style.display = 'none';
 }
 
-// ══════════════════════════
-// BACKGROUND — setBg فقط
-// (الـ grid بتتملأ من editor-auth.js)
-// ══════════════════════════
+
 function setBg(el, src) {
   if (!src) return;
   
-  // نستخدم الدالة الجديدة بدل ما نحط الخلفية مباشرة
   applyBgImage(src, CV);
 
-  // تحديث تحديد الصورة في القائمة
   document.querySelectorAll('.bgthumb').forEach(t => t.classList.remove('on'));
   if (el) el.classList.add('on');
 }
@@ -495,10 +476,7 @@ function setLogoPos(val) {
   if (P[val]) { logoEl.style.top = P[val].top + 'px'; logoEl.style.left = P[val].left + 'px'; }
 }
 
-// ══════════════════════════
-// ALT VIEWS — جاهز وجماعي
-// (الـ bg grids بتتملأ من editor-auth.js)
-// ══════════════════════════
+
 function setAltBg(el, src, type) {
   const gridId   = type === 'ready' ? 'ready-bg-grid' : 'batch-bg-grid';
   const canvasId = type === 'ready' ? 'ready-canvas'  : 'batch-canvas';
@@ -694,18 +672,11 @@ function notify(msg) {
 }
 function showNotif(msg) { notify(msg); }
 
-
-// ══════════════════════════════════════════
-//  LAYER SYSTEM
-// ══════════════════════════════════════════
-
-// Sync z-index فعلي بناءً على ترتيب الـ DOM
 function _syncZIndex() {
   const els = CV.querySelectorAll('.el');
   els.forEach((el, i) => { el.style.zIndex = i + 1; });
 }
 
-// رفع layer للأمام (bring forward)
 function layerUp(id) {
   const el = CV.querySelector(`.el[data-id="${id}"]`);
   if (!el || !el.nextElementSibling) return;
@@ -714,7 +685,6 @@ function layerUp(id) {
   notify('تم الرفع للأمام ✓');
 }
 
-// إرسال layer للخلف (send backward)
 function layerDown(id) {
   const el = CV.querySelector(`.el[data-id="${id}"]`);
   if (!el || !el.previousElementSibling) return;
@@ -723,7 +693,6 @@ function layerDown(id) {
   notify('تم الإرسال للخلف ✓');
 }
 
-// bring to front (أعلى كل شيء)
 function layerFront(id) {
   const el = CV.querySelector(`.el[data-id="${id}"]`);
   if (!el) return;
@@ -732,7 +701,6 @@ function layerFront(id) {
   notify('للأمام تماماً ✓');
 }
 
-// send to back (خلف كل شيء)
 function layerBack(id) {
   const el = CV.querySelector(`.el[data-id="${id}"]`);
   if (!el) return;
@@ -741,7 +709,6 @@ function layerBack(id) {
   notify('للخلف تماماً ✓');
 }
 
-// اسم العنصر
 function _layerName(el) {
   const txt = el.querySelector('.el-text');
   if (txt) {
@@ -761,7 +728,7 @@ function _refreshLayers() {
   const panel = document.getElementById('panel-lyr');
   if (!panel || !panel.classList.contains('on')) return;
 
-  const els = [...CV.querySelectorAll('.el')].reverse(); // أعلى أولاً
+  const els = [...CV.querySelectorAll('.el')].reverse(); 
   if (!els.length) {
     panel.innerHTML = `
       <div class="sec">الطبقات</div>
@@ -886,8 +853,6 @@ function _lyrDrop(e, targetId) {
   document.querySelectorAll('._lyr-row').forEach(r => r.style.borderColor = '');
   if (!_lyrDragId || _lyrDragId === targetId) return;
 
-  // في الـ DOM: العنصر الأعلى (أمام) هو الأخير في DOM
-  // panel list مقلوب (أعلى = أول في القائمة = آخر في DOM)
   const dragged = CV.querySelector(`.el[data-id="${_lyrDragId}"]`);
   const target  = CV.querySelector(`.el[data-id="${targetId}"]`);
   if (!dragged || !target) return;
@@ -897,10 +862,8 @@ function _lyrDrop(e, targetId) {
   const ti = allEls.indexOf(target);
 
   if (di > ti) {
-    // dragged أعلى من target في DOM → حط قبل target
     CV.insertBefore(dragged, target);
   } else {
-    // dragged أقل → حط بعد target
     target.after(dragged);
   }
 
@@ -910,19 +873,14 @@ function _lyrDrop(e, targetId) {
 }
 
 
-// دالة مساعدة لقراءة أبعاد الصورة وتطبيقها على الكانفاس
 function applyBgImage(src, targetElement = CV) {
   if (!src) return;
   
   const img = new Image();
   img.onload = function() {
-    // 1. حساب الـ Aspect Ratio بتاع الصورة (العرض / الطول)
     const ratio = this.width / this.height;
-    
-    // 2. تطبيق الـ Aspect Ratio على الكانفاس
     targetElement.style.aspectRatio = ratio.toString();
     
-    // 3. وضع الصورة كخلفية
     targetElement.style.setProperty('background-image', `url("${src}")`, 'important');
     targetElement.style.setProperty('background-size', 'cover', 'important');
     targetElement.style.setProperty('background-position', 'center', 'important');
@@ -932,38 +890,29 @@ function applyBgImage(src, targetElement = CV) {
   img.onerror = () => notify('فشل تحميل الصورة كخلفية', 'err');
   img.src = src;
 }
-/* ══════════════════════════════════════════════════════
-   EDITOR UNLOCK — يحمّل الصورة المختارة من templates ويسجلها كملكية
-══════════════════════════════════════════════════════ */
 (async function editorUnlock(){
-  /* 1. اقرأ الـ params من الرابط */
   const params = new URLSearchParams(location.search);
-  const uType  = params.get('unlock_type');   // 'calligraphy' | 'background'
-  const uId    = params.get('unlock_id');     // UUID في Supabase
+  const uType  = params.get('unlock_type');   
+  const uId    = params.get('unlock_id');    
 
-  if(!uType || !uId) return; /* لو مفيش حاجة مبعوتة — يكمل عادي */
+  if(!uType || !uId) return;
 
-  /* 🌟 2. السر هنا: نسجل إن العنصر ده بقى بتاعنا (عشان الـ Sidebar يفتح القفل) */
   let unlockedItems = JSON.parse(localStorage.getItem('sallim_unlocked') || '[]');
   if (!unlockedItems.includes(uId)) {
     unlockedItems.push(uId);
     localStorage.setItem('sallim_unlocked', JSON.stringify(unlockedItems));
   }
 
-  /* 3. نظّف الرابط فوراً عشان يبقى شكله نضيف */
   window.history.replaceState({}, '', location.pathname);
 
-  /* 4. انتظر المحرر يخلص تحميل */
   await _waitReady();
 
-  /* 🌟 5. نفتح التاب المناسب في القائمة الجانبية تلقائياً */
   const tabToOpen = uType === 'background' ? 'bg' : 'cal';
   const tabBtn = document.querySelector(`.stab[data-tab="${tabToOpen}"]`);
   if (tabBtn && typeof switchTab === 'function') {
       switchTab(tabBtn); 
   }
 
-  /* 6. جيب بيانات الصورة عشان نحطها في الكانفاس */
   let imgUrl = null, itemName = '', isDark = false;
 
   try {
@@ -975,7 +924,6 @@ function applyBgImage(src, targetElement = CV) {
       if(!error && data){ imgUrl = data.public_url; itemName = data.name || ''; }
     }
   } catch(e) {
-    /* لو فشل، يحاول يجيبها من الجلسة المؤقتة */
     try {
       const saved = JSON.parse(sessionStorage.getItem('unlocked_item') || '{}');
       imgUrl = saved.img || null; itemName = saved.name || ''; isDark = !!saved.darkBg;
@@ -985,7 +933,6 @@ function applyBgImage(src, targetElement = CV) {
   sessionStorage.removeItem('unlocked_item');
   if(!imgUrl){ _notify('لم يُعثر على الصورة'); return; }
 
-  /* 7. حمّل الصورة على الكانفاس فوراً */
   if(uType === 'background'){
     _applyBackground(imgUrl);
   } else {
@@ -995,11 +942,7 @@ function applyBgImage(src, targetElement = CV) {
   _notify('✓ تم تجهيز: ' + itemName);
 })();
 
-/* ══════════════════════════════════════════════════════
-   HELPERS — دوال مساعدة
-══════════════════════════════════════════════════════ */
 
-/* انتظر حتى يكون الكانفاس جاهزاً */
 function _waitReady(){
   return new Promise(resolve => {
     let tries = 0;
@@ -1010,12 +953,10 @@ function _waitReady(){
   });
 }
 
-/* تطبيق خلفية */
 function _applyBackground(url){
   const canvas = document.getElementById('canvas');
   if(!canvas) return;
   
-  // استخدام الدالة الأصلية للمحرر لو موجودة عشان المقاسات تتظبط
   if(typeof applyBgImage === 'function') { applyBgImage(url, canvas); return; }
   if(typeof setBg === 'function') { setBg(null, url); return; }
   
@@ -1024,9 +965,7 @@ function _applyBackground(url){
   canvas.style.backgroundPosition = 'center';
 }
 
-/* تطبيق مخطوطة */
 function _applyCalligraphy(url, name){
-  // استخدام دالة المحرر الأصلية لو موجودة عشان تنزل صح
   if(typeof addCallig === 'function') { 
     addCallig(url, name || 'مخطوطة'); 
     return; 
@@ -1060,7 +999,6 @@ function _applyCalligraphy(url, name){
   img.src = url;
 }
 
-/* السحب لو الدالة الأصلية مش موجودة */
 function _makeDraggable(el, container){
   let ox=0, oy=0, sx=0, sy=0;
   el.addEventListener('pointerdown', e => {
@@ -1076,7 +1014,6 @@ function _makeDraggable(el, container){
   }
 }
 
-/* إشعار */
 function _notify(msg){
   if(typeof notify === 'function') { notify(msg); return; }
   if(typeof showNotif === 'function') { showNotif(msg); return; }

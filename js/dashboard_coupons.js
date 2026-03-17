@@ -1,44 +1,13 @@
-// ══════════════════════════════════════════════════════
-//  DASHBOARD COUPONS — أضف في آخر <script> في dashboard
-// ══════════════════════════════════════════════════════
-
-// ── 1. في PAGE_LABELS أضف ──
-// coupons: 'الكوبونات',
-
-// ── 2. في PAGE_ACTIONS أضف ──
-// coupons: `<button class="btn-sm btn-primary" onclick="openGenerateModal()"><i class="fa-solid fa-wand-magic-sparkles"></i> توليد</button>`,
-
-// ── 3. في navTo function أضف ──
-// if (page === 'coupons') await loadCoupons();
-
-// ── 4. في <style> أضف ──
-/*
-.cp-pill{
-  padding:6px 14px;border-radius:20px;
-  border:1px solid var(--border);
-  background:rgba(247,242,232,.04);
-  color:rgba(247,242,232,.4);
-  font-family:"Tajawal",sans-serif;font-size:11px;font-weight:700;
-  cursor:pointer;transition:all .13s;
-}
-.cp-pill:hover{border-color:var(--border2);color:rgba(247,242,232,.7)}
-.cp-pill.on{background:rgba(212,168,67,.12);color:var(--gold2);border-color:var(--border2)}
-*/
-
-// ══ JS ══════════════════════════════════════
-
 let _allCoupons = [], _cpFilter = 'all', _pendingCodes = [];
 
 async function loadCoupons() {
   try {
-    // إحصائيات
     const { data: st } = await sb.from('coupon_stats').select('*').single();
     if (st) {
       document.getElementById('cp-available').textContent = st.available ?? 0;
       document.getElementById('cp-used').textContent      = st.used      ?? 0;
       document.getElementById('cp-total').textContent     = st.total     ?? 0;
     }
-    // القائمة
     const { data, error } = await sb.from('coupons')
       .select('*').order('created_at', { ascending: false }).limit(500);
     if (error) throw error;
@@ -186,21 +155,3 @@ function exportCoupons() {
   a.href = 'data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent([h,...rows].join('\n'));
   a.download = 'coupons.csv'; a.click();
 }
-
-// ── Dashboard: is_premium toggle ──
-// أضف ده في modal-cal عشان الأدمن يقدر يخلي المخطوطة تتطلب كوبون:
-//
-// <div class="mfield" style="display:flex;align-items:center;gap:10px">
-//   <label for="cal-premium" style="margin:0;cursor:pointer">محتوى حصري (يتطلب كوبون)</label>
-//   <label class="toggle-sw" style="margin-right:auto">
-//     <input type="checkbox" id="cal-premium"/>
-//     <div class="toggle-track"></div>
-//     <div class="toggle-thumb"></div>
-//   </label>
-// </div>
-//
-// وفي saveCalligraphy أضف:
-// is_premium: document.getElementById('cal-premium').checked
-//
-// نفس الشيء في modal-bg وsaveBackground:
-// is_premium: document.getElementById('bg-premium').checked  ← موجود بالفعل!

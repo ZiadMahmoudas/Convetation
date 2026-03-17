@@ -2,7 +2,6 @@
    TOKENS — Light Mode (الألوان الجديدة)
 ══════════════════════════════════════ */
 :root {
-    /* ── ألوان النظام الجديد ── */
     --color-primary: #223147;
     --color-primary-dark: #000b21;
     --color-primary-light: #48576d;
@@ -10,28 +9,24 @@
     --accent-dark: #223147;
     --accent-hover: #3a77b0;
 
-    /* ── ربط المتغيرات القديمة بالجديدة ── */
-    --navy: #4a74a4; /* كان #2a3a4d → accent الأزرق */
-    --gold: #4a74a4; /* كان #f7af3c → accent الأزرق */
-    --gold-hi: #3a77b0; /* للـ hover */
-    --ember: #c0705a; /* rose — للأزرار الحمراء */
-    --azure: #48576d; /* للـ hover الثانوي */
-    --jade: #2a7e6e; /* للأزرار الخضراء */
+    --navy: #4a74a4; 
+    --gold: #4a74a4; 
+    --gold-hi: #3a77b0;
+    --ember: #c0705a; 
+    --azure: #48576d; 
+    --jade: #2a7e6e; 
 
     /* Light Mode surfaces */
     --bg: #f5f8fc;
     --surface: #ffffff;
     --white: #ffffff;
 
-    /* حدود */
     --border: rgba(74, 116, 164, 0.12);
     --border-m: rgba(74, 116, 164, 0.2);
 
-    /* نصوص */
     --ink-dim: #48576d;
     --ink-faint: #7a9ab5;
 
-    /* متفرقات */
     --r: 6px;
     --ease: cubic-bezier(0.4, 0, 0.2, 1);
     --sh-sm: 0 2px 10px rgba(34, 49, 71, 0.08);
@@ -54,7 +49,6 @@ body {
     color: var(--color-primary);
 }
 
-/* ══ زر نقل للركن ↗ ══ */
 .el .mv-btn {
     position: absolute;
     top: -11px;
@@ -82,10 +76,6 @@ body {
     background: #1a6b61;
     transform: scale(1.12);
 }
-
-/* ══════════════════════════════════════
-   TOPBAR — أزرق داكن + شريط accent
-══════════════════════════════════════ */
 #topbar {
     position: fixed;
     top: 0;

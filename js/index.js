@@ -105,10 +105,7 @@ document.querySelectorAll('.ai').forEach(el => obs.observe(el));
   } catch(e) {}
 })();
 
-/* ══════════════════════════════════════════
-   CAROUSEL ENGINE
-   الكود الصح — GAP و step معرّفين صح
-══════════════════════════════════════════ */
+
 (function(){
   'use strict';
 
@@ -562,7 +559,6 @@ document.querySelectorAll('.ai').forEach(el => obs.observe(el));
   if (!grid) return;
  
   try {
-    /* جيب التصنيفات النشطة مرتبة */
     const { data: cats, error } = await sb
       .from('categories')
       .select('id,name,name_en,icon,color,sort_order')
@@ -574,7 +570,6 @@ document.querySelectorAll('.ai').forEach(el => obs.observe(el));
       return;
     }
  
-    /* اجيب عدد المخطوطات لكل تصنيف */
     const { data: calCounts } = await sb
       .from('calligraphy')
       .select('category_id')
@@ -603,7 +598,6 @@ document.querySelectorAll('.ai').forEach(el => obs.observe(el));
         </a>`;
     }).join('');
  
-    /* شغّل الـ IntersectionObserver على الكروت الجديدة */
     grid.querySelectorAll('.ai').forEach(el => observer.observe(el));
  
   } catch (e) {

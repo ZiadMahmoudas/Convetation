@@ -209,18 +209,12 @@ function _showLimitModal() {
   ov.style.display = "flex";
 }
 
-/* ══════════════════════════════════════════════════════
-   LOAD CALLIGRAPHY
-   ★ الكل يظهر دايماً
-   ★ is_premium + مش مفتوح → قفل + popup كوبون عند الضغط
-   ★ is_premium + مفتوح (في sallim_unlocked) → يشتغل على طول
-   ★ مجاني → يشتغل على طول
-══════════════════════════════════════════════════════ */
+
 async function _loadCalligraphy() {
   try {
     const [categories, items] = await Promise.all([
       DB.getCategories(),
-      DB.getCalligraphy() /* كل المخطوطات بدون فلتر */,
+      DB.getCalligraphy() ,
     ]);
     if (!items.length) return;
 
@@ -260,11 +254,9 @@ function _buildCalligItem(item, bgcls, unlocked) {
   const safeName = (item.name || "").replace(/'/g, "\\'");
   const promoLink = (item.promo_link || "").replace(/'/g, "\\'");
 
-  /* ★ القرار: مقفول لو is_premium ومش في القائمة */
   const isLocked = !!item.is_premium && !unlocked.includes(item.id);
 
   if (isLocked) {
-    /* مقفول → popup كوبون */
     const clickFn =
       `_showCouponPopup('${item.id}','calligraphy','${promoLink}',` +
       `function(){window.addCallig('${safeSrc}','${safeName}','${item.id}','${promoLink}')})`;
@@ -277,12 +269,10 @@ function _buildCalligItem(item, bgcls, unlocked) {
           style="filter:brightness(.45);pointer-events:none"
           onerror="this.style.display='none'"/>
         <div class="clabel">${item.name}</div>
-        <!-- طبقة القفل -->
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
           justify-content:center;gap:4px;z-index:2;pointer-events:none">
           <i class="fa-solid fa-lock" style="color:#D4A843;font-size:16px;drop-shadow(0 0 4px rgba(0,0,0,.6))"></i>
         </div>
-        <!-- بادج الكوبون -->
         <div style="position:absolute;top:4px;left:4px;z-index:3;
           background:linear-gradient(135deg,#D4A843,#c49830);color:#0d1117;
           font-size:8px;font-weight:900;padding:2px 5px;border-radius:3px;
@@ -540,12 +530,7 @@ function _onCalDragStart(e, itemEl) {
 
 window._showLimitModal = _showLimitModal;
 
-/* ══════════════════════════════════════════════════════
-   COUPON POPUP
-   ★ بعد النجاح: يضيف الـ id في sallim_unlocked
-             + يشغّل الصورة فوراً
-             + يعيد رسم الـ grids (تشيل القفل)
-══════════════════════════════════════════════════════ */
+
 (function injectStyles() {
   if (document.getElementById("_cp-kf")) return;
   const s = document.createElement("style");
@@ -640,7 +625,6 @@ function _showCouponPopup(imageId, imageType, promoUrl, onSuccess) {
 
   document.body.appendChild(ov);
 
-  /* احفظ الـ callback */
   window._couponSuccess = onSuccess;
   window._couponImageId = imageId;
 
@@ -685,13 +669,11 @@ async function _verifyCoupon(imageId, imageType) {
       return;
     }
 
-    /* لو مستخدم — تحقق لو نفس اليوزر */
     if (data.is_used) {
       const {
         data: { session },
       } = await sb.auth.getSession();
       if (session && data.used_by === session.user.id) {
-        /* نفس الشخص — اسمح له تاني */
         _cpMsg("✓ كوبون مستخدم من قبلك — جاري الفتح...", "ok");
         await _doUnlockSuccess(imageId, false, data.id, code);
       } else {
@@ -700,7 +682,6 @@ async function _verifyCoupon(imageId, imageType) {
       return;
     }
 
-    /* كوبون جديد → علّمه مستخدم */
     const {
       data: { session },
     } = await sb.auth.getSession();
@@ -731,26 +712,21 @@ async function _verifyCoupon(imageId, imageType) {
 }
 
 async function _doUnlockSuccess(imageId, isNew, couponDbId, code) {
-  /* 1. أضف الـ ID في localStorage عشان يتفتح في كل مكان */
   const unlocked = JSON.parse(localStorage.getItem("sallim_unlocked") || "[]");
   if (imageId && !unlocked.includes(imageId)) {
     unlocked.push(imageId);
     localStorage.setItem("sallim_unlocked", JSON.stringify(unlocked));
   }
 
-  /* 2. انتظر قليلاً ثم شغّل */
   await new Promise((r) => setTimeout(r, 700));
 
-  /* 3. أغلق الـ popup */
   document.getElementById("_coupon-popup")?.remove();
 
-  /* 4. شغّل الصورة فوراً (الـ callback) */
   if (typeof window._couponSuccess === "function") {
     window._couponSuccess();
     window._couponSuccess = null;
   }
 
-  /* 5. ★ أعد رسم كل الـ grids — بيشيل القفل تلقائياً */
   await _refreshAfterUnlock();
 }
 
