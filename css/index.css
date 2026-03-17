@@ -886,7 +886,7 @@ body {
   }
   @media (max-width: 560px) {
     .tpl-c-card, .tpl-c-skel {
-      flex: 0 0 calc(100% - 40px);
+      flex: 0 0 calc(50%);
     }
     .tpl-carousel-track { gap: 14px; }
   }

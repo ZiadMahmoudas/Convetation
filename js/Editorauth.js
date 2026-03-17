@@ -177,9 +177,6 @@ function _showLimitModal() {
         <h2 style="font-family:Amiri,serif;font-size:22px;color:#ECC96A;margin-bottom:10px">
           انتهت الاختيارات المجانية
         </h2>
-        <p style="color:rgba(247,242,232,.5);font-size:14px;line-height:1.7;margin-bottom:22px">
-         <br>سجّل دخولك مجاناً للوصول للكوبون!
-        </p>
         <div style="display:flex;gap:10px">
           <a href="/login.html" style="flex:1;padding:12px;border-radius:10px;text-align:center;
             background:#D4A843;color:#0D1117;font-size:14px;font-weight:800;text-decoration:none">
