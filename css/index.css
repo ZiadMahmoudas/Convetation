@@ -1,4 +1,6 @@
-
+a{
+  text-decoration: none;
+}
 :root {
   /* ── ألوان النظام الجديد ── */
   --color-primary:         #223147;
