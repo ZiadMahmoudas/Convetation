@@ -594,7 +594,7 @@ document.querySelectorAll('.ai').forEach(el => obs.observe(el));
       return `
         <a class="cat-pill ai"
            style="transition-delay:${i * 0.06}s"
-           href="/Templates.html?cat=${encodeURIComponent(cat.name_en || cat.name)}">
+           href="/editor.html">
           <div class="cat-pill-icon" style="background:${bgColor}">
             ${cat.icon || '📁'}
           </div>
