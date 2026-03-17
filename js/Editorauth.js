@@ -178,7 +178,7 @@ function _showLimitModal() {
           انتهت الاختيارات المجانية
         </h2>
         <p style="color:rgba(247,242,232,.5);font-size:14px;line-height:1.7;margin-bottom:22px">
-          استخدمت اختياراتك الـ 2 كضيف.<br>سجّل دخولك مجاناً للوصول الكامل!
+         <br>سجّل دخولك مجاناً للوصول للكوبون!
         </p>
         <div style="display:flex;gap:10px">
           <a href="/login.html" style="flex:1;padding:12px;border-radius:10px;text-align:center;

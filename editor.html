@@ -13,28 +13,60 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
+
+    <!-- ══ PingARLT ══ -->
+    <style>
+      @font-face {
+        font-family: "PingARLT";
+        src:
+          url("/fonts/PingARLT.woff2") format("woff2"),
+          url("/fonts/PingARLT.woff") format("woff");
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+    </style>
+
     <style>
       /* ══════════════════════════════════════
-   TOKENS
+   TOKENS — Light Mode (الألوان الجديدة)
 ══════════════════════════════════════ */
       :root {
-        --navy: #2a3a4d;
-        --gold: #f7af3c;
-        --ember: #fa6267;
-        --azure: #5bc0ea;
-        --jade: #14a48d;
-        --bg: #edf1f7;
-        --surface: #f7f9fc;
-        --white: #fff;
-        --border: rgba(42, 58, 77, 0.1);
-        --border-m: rgba(42, 58, 77, 0.16);
-        --ink-dim: #7a9ab5;
-        --ink-faint: #a8c0d0;
+        /* ── ألوان النظام الجديد ── */
+        --color-primary: #223147;
+        --color-primary-dark: #000b21;
+        --color-primary-light: #48576d;
+        --accent: #4a74a4;
+        --accent-dark: #223147;
+        --accent-hover: #3a77b0;
+
+        /* ── ربط المتغيرات القديمة بالجديدة ── */
+        --navy: #4a74a4; /* كان #2a3a4d → accent الأزرق */
+        --gold: #4a74a4; /* كان #f7af3c → accent الأزرق */
+        --gold-hi: #3a77b0; /* للـ hover */
+        --ember: #c0705a; /* rose — للأزرار الحمراء */
+        --azure: #48576d; /* للـ hover الثانوي */
+        --jade: #2a7e6e; /* للأزرار الخضراء */
+
+        /* Light Mode surfaces */
+        --bg: #f5f8fc;
+        --surface: #ffffff;
+        --white: #ffffff;
+
+        /* حدود */
+        --border: rgba(74, 116, 164, 0.12);
+        --border-m: rgba(74, 116, 164, 0.2);
+
+        /* نصوص */
+        --ink-dim: #48576d;
+        --ink-faint: #7a9ab5;
+
+        /* متفرقات */
         --r: 6px;
         --ease: cubic-bezier(0.4, 0, 0.2, 1);
-        --sh-sm: 0 2px 10px rgba(42, 58, 77, 0.09);
-        --sh-md: 0 6px 24px rgba(42, 58, 77, 0.13);
-        --sh-lg: 0 14px 48px rgba(42, 58, 77, 0.2);
+        --sh-sm: 0 2px 10px rgba(34, 49, 71, 0.08);
+        --sh-md: 0 6px 24px rgba(34, 49, 71, 0.12);
+        --sh-lg: 0 14px 48px rgba(34, 49, 71, 0.16);
       }
       * {
         margin: 0;
@@ -47,43 +79,42 @@
         overflow: hidden;
       }
       body {
-        font-family: "Tajawal", sans-serif;
+        font-family: "PingARLT", "Tajawal", sans-serif;
         background: var(--bg);
-        color: var(--navy);
+        color: var(--color-primary);
       }
-/* ══ أضف ده في <style> في editor.html بعد .el .del-btn:hover { ... } ══ */
 
-/* زر نقل للركن ↗ */
-.el .mv-btn {
-  position: absolute;
-  top: -11px;
-  right: 18px;          /* بجانب زر الحذف */
-  width: 22px;
-  height: 22px;
-  background: #2A8A7E;
-  color: #fff;
-  border-radius: 4px;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 900;
-  cursor: pointer;
-  z-index: 20;
-  box-shadow: 0 2px 8px rgba(42,138,126,0.4);
-  transition: all 0.16s;
-  user-select: none;
-}
-.el.selected .mv-btn {
-  display: flex;
-}
-.el .mv-btn:hover {
-  background: #1a6b61;
-  transform: scale(1.12);
-}
+      /* ══ زر نقل للركن ↗ ══ */
+      .el .mv-btn {
+        position: absolute;
+        top: -11px;
+        right: 18px;
+        width: 22px;
+        height: 22px;
+        background: #2a8a7e;
+        color: #fff;
+        border-radius: 4px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 900;
+        cursor: pointer;
+        z-index: 20;
+        box-shadow: 0 2px 8px rgba(42, 138, 126, 0.4);
+        transition: all 0.16s;
+        user-select: none;
+      }
+      .el.selected .mv-btn {
+        display: flex;
+      }
+      .el .mv-btn:hover {
+        background: #1a6b61;
+        transform: scale(1.12);
+      }
+
       /* ══════════════════════════════════════
-   TOPBAR
-   — navy full + gold accent strip bottom
+   TOPBAR — أزرق داكن + شريط accent
 ══════════════════════════════════════ */
       #topbar {
         position: fixed;
@@ -92,8 +123,8 @@
         right: 0;
         z-index: 700;
         height: 56px;
-        background: var(--navy);
-        border-bottom: 3px solid var(--gold);
+        background: var(--color-primary-dark);
+        border-bottom: 3px solid var(--accent);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -118,7 +149,6 @@
 
       /* ══════════════════════════════════════
    MODE BAR
-   — segmented control look (مختلف كامل)
 ══════════════════════════════════════ */
       #modebar {
         position: fixed;
@@ -136,7 +166,6 @@
         gap: 4px;
         box-shadow: var(--sh-sm);
       }
-      /* الـ segment container */
       .mode-seg {
         display: flex;
         background: var(--bg);
@@ -151,7 +180,7 @@
         gap: 6px;
         padding: 5px 18px;
         border-radius: 5px;
-        font-family: "Tajawal", sans-serif;
+        font-family: "PingARLT", "Tajawal", sans-serif;
         font-size: 13px;
         font-weight: 700;
         cursor: pointer;
@@ -161,14 +190,13 @@
         transition: all 0.18s var(--ease);
       }
       .mode-btn:hover {
-        color: var(--navy);
+        color: var(--color-primary);
       }
       .mode-btn.active {
-        background: var(--navy);
-        color: var(--white);
+        background: var(--color-primary-dark);
+        color: #fff;
         box-shadow: var(--sh-sm);
       }
-      /* active gold underline indicator */
       .mode-btn.active::after {
         display: none;
       }
@@ -187,7 +215,6 @@
 
       /* ══════════════════════════════════════
    CANVAS ZONE
-   — dot-pattern background
 ══════════════════════════════════════ */
       #canvas-zone {
         flex: 1;
@@ -199,24 +226,22 @@
         overflow: auto;
         background-image: radial-gradient(
           circle,
-          rgba(42, 58, 77, 0.07) 1px,
+          rgba(74, 116, 164, 0.07) 1px,
           transparent 1px
         );
         background-size: 22px 22px;
       }
-#canvas {
+      #canvas {
         position: relative;
-        width: 100%;       /* هياخد عرض المكان اللي هو فيه بحد أقصى */
-        max-width: 420px;  /* عشان ميكبرش أوي في الشاشات الكبيرة */
-        /* height اتشالت عشان هنعتمد على aspect-ratio */
-        aspect-ratio: 1 / 1; /* ده الافتراضي وهيتغير من الجافاسكربت */
+        width: 100%;
+        max-width: 420px;
+        aspect-ratio: 1 / 1;
         border-radius: 14px;
         overflow: hidden;
         box-shadow: var(--sh-lg);
         flex-shrink: 0;
         background: #1a1a2e center/cover no-repeat;
-        /* gold glow frame */
-        outline: 3px solid rgba(247, 175, 60, 0.6);
+        outline: 3px solid rgba(74, 116, 164, 0.6);
         outline-offset: 4px;
       }
 
@@ -236,7 +261,7 @@
         content: "";
         position: absolute;
         inset: -5px;
-        border: 2px dashed var(--gold);
+        border: 2px dashed var(--accent);
         border-radius: var(--r);
         pointer-events: none;
         animation: sel-pulse 2s infinite;
@@ -244,14 +269,14 @@
       @keyframes sel-pulse {
         0%,
         100% {
-          border-color: rgba(247, 175, 60, 0.9);
+          border-color: rgba(74, 116, 164, 0.9);
         }
         50% {
-          border-color: rgba(247, 175, 60, 0.3);
+          border-color: rgba(74, 116, 164, 0.3);
         }
       }
       .el-text {
-        font-family: "Tajawal", sans-serif;
+        font-family: "PingARLT", "Tajawal", sans-serif;
         font-size: 26px;
         font-weight: 700;
         color: #fff;
@@ -273,8 +298,8 @@
         left: -8px;
         width: 16px;
         height: 16px;
-        background: var(--gold);
-        border: 2.5px solid var(--navy);
+        background: var(--accent);
+        border: 2.5px solid var(--color-primary-dark);
         border-radius: 3px;
         cursor: se-resize;
         z-index: 5;
@@ -300,27 +325,26 @@
         font-weight: 900;
         cursor: pointer;
         z-index: 20;
-        box-shadow: 0 2px 8px rgba(250, 98, 103, 0.4);
+        box-shadow: 0 2px 8px rgba(192, 112, 90, 0.4);
         transition: all 0.16s var(--ease);
       }
       .el.selected .del-btn {
         display: flex;
       }
       .el .del-btn:hover {
-        background: #d93a3f;
+        background: #a0503d;
         transform: scale(1.12) rotate(5deg);
       }
 
       /* ══════════════════════════════════════
    EXPORT BAR
-   — card style مختلف
 ══════════════════════════════════════ */
       #export-bar {
         width: 420px;
         background: var(--white);
         border-radius: 12px;
         border: 1.5px solid var(--border-m);
-        border-top: 3px solid var(--gold);
+        border-top: 3px solid var(--accent);
         padding: 12px;
         box-shadow: var(--sh-sm);
         display: flex;
@@ -332,7 +356,7 @@
         font-weight: 900;
         letter-spacing: 0.6px;
         text-transform: uppercase;
-        color: var(--gold);
+        color: var(--accent);
         margin-bottom: 2px;
       }
       #export-row1 {
@@ -354,7 +378,6 @@
 
       /* ══════════════════════════════════════
    SIDEBAR
-   — narrower, top-indicator tabs
 ══════════════════════════════════════ */
       #sidebar {
         width: 292px;
@@ -364,14 +387,14 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        box-shadow: -4px 0 16px rgba(42, 58, 77, 0.05);
+        box-shadow: -4px 0 16px rgba(34, 49, 71, 0.05);
       }
 
-      /* TABS — top indicator style */
+      /* TABS */
       #stabs {
         display: flex;
         border-bottom: 1px solid var(--border);
-        background: var(--navy);
+        background: var(--color-primary-dark);
         overflow-x: auto;
       }
       #stabs::-webkit-scrollbar {
@@ -390,7 +413,7 @@
         border: none;
         background: transparent;
         color: rgba(255, 255, 255, 0.4);
-        font-family: "Tajawal", sans-serif;
+        font-family: "PingARLT", "Tajawal", sans-serif;
         font-size: 9px;
         font-weight: 800;
         letter-spacing: 0.3px;
@@ -401,7 +424,6 @@
         width: 14px;
         height: 14px;
       }
-      /* gold bottom line */
       .stab::after {
         content: "";
         position: absolute;
@@ -409,7 +431,7 @@
         left: 25%;
         right: 25%;
         height: 2px;
-        background: var(--gold);
+        background: var(--accent);
         border-radius: 2px 2px 0 0;
         transform: scaleX(0);
         transition: transform 0.16s var(--ease);
@@ -420,7 +442,7 @@
       }
       .stab.on {
         color: #fff;
-        background: rgba(247, 175, 60, 0.12);
+        background: rgba(74, 116, 164, 0.18);
       }
       .stab.on::after {
         transform: scaleX(1);
@@ -456,7 +478,7 @@
         gap: 6px;
         padding: 9px 14px;
         border-radius: var(--r);
-        font-family: "Tajawal", sans-serif;
+        font-family: "PingARLT", "Tajawal", sans-serif;
         font-size: 13px;
         font-weight: 700;
         cursor: pointer;
@@ -466,7 +488,6 @@
         position: relative;
         overflow: hidden;
       }
-      /* shimmer on hover */
       .btn::before {
         content: "";
         position: absolute;
@@ -484,48 +505,44 @@
         transform: translateX(100%);
       }
 
-      /* navy CTA */
       .btn-black {
-        background: var(--navy);
+        background: var(--color-primary-dark);
         color: #fff;
         box-shadow: var(--sh-sm);
       }
       .btn-black:hover {
-        background: #1e2b3a;
+        background: var(--color-primary);
         transform: translateY(-1px);
         box-shadow: var(--sh-md);
       }
 
-      /* jade = download/share */
       .btn-green {
         background: var(--jade);
         color: #fff;
-        box-shadow: 0 3px 12px rgba(20, 164, 141, 0.25);
+        box-shadow: 0 3px 12px rgba(42, 126, 110, 0.25);
       }
       .btn-green:hover {
-        background: #108e7a;
+        background: #1f6b5e;
         transform: translateY(-1px);
       }
 
-      /* subtle secondary */
       .btn-gray {
         background: var(--surface);
-        color: var(--navy);
+        color: var(--color-primary);
         border: 1.5px solid var(--border-m);
       }
       .btn-gray:hover {
-        background: rgba(91, 192, 234, 0.12);
-        border-color: var(--azure);
+        background: rgba(74, 116, 164, 0.08);
+        border-color: var(--accent);
       }
 
-      /* danger */
       .btn-red {
-        background: rgba(250, 98, 103, 0.12);
+        background: rgba(192, 112, 90, 0.1);
         color: var(--ember);
-        border: 1.5px solid rgba(250, 98, 103, 0.25);
+        border: 1.5px solid rgba(192, 112, 90, 0.25);
       }
       .btn-red:hover {
-        background: rgba(250, 98, 103, 0.2);
+        background: rgba(192, 112, 90, 0.18);
         border-color: var(--ember);
       }
 
@@ -534,7 +551,7 @@
       }
 
       /* ══════════════════════════════════════
-   BOX — gold left border
+   BOX — accent left border
 ══════════════════════════════════════ */
       .box {
         background: var(--surface);
@@ -544,7 +561,7 @@
         flex-direction: column;
         gap: 9px;
         border: 1px solid var(--border);
-        border-right: 3px solid var(--gold);
+        border-right: 3px solid var(--accent);
       }
       .lbl {
         font-size: 10px;
@@ -570,22 +587,23 @@
         padding: 8px 10px;
         border-radius: var(--r);
         border: 1.5px solid var(--border-m);
-        background: var(--white);
-        font-family: "Tajawal", sans-serif;
+        background: var(--bg);
+        font-family: "PingARLT", "Tajawal", sans-serif;
         font-size: 13px;
         resize: none;
         outline: none;
         direction: rtl;
         line-height: 1.5;
-        color: var(--navy);
+        color: var(--color-primary);
         transition:
           border-color 0.15s,
           box-shadow 0.15s;
       }
       textarea.tinp:focus,
       input[type="text"].tinp:focus {
-        border-color: var(--gold);
-        box-shadow: 0 0 0 3px rgba(247, 175, 60, 0.18);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(74, 116, 164, 0.12);
+        background: var(--white);
       }
       select.sinp {
         width: 100%;
@@ -593,15 +611,15 @@
         border-radius: var(--r);
         border: 1.5px solid var(--border-m);
         background: var(--white);
-        font-family: "Tajawal", sans-serif;
+        font-family: "PingARLT", "Tajawal", sans-serif;
         font-size: 13px;
         outline: none;
         cursor: pointer;
-        color: var(--navy);
+        color: var(--color-primary);
         transition: border-color 0.15s;
       }
       select.sinp:focus {
-        border-color: var(--gold);
+        border-color: var(--accent);
       }
 
       /* ══════════════════════════════════════
@@ -619,16 +637,16 @@
       }
       .slrow input[type="range"] {
         flex: 1;
-        accent-color: var(--gold);
+        accent-color: var(--accent);
         cursor: pointer;
       }
       .slval {
         font-size: 11px;
         font-weight: 900;
-        color: var(--navy);
+        color: var(--color-primary);
         min-width: 34px;
         text-align: center;
-        background: rgba(247, 175, 60, 0.15);
+        background: rgba(74, 116, 164, 0.1);
         border-radius: 4px;
         padding: 1px 5px;
       }
@@ -646,7 +664,7 @@
         border-radius: var(--r);
         border: 1.5px solid var(--border-m);
         background: var(--white);
-        font-family: "Tajawal", sans-serif;
+        font-family: "PingARLT", "Tajawal", sans-serif;
         font-size: 11px;
         font-weight: 700;
         cursor: pointer;
@@ -657,18 +675,18 @@
         justify-content: center;
       }
       .gbtn:hover {
-        border-color: var(--azure);
-        color: var(--navy);
-        background: rgba(91, 192, 234, 0.1);
+        border-color: var(--accent);
+        color: var(--color-primary);
+        background: rgba(74, 116, 164, 0.08);
       }
       .gbtn.on {
-        background: var(--navy);
+        background: var(--accent);
         color: #fff;
-        border-color: var(--navy);
+        border-color: var(--accent);
       }
 
       /* ══════════════════════════════════════
-   COLOR SWATCHES — square not circle
+   COLOR SWATCHES
 ══════════════════════════════════════ */
       .cdots {
         display: flex;
@@ -687,9 +705,9 @@
       }
       .cdot:hover,
       .cdot.on {
-        border-color: var(--navy);
+        border-color: var(--color-primary);
         transform: scale(1.18);
-        box-shadow: 0 0 0 3px rgba(247, 175, 60, 0.25);
+        box-shadow: 0 0 0 3px rgba(74, 116, 164, 0.2);
       }
 
       /* ══════════════════════════════════════
@@ -715,7 +733,7 @@
         background: var(--surface);
       }
       .citem:hover {
-        border-color: var(--gold);
+        border-color: var(--accent);
         transform: scale(1.04) translateY(-1px);
         box-shadow: var(--sh-sm);
       }
@@ -757,7 +775,7 @@
         border-radius: var(--r);
         border: 1.5px dashed var(--border-m);
         background: var(--white);
-        font-family: "Tajawal", sans-serif;
+        font-family: "PingARLT", "Tajawal", sans-serif;
         font-size: 12px;
         font-weight: 700;
         cursor: pointer;
@@ -770,9 +788,9 @@
         transition: all 0.13s var(--ease);
       }
       .showmore:hover {
-        border-color: var(--gold);
-        color: var(--navy);
-        background: rgba(247, 175, 60, 0.1);
+        border-color: var(--accent);
+        color: var(--color-primary);
+        background: rgba(74, 116, 164, 0.06);
       }
       .showmore.vis {
         display: flex;
@@ -797,8 +815,8 @@
       }
       .bgthumb:hover,
       .bgthumb.on {
-        border-color: var(--gold);
-        box-shadow: 0 0 0 3px rgba(247, 175, 60, 0.3);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(74, 116, 164, 0.25);
         transform: scale(1.02);
       }
       .bgthumb img {
@@ -811,8 +829,8 @@
         position: absolute;
         top: 4px;
         right: 4px;
-        background: var(--gold);
-        color: var(--navy);
+        background: var(--accent);
+        color: #fff;
         padding: 2px 6px;
         border-radius: 3px;
         font-size: 8px;
@@ -832,7 +850,7 @@
         border-radius: 20px;
         border: 1.5px solid var(--border-m);
         background: var(--white);
-        font-family: "Tajawal", sans-serif;
+        font-family: "PingARLT", "Tajawal", sans-serif;
         font-size: 11px;
         font-weight: 700;
         cursor: pointer;
@@ -840,13 +858,13 @@
         transition: all 0.12s var(--ease);
       }
       .catbtn:hover {
-        border-color: var(--azure);
-        color: var(--navy);
+        border-color: var(--accent);
+        color: var(--color-primary);
       }
       .catbtn.on {
-        background: var(--navy);
+        background: var(--accent);
         color: #fff;
-        border-color: var(--navy);
+        border-color: var(--accent);
       }
 
       /* ══════════════════════════════════════
@@ -867,18 +885,18 @@
         border-radius: var(--r);
         border: 1.5px solid var(--border);
         background: var(--white);
-        font-family: "Tajawal", sans-serif;
+        font-family: "PingARLT", "Tajawal", sans-serif;
         font-size: 12px;
         font-weight: 600;
         cursor: pointer;
         text-align: right;
-        color: var(--navy);
+        color: var(--color-primary);
         transition: all 0.12s var(--ease);
         border-right: 3px solid transparent;
       }
       .ritem:hover {
-        border-right-color: var(--gold);
-        background: rgba(247, 175, 60, 0.08);
+        border-right-color: var(--accent);
+        background: rgba(74, 116, 164, 0.06);
       }
 
       /* ══════════════════════════════════════
@@ -900,9 +918,9 @@
         color: var(--ink-faint);
       }
       .uarea:hover {
-        border-color: var(--gold);
-        color: var(--navy);
-        background: rgba(247, 175, 60, 0.08);
+        border-color: var(--accent);
+        color: var(--color-primary);
+        background: rgba(74, 116, 164, 0.05);
         transform: translateY(-1px);
         box-shadow: var(--sh-sm);
       }
@@ -920,7 +938,7 @@
       }
 
       /* ══════════════════════════════════════
-   ALT VIEWS (جاهز / جماعي)
+   ALT VIEWS
 ══════════════════════════════════════ */
       .alt-view {
         position: fixed;
@@ -933,7 +951,7 @@
         background: var(--bg);
         background-image: radial-gradient(
           circle,
-          rgba(42, 58, 77, 0.05) 1px,
+          rgba(74, 116, 164, 0.05) 1px,
           transparent 1px
         );
         background-size: 22px 22px;
@@ -952,14 +970,13 @@
         }
       }
 
-      /* alt box — top gold strip */
       .alt-box {
         background: var(--white);
         border-radius: 14px;
         padding: 20px;
         box-shadow: var(--sh-sm);
         border: 1.5px solid var(--border);
-        border-top: 3px solid var(--gold);
+        border-top: 3px solid var(--accent);
       }
       .alt-box-title {
         font-size: 10px;
@@ -979,7 +996,7 @@
         background-position: center;
         box-shadow: var(--sh-lg);
         flex-shrink: 0;
-        outline: 3px solid var(--gold);
+        outline: 3px solid var(--accent);
         outline-offset: 3px;
       }
       .preview-text {
@@ -988,7 +1005,7 @@
         text-align: center;
         left: 0;
         transform: translateY(-50%);
-        font-family: "Tajawal", sans-serif;
+        font-family: "PingARLT", "Tajawal", sans-serif;
         font-weight: bold;
         text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
         padding: 0 12px;
@@ -997,13 +1014,12 @@
 
       /* ══════════════════════════════════════
    NOTIFICATION
-   — bottom-left, navy + gold strip
 ══════════════════════════════════════ */
       #notif {
         position: fixed;
         bottom: 24px;
         left: 24px;
-        background: var(--navy);
+        background: var(--color-primary-dark);
         color: #fff;
         padding: 11px 22px;
         border-radius: var(--r);
@@ -1015,7 +1031,7 @@
           opacity 0.22s,
           transform 0.22s var(--ease);
         pointer-events: none;
-        border-left: 3px solid var(--gold);
+        border-left: 3px solid var(--accent);
         box-shadow: var(--sh-md);
         transform: translateY(8px);
       }
@@ -1025,10 +1041,10 @@
       }
 
       /* ══════════════════════════════════════
-   FOOTER — inside editor (compact)
+   FOOTER
 ══════════════════════════════════════ */
       #editor-footer {
-        background: var(--navy);
+        background: var(--color-primary-dark);
         color: rgba(255, 255, 255, 0.4);
         font-size: 12px;
         font-weight: 600;
@@ -1036,7 +1052,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-top: 2px solid var(--gold);
+        border-top: 2px solid var(--accent);
         flex-wrap: wrap;
         gap: 10px;
       }
@@ -1096,7 +1112,7 @@
           height: auto;
           overflow: visible;
           border-left: none;
-          border-top: 2px solid var(--gold);
+          border-top: 2px solid var(--accent);
         }
         #editor-footer {
           display: none;
@@ -1125,9 +1141,9 @@
           class="btn btn-black"
           onclick="dlPNG()"
           style="
-            background: var(--gold);
-            color: var(--navy);
-            border-bottom: 2px solid #c88820;
+            background: var(--accent);
+            color: #fff;
+            border-bottom: 2px solid var(--color-primary);
           "
         >
           <i class="fa-solid fa-download" style="font-size: 12px"></i> تحميل
@@ -1159,7 +1175,6 @@
       <!-- CANVAS ZONE -->
       <div id="canvas-zone">
         <div id="canvas"></div>
-
         <!-- EXPORT BAR -->
         <div id="export-bar">
           <div id="export-label">تصدير البطاقة</div>
@@ -1257,13 +1272,25 @@
               <polyline points="21,15 16,10 5,21" /></svg
             >خلفية
           </button>
-          <button class="stab" data-tab="lyr" onclick="switchTab(this);_refreshLayers()">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-    <rect x="2" y="7" width="20" height="4" rx="1"/>
-    <rect x="2" y="13" width="20" height="4" rx="1"/>
-    <rect x="2" y="1"  width="20" height="4" rx="1"/>
-  </svg>طبقات
-</button>
+          <button
+            class="stab"
+            data-tab="lyr"
+            onclick="
+              switchTab(this);
+              _refreshLayers();
+            "
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <rect x="2" y="7" width="20" height="4" rx="1" />
+              <rect x="2" y="13" width="20" height="4" rx="1" />
+              <rect x="2" y="1" width="20" height="4" rx="1" /></svg
+            >طبقات
+          </button>
         </div>
 
         <!-- PANEL: FORMAT -->
@@ -1283,27 +1310,6 @@
               <button class="gbtn on" data-val="700">بولد</button>
               <button class="gbtn" data-val="900">أسود</button>
             </div>
-            <!-- <div class="lbl">محاذاة</div>
-        <div class="bgrp" data-grp="ta">
-          <button class="gbtn on" data-val="right">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <rect x="3" y="4" width="18" height="2"/><rect x="7" y="9" width="14" height="2"/>
-              <rect x="3" y="14" width="18" height="2"/><rect x="7" y="19" width="14" height="2"/>
-            </svg>
-          </button>
-          <button class="gbtn" data-val="center">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <rect x="3" y="4" width="18" height="2"/><rect x="6" y="9" width="12" height="2"/>
-              <rect x="3" y="14" width="18" height="2"/><rect x="6" y="19" width="12" height="2"/>
-            </svg>
-          </button>
-          <button class="gbtn" data-val="left">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <rect x="3" y="4" width="18" height="2"/><rect x="3" y="9" width="14" height="2"/>
-              <rect x="3" y="14" width="18" height="2"/><rect x="3" y="19" width="14" height="2"/>
-            </svg>
-          </button>
-        </div> -->
           </div>
           <div class="box">
             <div class="lbl">الحجم</div>
@@ -1368,28 +1374,28 @@
               ></div>
               <div
                 class="cdot"
-                style="background: #f7af3c"
-                data-color="#F7AF3C"
+                style="background: #4a74a4"
+                data-color="#4A74A4"
               ></div>
               <div
                 class="cdot"
-                style="background: #fa6267"
-                data-color="#FA6267"
+                style="background: #c0705a"
+                data-color="#C0705A"
               ></div>
               <div
                 class="cdot"
-                style="background: #5bc0ea"
-                data-color="#5BC0EA"
+                style="background: #48576d"
+                data-color="#48576D"
               ></div>
               <div
                 class="cdot"
-                style="background: #14a48d"
-                data-color="#14A48D"
+                style="background: #2a7e6e"
+                data-color="#2A7E6E"
               ></div>
               <div
                 class="cdot"
-                style="background: #2a3a4d"
-                data-color="#2A3A4D"
+                style="background: #223147"
+                data-color="#223147"
               ></div>
               <div
                 class="cdot"
@@ -1621,18 +1627,18 @@
               ></div>
               <div
                 class="cdot"
-                style="background: #f7af3c"
-                data-color="#F7AF3C"
+                style="background: #4a74a4"
+                data-color="#4A74A4"
               ></div>
               <div
                 class="cdot"
-                style="background: #5bc0ea"
-                data-color="#5BC0EA"
+                style="background: #48576d"
+                data-color="#48576D"
               ></div>
               <div
                 class="cdot"
-                style="background: #14a48d"
-                data-color="#14A48D"
+                style="background: #2a7e6e"
+                data-color="#2A7E6E"
               ></div>
               <div
                 class="cdot"
@@ -1740,13 +1746,11 @@
         </div>
       </div>
       <div class="spanel" id="panel-lyr"></div>
-
-      <!-- /sidebar -->
     </div>
     <!-- /app-shell -->
 
     <!-- ══════════ ALT VIEW: READY ══════════ -->
-<div id="view-ready" class="alt-view">
+    <div id="view-ready" class="alt-view">
       <div class="alt-container">
         <div class="alt-box">
           <div class="alt-box-title">تخصيص البطاقة السريعة</div>
@@ -1756,57 +1760,154 @@
           </div>
           <div class="box" style="margin-bottom: 12px">
             <div class="lbl">الاسم (النص الرئيسي)</div>
-            <input type="text" id="r-main" class="tinp" value="عائلة محمد" oninput="updateReady()" />
+            <input
+              type="text"
+              id="r-main"
+              class="tinp"
+              value="عائلة محمد"
+              oninput="updateReady()"
+            />
             <div class="slrow" style="margin-top: 8px">
               <span>حجم</span>
-              <input type="range" id="r-msize" min="20" max="80" value="48" oninput="updateReady()" />
+              <input
+                type="range"
+                id="r-msize"
+                min="20"
+                max="80"
+                value="48"
+                oninput="updateReady()"
+              />
               <span class="slval" id="vl-rms">48</span>
             </div>
             <div class="slrow">
               <span>موضع</span>
-              <input type="range" id="r-mpos" min="10" max="90" value="40" oninput="updateReady()" />
+              <input
+                type="range"
+                id="r-mpos"
+                min="10"
+                max="90"
+                value="40"
+                oninput="updateReady()"
+              />
               <span class="slval" id="vl-rmp">40%</span>
             </div>
           </div>
           <div class="box" style="margin-bottom: 12px">
             <div class="lbl">المرسل (النص الفرعي)</div>
-            <input type="text" id="r-sub" class="tinp" value="محبكم أحمد" oninput="updateReady()" />
+            <input
+              type="text"
+              id="r-sub"
+              class="tinp"
+              value="محبكم أحمد"
+              oninput="updateReady()"
+            />
             <div class="slrow" style="margin-top: 8px">
               <span>حجم</span>
-              <input type="range" id="r-ssize" min="14" max="50" value="24" oninput="updateReady()" />
+              <input
+                type="range"
+                id="r-ssize"
+                min="14"
+                max="50"
+                value="24"
+                oninput="updateReady()"
+              />
               <span class="slval" id="vl-rss">24</span>
             </div>
             <div class="slrow">
               <span>موضع</span>
-              <input type="range" id="r-spos" min="10" max="90" value="78" oninput="updateReady()" />
+              <input
+                type="range"
+                id="r-spos"
+                min="10"
+                max="90"
+                value="78"
+                oninput="updateReady()"
+              />
               <span class="slval" id="vl-rsp">78%</span>
             </div>
           </div>
           <div class="box">
             <div class="lbl">الخط واللون</div>
-            <div style="display: flex; gap: 10px; align-items: center; margin-top: 5px;">
-              <select class="sinp" id="r-font" onchange="updateReady()" style="flex: 1">
+            <div
+              style="
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                margin-top: 5px;
+              "
+            >
+              <select
+                class="sinp"
+                id="r-font"
+                onchange="updateReady()"
+                style="flex: 1"
+              >
                 <option value="Tajawal">Tajawal</option>
                 <option value="Cairo">Cairo</option>
                 <option value="Amiri">Amiri</option>
               </select>
-              <input type="color" id="r-color" value="#ffffff" oninput="updateReady()"
-                style="width: 34px; height: 34px; border-radius: 6px; border: 1.5px solid var(--border-m); cursor: pointer; padding: 2px;" />
+              <input
+                type="color"
+                id="r-color"
+                value="#ffffff"
+                oninput="updateReady()"
+                style="
+                  width: 34px;
+                  height: 34px;
+                  border-radius: 6px;
+                  border: 1.5px solid var(--border-m);
+                  cursor: pointer;
+                  padding: 2px;
+                "
+              />
             </div>
           </div>
         </div>
-        
-        <div class="alt-box" style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+        <div
+          class="alt-box"
+          style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+          "
+        >
           <div class="alt-box-title" style="width: 100%">المعاينة المباشرة</div>
-          <div id="ready-canvas" class="preview-window" style="background-image: none">
-            <div id="r-text-main" class="preview-text" style="top: 40%; font-size: 48px; color: #fff; font-family: Tajawal;">
+          <div
+            id="ready-canvas"
+            class="preview-window"
+            style="background-image: none"
+          >
+            <div
+              id="r-text-main"
+              class="preview-text"
+              style="
+                top: 40%;
+                font-size: 48px;
+                color: #fff;
+                font-family: Tajawal;
+              "
+            >
               عائلة محمد
             </div>
-            <div id="r-text-sub" class="preview-text" style="top: 78%; font-size: 24px; color: #fff; font-family: Tajawal;">
+            <div
+              id="r-text-sub"
+              class="preview-text"
+              style="
+                top: 78%;
+                font-size: 24px;
+                color: #fff;
+                font-family: Tajawal;
+              "
+            >
               محبكم أحمد
             </div>
           </div>
-          <button class="btn btn-green bfull" style="padding: 13px; font-size: 15px" onclick="dlReady()">
+          <button
+            class="btn btn-green bfull"
+            style="padding: 13px; font-size: 15px"
+            onclick="dlReady()"
+          >
             <i class="fa-solid fa-download"></i> تحميل البطاقة
           </button>
           <button class="btn btn-gray bfull" onclick="shareReadyWA()">
@@ -1816,61 +1917,6 @@
       </div>
     </div>
 
-    <div id="view-group" class="alt-view">
-      <div class="alt-container">
-        <div class="alt-box">
-          <div class="alt-box-title">نظام التهنئة الجماعية</div>
-          <div class="box" style="margin-bottom: 12px">
-            <div class="lbl">اختر الخلفية</div>
-            <div class="bggrid" id="batch-bg-grid"></div>
-          </div>
-          <div class="box" style="margin-bottom: 12px">
-            <div class="lbl">قائمة الأسماء (اسم في كل سطر)</div>
-            <textarea id="b-names" class="tinp" rows="7" placeholder="محمد علي&#10;عائلة السعيد&#10;أحمد خالد&#10;سارة محمود" oninput="updateBatch()"></textarea>
-            <div style="font-size: 11px; color: var(--ink-faint); text-align: right;" id="b-count">
-              0 أسماء
-            </div>
-          </div>
-          <div class="box">
-            <div class="lbl">تنسيق الأسماء</div>
-            <div class="slrow" style="margin-top: 5px">
-              <span>حجم</span>
-              <input type="range" id="b-size" min="20" max="80" value="44" oninput="updateBatch()" />
-              <span class="slval" id="vl-bs">44</span>
-            </div>
-            <div class="slrow">
-              <span>موضع</span>
-              <input type="range" id="b-pos" min="10" max="90" value="50" oninput="updateBatch()" />
-              <span class="slval" id="vl-bp">50%</span>
-            </div>
-            <div style="display: flex; gap: 10px; align-items: center; margin-top: 8px;">
-              <select class="sinp" id="b-font" onchange="updateBatch()" style="flex: 1">
-                <option value="Tajawal">Tajawal</option>
-                <option value="Cairo">Cairo</option>
-                <option value="Amiri">Amiri</option>
-              </select>
-              <input type="color" id="b-color" value="#F7AF3C" oninput="updateBatch()"
-                style="width: 34px; height: 34px; border-radius: 6px; border: 1.5px solid var(--border-m); cursor: pointer; padding: 2px;" />
-            </div>
-          </div>
-        </div>
-        
-        <div class="alt-box" style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
-          <div class="alt-box-title" style="width: 100%">معاينة + تحميل</div>
-          <div id="batch-canvas" class="preview-window" style="background-image: none">
-            <div id="b-text-name" class="preview-text" style="top: 50%; font-size: 44px; color: #f7af3c; font-family: Tajawal;">
-              الاسم يظهر هنا
-            </div>
-          </div>
-          <button class="btn btn-black bfull" style="padding: 13px; font-size: 15px" id="btn-batch" onclick="dlBatchZip()">
-            <i class="fa-solid fa-box-archive"></i> إنشاء وتحميل ملف ZIP
-          </button>
-          <p style="font-size: 11px; color: var(--ink-faint); text-align: center;">
-            سيتم إنشاء بطاقة منفصلة لكل اسم
-          </p>
-        </div>
-      </div>
-    </div>
     <!-- ══════════ ALT VIEW: GROUP ══════════ -->
     <div id="view-group" class="alt-view">
       <div class="alt-container">
@@ -1947,7 +1993,7 @@
               <input
                 type="color"
                 id="b-color"
-                value="#F7AF3C"
+                value="#4a74a4"
                 oninput="updateBatch()"
                 style="
                   width: 34px;
@@ -1971,14 +2017,18 @@
           "
         >
           <div class="alt-box-title" style="width: 100%">معاينة + تحميل</div>
-        <div id="ready-canvas" class="preview-window" style="background-image: none">
+          <div
+            id="batch-canvas"
+            class="preview-window"
+            style="background-image: none"
+          >
             <div
               id="b-text-name"
               class="preview-text"
               style="
                 top: 50%;
                 font-size: 44px;
-                color: #f7af3c;
+                color: #4a74a4;
                 font-family: Tajawal;
               "
             >
@@ -2027,6 +2077,5 @@
     <script src="/js/supabase-config.js"></script>
     <script src="js/editor.js"></script>
     <script src="js/Editorauth.js"></script>
-    <!-- ← أضف هذا السطر -->
   </body>
 </html>

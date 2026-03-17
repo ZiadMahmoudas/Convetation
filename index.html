@@ -6,9 +6,64 @@
 <title>مكتبة المعلمين — بطاقات العيد</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<style>
+  @font-face {
+    font-family: 'PingARLT';
+    src: url('/fonts/PingARLT.woff2') format('woff2'),
+         url('/fonts/PingARLT.woff')  format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  :root {
+    --font-main:             'PingARLT', sans-serif;
+    --color-primary:         #223147;
+    --color-primary-dark:    #000b21;
+    --color-primary-light:   #48576d;
+    --color-primary-reverse: #eefdff;
+    --dark-bg-main:          #4a74a4;
+    --dark-text-main:        #f2f2f2;
+    --dark-text-sec:         #fcfcfc;
+    --dark-grey:             #3a77b0;
+    --text-btn:              #f7f7f7;
+    --bg-color:              #ffffff;
+    --header-bg:             #ffffff;
+    --menu-bg:               #ffffff;
+    --footer-bg:             #ffffff;
+    --gold:    #4a74a4;
+    --gold2:   #3a77b0;
+    --gold3:   #eefdff;
+    --teal:    #48576d;
+    --rose:    #c0705a;
+    --bg:      var(--color-primary-dark);
+    --bg2:     var(--color-primary);
+    --bg3:     var(--color-primary-light);
+    --border:  rgba(74, 116, 164, 0.15);
+    --border2: rgba(74, 116, 164, 0.28);
+    --text:    var(--dark-text-main);
+    --muted:   rgba(242, 242, 242, 0.55);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body, button, input, select, textarea {
+    font-family: var(--font-main) !important;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+</style>
+
 <link rel="stylesheet" href="css/index.css">
+
+
 </head>
 <body>
 
@@ -16,9 +71,9 @@
 
 <!-- NAVBAR -->
 <nav id="nav">
-    <a href="index.html" class="brand-name">
-      <img src="images/logo.webp" alt="">
-    </a>
+  <a href="index.html" class="brand-name">
+    <img src="images/logo.webp" alt="">
+  </a>
   <div class="nav-links">
     <a href="#" class="act">الرئيسية</a>
     <a href="#how">كيف تعمل</a>
@@ -29,14 +84,12 @@
     <a href="/editor.html" class="nav-cta">
       <i class="fa-solid fa-pen-nib"></i> ابدأ التصميم
     </a>
-<!-- AUTH BUTTON -->
-<div id="nav-auth-area">
-  <!-- الافتراضي: زرار تسجيل الدخول -->
-  <a href="/login.html" class="nav-cta1" id="btn-login-nav">
-    <i class="fa-solid fa-user-plus"></i>
-    <span>تسجيل الدخول</span>
-  </a>
-</div>
+    <div id="nav-auth-area">
+      <a href="/login.html" class="nav-cta1" id="btn-login-nav">
+        <i class="fa-solid fa-user-plus"></i>
+        <span>تسجيل الدخول</span>
+      </a>
+    </div>
     <button class="nav-ham" id="hamBtn"><i class="fa-solid fa-bars"></i></button>
   </div>
 </nav>
@@ -51,76 +104,48 @@
 
 <!-- ══════════ HERO ══════════ -->
 <section id="hero">
-
-  <!-- TEXT SIDE -->
   <div class="hl">
     <div class="eid-label ai">
       <span class="el-dot"></span>
       <span>عيد الفطر ١٤٤٧— قوالب جاهزة</span>
     </div>
-
     <h1 class="hero-display ai" style="transition-delay:.07s">
-      بطاقاتك<br/>
-      <em>تتحدث</em><br/>
-      عنك
+      بطاقاتك<br/><em>تتحدث</em><br/>عنك
     </h1>
-
     <p class="hero-sub-heading ai" style="transition-delay:.13s">مكتبة المعلمين · استوديو البطاقات</p>
-
     <p class="hero-desc ai" style="transition-delay:.19s">
       اختر قالباً من مكتبتنا، خصّصه بنصوصك وصورك، ثم حمّله بجودة طباعة عالية أو أرسله عبر واتساب — في دقيقتين وبدون تسجيل.
     </p>
-
     <div class="hero-actions ai" style="transition-delay:.25s">
       <a href="/editor.html" class="ha-primary">
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
-        ابدأ التصميم مجاناً
+        <i class="fa-solid fa-wand-magic-sparkles"></i> ابدأ التصميم مجاناً
       </a>
       <a href="#how" class="ha-sec">
-        <i class="fa-solid fa-circle-play"></i>
-        كيف يعمل الموقع؟
+        <i class="fa-solid fa-circle-play"></i> كيف يعمل الموقع؟
       </a>
     </div>
-
     <div class="hero-nums ai" style="transition-delay:.31s">
-      <div>
-        <div class="hnum-n">+٥٠,٠٠٠</div>
-        <div class="hnum-l">بطاقة تم تصميمها</div>
-      </div>
-      <div>
-        <div class="hnum-n">+٢٠</div>
-        <div class="hnum-l">قالب احترافي</div>
-      </div>
-      <div>
-        <div class="hnum-n">٣</div>
-        <div class="hnum-l">خطوط عربية</div>
-      </div>
-      <!-- <div>
-        <div class="hnum-n">صفر</div>
-        <div class="hnum-l">تسجيل مطلوب</div>
-      </div> -->
+      <div><div class="hnum-n">+٥٠,٠٠٠</div><div class="hnum-l">بطاقة تم تصميمها</div></div>
+      <div><div class="hnum-n">+٢٠</div><div class="hnum-l">قالب احترافي</div></div>
+      <div><div class="hnum-n">٣</div><div class="hnum-l">خطوط عربية</div></div>
     </div>
   </div>
-
-  <!-- MOSAIC SIDE -->
-<div class="hr">
+  <div class="hr">
     <div class="hero-showcase">
       <div class="hero-card c1 ai" style="transition-delay:.3s">
-        <img src="images/1.png" alt="قالب ١" onerror="this.src='https://via.placeholder.com/260x360/1a2840/D4A843?text=Template+1'"/>
+        <img src="images/1.png" alt="قالب ١" onerror="this.src='https://via.placeholder.com/260x360/1a2840/4a74a4?text=Template+1'"/>
       </div>
       <div class="hero-card c2 ai" style="transition-delay:.4s">
-        <img src="images/11.png" alt="قالب ٢" onerror="this.src='https://via.placeholder.com/260x360/201520/c0705a?text=Template+2'"/>
+        <img src="images/11.png" alt="قالب ٢" onerror="this.src='https://via.placeholder.com/260x360/000b21/3a77b0?text=Template+2'"/>
       </div>
       <div class="hero-card c3 ai" style="transition-delay:.5s">
-        <img src="images/2.png" alt="قالب ٣" onerror="this.src='https://via.placeholder.com/260x360/1a2030/D4A843?text=Main+Template'"/>
+        <img src="images/2.png" alt="قالب ٣" onerror="this.src='https://via.placeholder.com/260x360/223147/4a74a4?text=Main+Template'"/>
       </div>
     </div>
-
     <a href="/editor.html" class="mosaic-cta ai" style="transition-delay:.6s">
       <i class="fa-solid fa-pen-nib"></i> خصّص القالب الرئيسي
     </a>
   </div>
-
 </section>
 
 <!-- TICKER -->
@@ -145,15 +170,14 @@
   </div>
 </div>
 
-<!-- ══════════ HOW IT WORKS ══════════ -->
+<!-- HOW IT WORKS -->
 <section id="how" class="sec alt">
   <div class="container">
     <div class="ai" style="text-align:center">
       <div class="sec-eyebrow" style="justify-content:center">كيف تعمل المنصة</div>
       <h2 class="sec-title">ثلاث خطوات <em>وبطاقتك جاهزة</em></h2>
-      <p class="sec-body" style="margin:12px auto 0; text-align:center">لا تحتاج أي خبرة في التصميم — الموقع يوجهك في كل خطوة</p>
+      <p class="sec-body" style="margin:12px auto 0;text-align:center">لا تحتاج أي خبرة في التصميم — الموقع يوجهك في كل خطوة</p>
     </div>
-
     <div class="how-track ai" style="transition-delay:.12s">
       <div class="how-cell">
         <div class="how-num">١</div>
@@ -177,7 +201,7 @@
   </div>
 </section>
 
-<!-- ══════════ TEMPLATES ══════════ -->
+<!-- ══════════ TEMPLATES — CAROUSEL ══════════ -->
 <section id="templates" class="sec">
   <div class="container">
     <div class="tpl-header ai">
@@ -190,34 +214,38 @@
         استعرض كل القوالب <i class="fa-solid fa-arrow-left fa-sm"></i>
       </a>
     </div>
-    <!-- يتملأ ديناميك من Supabase -->
-    <div class="tpl-grid" id="tpl-grid-dynamic"></div>
-    <!-- Pagination — تظهر فقط لو المختارة أكتر من 3 -->
-    <div id="tpl-pagination"></div>
+
+    <!-- CAROUSEL CONTAINER -->
+    <div class="tpl-carousel-wrap" id="tplCarouselWrap">
+      <div class="tpl-carousel-track" id="tplTrack">
+        <!-- skeletons أثناء التحميل -->
+        <div class="tpl-c-skel"><div class="tpl-c-skel-img"></div><div class="tpl-c-skel-foot"><div class="tpl-c-skel-line" style="flex:1"></div><div class="tpl-c-skel-line" style="width:30px"></div></div></div>
+        <div class="tpl-c-skel"><div class="tpl-c-skel-img"></div><div class="tpl-c-skel-foot"><div class="tpl-c-skel-line" style="flex:1"></div><div class="tpl-c-skel-line" style="width:30px"></div></div></div>
+        <div class="tpl-c-skel"><div class="tpl-c-skel-img"></div><div class="tpl-c-skel-foot"><div class="tpl-c-skel-line" style="flex:1"></div><div class="tpl-c-skel-line" style="width:30px"></div></div></div>
+      </div>
+    </div>
+
+    <!-- شريط التقدم -->
+    <div class="tpl-progress"><div class="tpl-progress-bar" id="tplProgressBar"></div></div>
+
+    <!-- الـ dots + الأسهم -->
+    <div class="tpl-carousel-nav">
+      <button class="tpl-nav-btn" id="tplPrev" title="السابق">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+      <div class="tpl-carousel-dots" id="tplDots"></div>
+      <button class="tpl-nav-btn" id="tplNext" title="التالي">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+    </div>
+
+    <!-- الـ grid القديم مخفي — ضروري عشان index.js يشتغل -->
+    <div class="tpl-grid" id="tpl-grid-dynamic" style="display:none"></div>
+    <div id="tpl-pagination" style="display:none"></div>
   </div>
 </section>
 
-<!-- ══════════ OCCASIONS ══════════ -->
-<!-- <section id="occasions" class="sec alt">
-  <div class="container">
-    <div class="ai">
-      <div class="sec-eyebrow">المناسبات</div>
-      <h2 class="sec-title">بطاقة لكل <em>مناسبة</em></h2>
-    </div>
-    <div class="occ-scroll ai" style="transition-delay:.1s">
-      <a href="/editor.html" class="occ-chip">
-        <div class="chip-icon" style="background:rgba(212,168,67,.1);color:var(--gold)"><i class="fa-solid fa-star-and-crescent"></i></div>
-        عيد الفطر
-      </a>
-      <a href="/editor.html" class="occ-chip">
-        <div class="chip-icon" style="background:rgba(212,168,67,.1);color:var(--gold)"><i class="fa-solid fa-moon"></i></div>
-        عيد الأضحى
-      </a>
-    </div>
-  </div>
-</section> -->
-
-<!-- ══════════ FEATURES ══════════ -->
+<!-- FEATURES -->
 <section id="features" class="sec">
   <div class="container">
     <div class="feat-layout">
@@ -234,25 +262,24 @@
           <span class="fpill">متجاوب مع الجوال</span>
         </div>
       </div>
-
       <div class="feat-right ai" style="transition-delay:.12s">
         <div class="fcard gc1">
-          <div class="fcard-ic" style="background:rgba(212,168,67,.08); color:var(--gold)"><i class="fa-solid fa-layer-group"></i></div>
+          <div class="fcard-ic" style="background:rgba(74,116,164,.08);color:var(--dark-bg-main)"><i class="fa-solid fa-layer-group"></i></div>
           <h4>قوالب احترافية</h4>
           <p>أكثر من ٢٠ قالب مصمم بعناية لكل المناسبات العربية من العيد إلى الزفاف والدعوات</p>
         </div>
         <div class="fcard gc2">
-          <div class="fcard-ic" style="background:rgba(42,138,126,.1); color:var(--teal)"><i class="fa-solid fa-sliders"></i></div>
+          <div class="fcard-ic" style="background:rgba(72,87,109,.1);color:var(--color-primary-light)"><i class="fa-solid fa-sliders"></i></div>
           <h4>تخصيص كامل</h4>
           <p>غيّر كل شيء: النص، الاسم، الصورة، الألوان، والخط — بمحرر مرئي بسيط بدون أي خبرة</p>
         </div>
         <div class="fcard gc3">
-          <div class="fcard-ic" style="background:rgba(192,112,90,.1); color:var(--rose)"><i class="fa-solid fa-file-arrow-down"></i></div>
+          <div class="fcard-ic" style="background:rgba(34,49,71,.2);color:var(--dark-text-sec)"><i class="fa-solid fa-file-arrow-down"></i></div>
           <h4>جودة طباعة عالية</h4>
           <p>تصدير PNG و PDF بدقة عالية جاهزة للطباعة أو النشر على السوشيال ميديا</p>
         </div>
         <div class="fcard gc4">
-          <div class="fcard-ic" style="background:rgba(212,168,67,.08); color:var(--gold2)"><i class="fa-brands fa-whatsapp"></i></div>
+          <div class="fcard-ic" style="background:rgba(74,116,164,.08);color:var(--gold2)"><i class="fa-brands fa-whatsapp"></i></div>
           <h4>مشاركة فورية</h4>
           <p>أرسل بطاقتك لأهلك وأصدقائك مباشرة عبر واتساب بضغطة واحدة بدون تحميل</p>
         </div>
@@ -261,7 +288,7 @@
   </div>
 </section>
 
-<!-- ══════════ CTA ══════════ -->
+<!-- CTA -->
 <section id="cta">
   <div class="container">
     <div class="cta-inner ai">
@@ -270,15 +297,14 @@
       <h2>صمّم بطاقتك<br/><em>في دقيقتين</em></h2>
       <p>لا تسجيل، لا اشتراك، لا تعقيد<br/>اختر قالباً وابدأ التخصيص الآن</p>
       <a href="/editor.html" class="cta-main">
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
-        افتح محرر البطاقات مجاناً
+        <i class="fa-solid fa-wand-magic-sparkles"></i> افتح محرر البطاقات مجاناً
       </a>
       <p class="cta-note">أكثر من ٥٠,٠٠٠ بطاقة تم تصميمها حتى الآن ✦</p>
     </div>
   </div>
 </section>
 
-<!-- ══════════ PARTNERS ══════════ -->
+<!-- PARTNERS -->
 <section id="partners">
   <div class="container">
     <div class="ai">
@@ -287,7 +313,7 @@
     </div>
     <div class="partners-grid ai" style="transition-delay:.1s">
       <a href="https://sabir5-1-1.com/" target="_blank" rel="noopener" class="pcard">
-        <div class="pcard-ic" style="background:rgba(42,138,126,.1); color:var(--teal)">
+        <div class="pcard-ic" style="background:rgba(72,87,109,.1);color:var(--color-primary-light)">
           <i class="fa-solid fa-globe"></i>
         </div>
         <div>
@@ -297,7 +323,7 @@
         </div>
       </a>
       <a href="https://sabir511.com/" target="_blank" rel="noopener" class="pcard">
-        <div class="pcard-ic" style="background:rgba(192,112,90,.1); color:var(--rose)">
+        <div class="pcard-ic" style="background:rgba(34,49,71,.2);color:var(--dark-text-sec)">
           <i class="fa-solid fa-flask"></i>
         </div>
         <div>
@@ -310,7 +336,7 @@
   </div>
 </section>
 
-<!-- ══════════ FOOTER ══════════ -->
+<!-- FOOTER -->
 <footer id="footer">
   <div class="container">
     <div class="footer-top">
@@ -348,10 +374,13 @@
     </div>
   </div>
 </footer>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="/js/supabase-config.js"></script>
-<script src="js/index.js">
+<script src="js/index.js"></script>
 
-</script>
+<!-- ══ CAROUSEL ENGINE ══ -->
+
+
 </body>
 </html>

@@ -62,10 +62,10 @@ document.querySelectorAll('#hero .ai').forEach(el => {
 });
 
 /* ── Navbar scroll effect ── */
-window.addEventListener('scroll', () => {
-  document.getElementById('nav').style.background =
-    window.scrollY > 30 ? 'rgba(13,17,23,.97)' : 'rgba(13,17,23,.85)';
-});
+// window.addEventListener('scroll', () => {
+//   document.getElementById('nav').style.background =
+//     window.scrollY > 30 ? 'rgba(13,17,23,.97)' : 'rgba(13,17,23,.85)';
+// });
 
 
 (async () => {
@@ -491,4 +491,185 @@ loadFeaturedTemplates();
         e.preventDefault();
     });
 
+})();
+
+
+(function() {
+  'use strict';
+
+  /* ── حالة الكاروسيل ── */
+  const VISIBLE      = 3;   // كاردات ظاهرة
+  const AUTOPLAY_MS  = 5000;
+  let _items         = [];  // كل البيانات من Supabase
+  let _curIdx        = 0;   // index أول كارد ظاهر
+  let _autoTimer     = null;
+  let _progTimer     = null;
+  let _paused        = false;
+
+  const track    = document.getElementById('tplTrack');
+  const dotsWrap = document.getElementById('tplDots');
+  const prevBtn  = document.getElementById('tplPrev');
+  const nextBtn  = document.getElementById('tplNext');
+  const progBar  = document.getElementById('tplProgressBar');
+  const wrap     = document.getElementById('tplCarouselWrap');
+
+  /* ── بناء كارد ── */
+  function buildCard(t) {
+    const isPrem = t.isPremium;
+    const tagHtml = isPrem
+      ? `<div class="tpl-c-tag premium"><i class="fa-solid fa-crown"></i> حصري</div>`
+      : `<div class="tpl-c-tag free"><i class="fa-solid fa-gift"></i> مجاني</div>`;
+
+    const div = document.createElement('div');
+    div.className = 'tpl-c-card';
+    div.onclick = () => window.location = '/editor.html';
+    div.innerHTML = `
+      <div class="tpl-c-img">
+        ${t.img
+          ? `<img src="${t.img}" alt="${t.name}" loading="lazy"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+             <div class="tpl-c-placeholder" style="display:none">
+               <i class="fa-solid fa-image"></i><span>صورة القالب</span>
+             </div>`
+          : `<div class="tpl-c-placeholder">
+               <i class="fa-solid fa-image"></i><span>صورة القالب</span>
+             </div>`
+        }
+        ${tagHtml}
+        <div class="tpl-c-overlay">
+          <a href="/editor.html" class="tpl-c-ov-btn" onclick="event.stopPropagation()">
+            <i class="fa-solid fa-pen-nib"></i> ابدأ التصميم
+          </a>
+        </div>
+      </div>
+      <div class="tpl-c-foot">
+        <span class="tpl-c-name">${t.name}</span>
+        <a href="/editor.html" class="tpl-c-btn" onclick="event.stopPropagation()">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+      </div>`;
+    return div;
+  }
+
+  /* ── رسم الـ dots ── */
+  function renderDots() {
+    const pages = _items.length - VISIBLE + 1;
+    dotsWrap.innerHTML = '';
+    for (let i = 0; i < pages; i++) {
+      const d = document.createElement('div');
+      d.className = 'tpl-dot' + (i === _curIdx ? ' on' : '');
+      d.onclick = () => goTo(i);
+      dotsWrap.appendChild(d);
+    }
+  }
+
+  /* ── تحريك الـ track ── */
+  function goTo(idx, resetProgress = true) {
+    const max = Math.max(0, _items.length - VISIBLE);
+    _curIdx = Math.max(0, Math.min(idx, max));
+
+    /* عرض كارد واحد = 100% ÷ VISIBLE */
+    const cardW = track.parentElement.offsetWidth / VISIBLE;
+    /* RTL: نحرك للأمام (positive) */
+    track.style.transform = `translateX(${_curIdx * (cardW + 22)}px)`;
+
+    renderDots();
+    prevBtn.disabled = _curIdx === 0;
+    nextBtn.disabled = _curIdx >= max;
+
+    if (resetProgress) resetProg();
+  }
+
+  /* ── شريط التقدم ── */
+  function resetProg() {
+    progBar.classList.remove('running');
+    progBar.style.transition = 'none';
+    progBar.style.width = '0%';
+    /* force reflow */
+    void progBar.offsetWidth;
+    progBar.style.transition = `width ${AUTOPLAY_MS}ms linear`;
+    progBar.classList.add('running');
+  }
+
+  /* ── autoplay ── */
+  function startAuto() {
+    stopAuto();
+    _autoTimer = setInterval(() => {
+      if (_paused) return;
+      const max = Math.max(0, _items.length - VISIBLE);
+      goTo(_curIdx < max ? _curIdx + 1 : 0);
+    }, AUTOPLAY_MS);
+    resetProg();
+  }
+
+  function stopAuto() {
+    clearInterval(_autoTimer);
+    progBar.classList.remove('running');
+  }
+
+  /* pause on hover */
+  wrap.addEventListener('mouseenter', () => { _paused = true; progBar.style.animationPlayState = 'paused'; });
+  wrap.addEventListener('mouseleave', () => { _paused = false; progBar.style.animationPlayState = 'running'; });
+
+  /* أزرار */
+  prevBtn.addEventListener('click', () => goTo(_curIdx - 1));
+  nextBtn.addEventListener('click', () => goTo(_curIdx + 1));
+
+  /* swipe على الموبايل */
+  let _tx = 0;
+  wrap.addEventListener('touchstart', e => { _tx = e.touches[0].clientX; }, { passive: true });
+  wrap.addEventListener('touchend',   e => {
+    const diff = _tx - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) goTo(diff > 0 ? _curIdx + 1 : _curIdx - 1);
+  });
+
+  /* ── جلب البيانات ── */
+  async function loadCarousel() {
+    try {
+      const [calRes, bgRes] = await Promise.all([
+        sb.from('calligraphy')
+          .select('id,name,public_url,is_premium,sort_order,created_at')
+          .eq('is_active', true)
+          .order('sort_order', { ascending: true })
+          .order('created_at',  { ascending: false }),
+        sb.from('backgrounds')
+          .select('id,name,public_url,is_premium,sort_order,created_at')
+          .eq('is_active', true)
+          .order('sort_order', { ascending: true })
+          .order('created_at',  { ascending: false }),
+      ]);
+
+      _items = [
+        ...(calRes.data || []).map(c => ({ id: 'cal_'+c.id, name: c.name, img: c.public_url, isPremium: !!c.is_premium, type: 'calligraphy' })),
+        ...(bgRes.data  || []).map(b => ({ id: 'bg_'+b.id,  name: b.name, img: b.public_url, isPremium: !!b.is_premium, type: 'background'  })),
+      ];
+
+      if (!_items.length) { track.innerHTML = '<p style="color:var(--muted);padding:40px">لا توجد قوالب حالياً</p>'; return; }
+
+      /* بناء الكاردات */
+      track.innerHTML = '';
+      _items.forEach(t => track.appendChild(buildCard(t)));
+
+      goTo(0, false);
+      startAuto();
+    } catch (e) {
+      console.error(e);
+      track.innerHTML = '<p style="color:var(--muted);padding:40px">تعذّر تحميل القوالب</p>';
+    }
+  }
+
+  /* ابدأ بعد تحميل Supabase */
+  if (typeof sb !== 'undefined') {
+    loadCarousel();
+  } else {
+    /* انتظر حتى يتحمل supabase-config.js */
+    document.addEventListener('DOMContentLoaded', () => {
+      const wait = setInterval(() => {
+        if (typeof sb !== 'undefined') { clearInterval(wait); loadCarousel(); }
+      }, 80);
+    });
+  }
+
+  /* resize: إعادة حساب الـ transform */
+  window.addEventListener('resize', () => goTo(_curIdx, false));
 })();
