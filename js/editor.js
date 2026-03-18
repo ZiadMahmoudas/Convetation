@@ -1022,7 +1022,7 @@ function _notify(msg){
 }
 
 
-      (function() {
+     (function() {
           'use strict';
           document.addEventListener('contextmenu', function(e) {
               e.preventDefault();
