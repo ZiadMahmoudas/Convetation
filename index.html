@@ -257,7 +257,31 @@
         </div>
       </div>
     </section>
-
+<section id="share-cta">
+  <div class="container">
+    <div class="share-cta-inner ai">
+      <div class="share-cta-icon">
+        <i class="fa-solid fa-share-nodes"></i>
+      </div>
+      <h2 class="share-cta-title">أعجبتك الفكرة؟</h2>
+      <p class="share-cta-sub">شارك الموقع مع أصدقائك ليصنعوا بطاقات العيد بأسمائهم</p>
+      <div class="share-cta-btns">
+        <a href="https://wa.me/?text=موقع رائع لتصميم بطاقات العيد بأسمائك 🎴 جربه الآن: https://effulgent-unicorn-574b7e.netlify.app" 
+           target="_blank" class="share-wa-btn">
+          <i class="fa-brands fa-whatsapp"></i>
+          شارك عبر واتساب
+        </a>
+        <button class="share-copy-btn" onclick="
+          navigator.clipboard.writeText(window.location.origin);
+          this.innerHTML='<i class=\'fa-solid fa-check\'></i> تم النسخ!';
+          setTimeout(()=>this.innerHTML='<i class=\'fa-solid fa-copy\'></i> نسخ رابط الموقع',2000)">
+          <i class="fa-solid fa-copy"></i>
+          نسخ رابط الموقع
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
     <section id="partners">
       <div class="container">
         <div class="ai">
