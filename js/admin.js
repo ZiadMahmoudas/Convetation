@@ -95,11 +95,11 @@ async function loadOverview() {
     }
   } catch (e) {}
   try {
-    const { data } = await sb
-      .from("activity_log")
-      .select("*,profiles(username)")
-      .order("created_at", { ascending: false })
-      .limit(8);
+const { data } = await sb
+  .from("activity_log")
+  .select("*")
+  .order("created_at", { ascending: false })
+  .limit(8);
     const body = document.getElementById("recent-activity");
     if (!data?.length) {
       body.innerHTML = `<div class="empty-state"><i class="fa-solid fa-clock-rotate-left"></i><p>لا توجد أنشطة</p></div>`;
@@ -110,7 +110,8 @@ async function loadOverview() {
       data
         .map(
           (r) =>
-            `<tr><td style="font-size:11px;color:rgba(247,242,232,.4)">${new Date(r.created_at).toLocaleString("ar-SA")}</td><td>${r.profiles?.username || "—"}</td><td><span class="badge badge-gold">${r.action}</span></td></tr>`,
+            `<tr><td style="font-size:11px;color:rgba(247,242,232,.4)">${new Date(r.created_at).toLocaleString("ar-SA")}</td><td style="font-size:11px;color:rgba(247,242,232,.35)">${r.user_id ? r.user_id.slice(0,8)+"..." : "—"}</td>
+<td><span class="badge badge-gold">${r.action}</span></td></tr>`,
         )
         .join("") +
       "</tbody></table>";
@@ -177,6 +178,7 @@ async function saveCategory() {
     toast("أدخل اسم التصنيف", "err");
     return;
   }
+  await logActivity(id ? "تعديل تصنيف" : "إنشاء تصنيف", "category", { name });
   try {
     await DB.saveCategory({
       id: id || undefined,
@@ -197,11 +199,13 @@ async function saveCategory() {
 async function toggleCatActive(id, active) {
   try {
     await sb.from("categories").update({ is_active: active }).eq("id", id);
+    await logActivity(active ? "تفعيل تصنيف" : "إيقاف تصنيف", "category", { id });
   } catch(e) {}
 }
 async function deleteCategory(id) {
   await DB.deleteCategory(id);
   await loadCategories();
+  await logActivity("حذف تصنيف", "category", { id });
   toast("تم الحذف ✓", "ok");
 }
 function pickCatColor(el) {
@@ -368,6 +372,7 @@ async function saveCalligraphy() {
       toast("اختر صورة", "err");
       return;
     }
+    await logActivity(isEdit ? "تعديل مخطوطة" : "رفع مخطوطة", "calligraphy", { name });
     const btn = document.getElementById("btn-save-cal");
     btn.disabled = true;
     btn.innerHTML = '<div class="spin"></div> جاري الرفع...';
@@ -467,11 +472,13 @@ async function toggleCalActive(id, active) {
     const { error } = await sb.from("calligraphy").update({ is_active: active }).eq("id", id);
     if (error) throw error;
     toast(active ? "تم التفعيل ✓" : "تم الإيقاف ✓", "ok");
+    await logActivity(active ? "تفعيل مخطوطة" : "إيقاف مخطوطة", "calligraphy", { id });
     allCalligraphy = allCalligraphy.map(c => c.id === id ? {...c, is_active: active} : c);
   } catch(e) { toast("خطأ: " + e.message, "err"); }
 }
 async function deleteCalligraphy(id, path) {
   await DB.deleteCalligraphy(id);
+  await logActivity("حذف مخطوطة", "calligraphy", { id });
   if (path) await Storage.delete("calligraphy", path).catch(() => {});
   await loadCalligraphy();
   await loadOverview();
@@ -592,6 +599,7 @@ async function saveBackground() {
       toast("اختر صورة", "err");
       return;
     }
+    await logActivity(isEdit ? "تعديل خلفية" : "رفع خلفية", "background", { name });
     const btn = document.getElementById("btn-save-bg");
     btn.disabled = true;
     btn.innerHTML = '<div class="spin"></div>';
@@ -683,11 +691,13 @@ async function toggleBgActive(id, active) {
     const { error } = await sb.from("backgrounds").update({ is_active: active }).eq("id", id);
     if (error) throw error;
     toast(active ? "تم التفعيل ✓" : "تم الإيقاف ✓", "ok");
+    await logActivity(active ? "تفعيل خلفية" : "إيقاف خلفية", "background", { id });
     allBackgrounds = allBackgrounds.map(b => b.id === id ? {...b, is_active: active} : b);
   } catch(e) { toast("خطأ: " + e.message, "err"); }
 }
 async function deleteBackground(id, path) {
   await DB.deleteBackground(id);
+  await logActivity("حذف خلفية", "background", { id });
   if (path) await Storage.delete("backgrounds", path).catch(() => {});
   await loadBackgrounds();
   await loadOverview();
@@ -807,6 +817,7 @@ async function doGenerateCoupons() {
     closeModal("modal-coupons");
     await loadCoupons();
     toast(`تم توليد ${_pendingCodes.length} كوبون ✓`, "ok");
+    await logActivity("توليد كوبونات", "coupons", { count: _pendingCodes.length, note });
     _pendingCodes = [];
   } catch (e) {
     toast(
@@ -914,6 +925,7 @@ async function demoteAdmin(id, name) {
 
   await loadUsers();
   toast(`تم تقليل "${name}" لمستخدم عادي ✓`, "ok");
+  await logActivity("تقليل أدمن", "users", { id, name });
 }
 function filterUsers(q) {
   renderUsers(
@@ -927,6 +939,7 @@ async function promoteUser(id) {
   await sb.from("profiles").update({ role: "admin" }).eq("id", id);
   await loadUsers();
   toast("تم الترقية ✓", "ok");
+  await logActivity("تقليل أدمن", "users", { id, name });
 }
 
 // ══ ACTIVITY ══
@@ -1065,7 +1078,15 @@ function _renderFeaturedPage() {
   if (!container) return;
   const picksCount = _featuredPicks.length,
     showInHome = Math.min(3, picksCount);
-  container.innerHTML = `<div style="background:rgba(212,168,67,.06);border:1px solid rgba(212,168,67,.15);border-right:3px solid var(--gold);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--ivory)"><i class="fa-solid fa-star" style="color:var(--gold);margin-left:6px"></i>القوالب المميزة في الصفحة الرئيسية</div><div style="font-size:11px;color:rgba(247,242,232,.4);margin-top:4px">يُعرض أول 3 فقط في الصفحة الرئيسية</div></div><div style="display:flex;gap:8px;align-items:center"><div style="background:${picksCount > 0 ? "rgba(42,138,126,.15)" : "rgba(247,242,232,.06)"};color:${picksCount > 0 ? "var(--teal2)" : "rgba(247,242,232,.3)"};border:1px solid ${picksCount > 0 ? "rgba(42,138,126,.25)" : "var(--border)"};padding:5px 14px;border-radius:20px;font-size:11px;font-weight:800">${picksCount} مختار</div><div style="background:rgba(212,168,67,.12);color:var(--gold2);border:1px solid rgba(212,168,67,.22);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:800">${showInHome} يظهر في الرئيسية</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px"><div class="section-card"><div class="section-head" style="background:rgba(212,168,67,.05)"><div><h3 style="color:var(--gold2)"><i class="fa-solid fa-star" style="color:var(--gold);margin-left:8px"></i>القوالب المختارة</h3><p>اسحب لإعادة الترتيب</p></div><div class="section-actions"><button class="btn-sm btn-ghost" onclick="_clearFeatured()" ${picksCount === 0 ? "disabled" : ""}><i class="fa-solid fa-trash"></i> مسح الكل</button><button class="btn-sm btn-primary" onclick="saveFeatured()"><i class="fa-solid fa-floppy-disk"></i> حفظ</button></div></div><div style="padding:16px;min-height:200px">${picksCount === 0 ? `<div style="text-align:center;padding:48px 20px;color:rgba(247,242,232,.2)"><i class="fa-solid fa-star" style="font-size:32px;margin-bottom:12px;display:block;opacity:.2"></i><p style="font-size:13px">لم تختر قوالب بعد</p></div>` : `<div id="feat-picks-list" style="display:flex;flex-direction:column;gap:10px">${_featuredPicks.map((item, i) => `<div class="_feat-pick-item" data-idx="${i}" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:var(--ink3);border:1px solid var(--border);cursor:grab" draggable="true" ondragstart="_featDragStart(event,${i})" ondragover="_featDragOver(event,${i})" ondrop="_featDrop(event,${i})"><div style="width:26px;height:26px;border-radius:50%;background:${i < 3 ? "rgba(212,168,67,.15)" : "rgba(247,242,232,.06)"};color:${i < 3 ? "var(--gold2)" : "rgba(247,242,232,.3)"};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;border:1px solid ${i < 3 ? "rgba(212,168,67,.25)" : "var(--border)"}">${i + 1}</div><div style="width:42px;height:42px;border-radius:8px;overflow:hidden;flex-shrink:0;background:${item.style === "white" ? "#1a1a2e" : "var(--ink4)"}">${item.public_url ? `<img src="${item.public_url}" style="width:100%;height:100%;object-fit:cover"/>` : `<i class="fa-solid fa-image" style="font-size:18px;color:rgba(247,242,232,.2)"></i>`}</div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:var(--ivory);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div><div style="font-size:10px;color:rgba(247,242,232,.3);margin-top:2px">${item.itemType === "calligraphy" ? "مخطوطة" : "خلفية"}${item.is_premium ? " • ★ حصري" : ""}</div></div><button onclick="_removeFeaturedPick(${i})" style="width:26px;height:26px;border-radius:6px;border:none;background:rgba(192,112,90,.1);color:var(--rose2);cursor:pointer;font-size:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center"><i class="fa-solid fa-xmark"></i></button></div>`).join("")}</div>`}</div></div><div class="section-card"><div class="section-head"><div><h3><i class="fa-solid fa-grid-2" style="color:var(--gold);margin-left:8px"></i>جميع القوالب</h3><p>اضغط للإضافة</p></div></div><div style="padding:14px"><div class="search-bar" style="margin-bottom:12px"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="ابحث..." oninput="_featPoolSearch=this.value;_featPoolPage=1;_renderFeaturedPage()" value="${_featPoolSearch}"/></div>${_renderFeatPool()}</div></div></div>`;
+  container.innerHTML = `<div style="background:rgba(212,168,67,.06);
+  border:1px solid rgba(212,168,67,.15);border-right:3px solid var(--gold);border-radius:12px;
+  padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;
+  gap:12px;flex-wrap:wrap"><div style="flex:1">
+  <div style="font-size:13px;font-weight:700;color:var(--ivory)"><i class="fa-solid fa-star" style="color:var(--gold);margin-left:6px"></i>القوالب المميزة في الصفحة الرئيسية</div><div style="font-size:11px;color:rgba(247,242,232,.4);margin-top:4px">يُعرض أول 3 فقط في الصفحة الرئيسية</div></div><div style="display:flex;gap:8px;align-items:center"><div style="background:${picksCount > 0 ? "rgba(42,138,126,.15)" : "rgba(247,242,232,.06)"};color:${picksCount > 0 ? "var(--teal2)" : "rgba(247,242,232,.3)"};border:1px solid ${picksCount > 0 ? "rgba(42,138,126,.25)" : "var(--border)"};padding:5px 14px;border-radius:20px;font-size:11px;font-weight:800">${picksCount} مختار</div><div style="background:rgba(212,168,67,.12);color:var(--gold2);border:1px solid rgba(212,168,67,.22);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:800">${showInHome} يظهر في الرئيسية</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px"><div class="section-card">
+  <div class="section-head" style="background:rgba(212,168,67,.05)"><div><h3 style="color:var(--gold2)"><i class="fa-solid fa-star" style="color:var(--gold);margin-left:8px"></i>القوالب المختارة</h3><p>اسحب لإعادة الترتيب</p></div><div class="section-actions"><button class="btn-sm btn-ghost" onclick="_clearFeatured()" ${picksCount === 0 ? "disabled" : ""}><i class="fa-solid fa-trash"></i> مسح الكل</button><button class="btn-sm btn-primary" onclick="saveFeatured()"><i class="fa-solid fa-floppy-disk"></i> حفظ</button></div></div><div style="padding:16px;min-height:200px">${picksCount === 0 ? `<div style="text-align:center;padding:48px 20px;color:rgba(247,242,232,.2)"><i class="fa-solid fa-star" style="font-size:32px;margin-bottom:12px;display:block;opacity:.2"></i><p style="font-size:13px">لم تختر قوالب بعد</p></div>` : `<div id="feat-picks-list" style="display:flex;flex-direction:column;gap:10px">${_featuredPicks.map((item, i) => `<div class="_feat-pick-item" data-idx="${i}" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:var(--ink3);border:1px solid var(--border);cursor:grab" draggable="true" ondragstart="_featDragStart(event,${i})" ondragover="_featDragOver(event,${i})" ondrop="_featDrop(event,${i})"><div style="width:26px;height:26px;border-radius:50%;background:${i < 3 ? "rgba(212,168,67,.15)" : "rgba(247,242,232,.06)"};color:${i < 3 ? "var(--gold2)" : "rgba(247,242,232,.3)"};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;border:1px solid ${i < 3 ? "rgba(212,168,67,.25)" : "var(--border)"}">${i + 1}</div><div style="width:42px;height:42px;border-radius:8px;overflow:hidden;flex-shrink:0;background:${item.style === "white" ? "#1a1a2e" : "var(--ink4)"}">${item.public_url ? `<img src="${item.public_url}" style="width:100%;height:100%;object-fit:cover"/>` : `<i class="fa-solid fa-image" style="font-size:18px;color:rgba(247,242,232,.2)"></i>`}</div><div style="flex:1;min-width:0">
+  <div style="font-size:12px;font-weight:700;color:var(--ivory);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div>
+  <div style="font-size:10px;color:rgba(247,242,232,.3);margin-top:2px">${item.itemType === "calligraphy" ? "مخطوطة" : "خلفية"}${item.is_premium ? " • ★ حصري" : ""}</div></div><button onclick="_removeFeaturedPick(${i})" style="width:26px;height:26px;border-radius:6px;border:none;background:rgba(192,112,90,.1);color:var(--rose2);cursor:pointer;font-size:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center"><i class="fa-solid fa-xmark"></i></button></div>`).join("")}</div>`}</div></div>
+  <div class="section-card"><div class="section-head"><div><h3><i class="fa-solid fa-grid-2" style="color:var(--gold);margin-left:8px"></i>جميع القوالب</h3><p>اضغط للإضافة</p></div></div><div style="padding:14px"><div class="search-bar" style="margin-bottom:12px"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="ابحث..." oninput="_featPoolSearch=this.value;_featPoolPage=1;_renderFeaturedPage()" value="${_featPoolSearch}"/></div>${_renderFeatPool()}</div></div></div>`;
   _attachFeatDrag();
 }
 
@@ -1200,6 +1221,7 @@ async function saveFeatured() {
       sort_order: i,
     }));
     toast(`تم حفظ ${_featuredPicks.length} قالب مميز ✓`, "ok");
+    await logActivity("تحديث القوالب المميزة", "featured", { count: _featuredPicks.length });
   } catch (e) {
     toast("خطأ: " + e.message, "err");
   } finally {
@@ -1211,3 +1233,37 @@ async function saveFeatured() {
 }
 
 window._featTypeFilter = "all";
+
+async function loadActivity() {
+  try {
+    const { data, error } = await sb
+      .from("activity_log")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (error) throw error;
+
+    const body = document.getElementById("activity-body");
+    if (!data?.length) {
+      body.innerHTML = `<tr><td colspan="4"><div class="empty-state"><i class="fa-solid fa-clock-rotate-left"></i><p>لا توجد سجلات</p></div></td></tr>`;
+      return;
+    }
+    body.innerHTML = data.map((r) => `
+      <tr>
+        <td style="font-size:11px;color:rgba(247,242,232,.4);white-space:nowrap">
+          ${new Date(r.created_at).toLocaleString("ar-SA")}
+        </td>
+        <td style="font-size:11px;color:rgba(247,242,232,.35)">
+          ${r.user_id ? r.user_id.slice(0,8)+"..." : "—"}
+        </td>
+        <td><span class="badge badge-gold">${r.action}</span></td>
+        <td style="font-size:11px;color:rgba(247,242,232,.3)">
+          ${r.entity_type || ""} 
+          ${r.details ? JSON.stringify(r.details).slice(0, 60) : ""}
+        </td>
+      </tr>`).join("");
+  } catch (e) {
+    console.error("loadActivity error:", e);
+  }
+}
