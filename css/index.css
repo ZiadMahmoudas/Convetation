@@ -1701,24 +1701,7 @@ body {
   color: #ecc96a;
   border-color: #ecc96a;
 }
-.marquee-track {
-  animation: scroll-rtl 35s linear infinite;
-}
-.marquee-track:hover {
-  animation-play-state: paused;
-}
-.tc:hover {
-  transform: translateY(-5px) !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
-.tc:hover .tc-overlay {
-  opacity: 1 !important;
-}
-@keyframes scroll-rtl {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(50%);
-  }
-}
+
+.feat-swiper .swiper-slide { width: 240px; }
+.feat-swiper .tc:hover .tc-overlay { opacity: 1 !important; }
+.feat-swiper .tc:hover { transform: translateY(-5px); }

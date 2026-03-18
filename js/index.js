@@ -288,49 +288,49 @@ document.querySelectorAll('.ai').forEach(el => obs.observe(el));
 
 })();
 
-(function() {
-    'use strict';
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-    });
+// (function() {
+//     'use strict';
+//     document.addEventListener('contextmenu', function(e) {
+//         e.preventDefault();
+//     });
 
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'F12' || e.keyCode === 123) {
-            e.preventDefault();
-            return false;
-        }
+//     document.addEventListener('keydown', function(e) {
+//         if (e.key === 'F12' || e.keyCode === 123) {
+//             e.preventDefault();
+//             return false;
+//         }
 
-        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) {
-            e.preventDefault();
-            return false;
-        }
+//         if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) {
+//             e.preventDefault();
+//             return false;
+//         }
 
-   if (e.ctrlKey && (e.key === 'u' || e.keyCode === 85)) {
-        e.preventDefault();
-        return false;
-    }
-    });
+//    if (e.ctrlKey && (e.key === 'u' || e.keyCode === 85)) {
+//         e.preventDefault();
+//         return false;
+//     }
+//     });
 
-    const devToolsCheck = function() {
-        if (window.console && window.console.time) {
-                (function() {
-                    (function() {
-                        debugger;
-                    }).apply(this, ['alwaysOn']);
-                })();
+//     const devToolsCheck = function() {
+//         if (window.console && window.console.time) {
+//                 (function() {
+//                     (function() {
+//                         debugger;
+//                     }).apply(this, ['alwaysOn']);
+//                 })();
          
-        }
-    };
+//         }
+//     };
     
 
-    setInterval(devToolsCheck, 1000);
+//     setInterval(devToolsCheck, 1000);
 
 
-    document.addEventListener('copy', function(e) {
-        e.preventDefault();
-    });
+//     document.addEventListener('copy', function(e) {
+//         e.preventDefault();
+//     });
 
-})();
+// })();
 
 
       /* ── Mobile nav ── */
@@ -485,73 +485,106 @@ document.querySelectorAll('.ai').forEach(el => obs.observe(el));
           console.error("Featured load error:", e);
         }
       }
+function _renderFeaturedGrid() {
+  const grid = document.getElementById("tpl-grid-dynamic");
+  if (!grid || !_featItems.length) return;
 
-      function _renderFeaturedGrid() {
-        const grid = document.getElementById("tpl-grid-dynamic");
-        if (!grid || !_featItems.length) return;
+  const itemsHtml = _featItems.map((item) => {
+    const isPrem   = item.is_premium;
+    const darkBg   = item.style === "white";
+    const priceVal = item.price ? parseFloat(item.price) : 0;
+    const priceText = priceVal > 0 ? ` | ${priceVal} ر.س` : '';
 
-        const itemsHtml = _featItems.map((item, i) => {
-          const isPrem = item.is_premium;
-          const darkBg = item.style === "white";
-          
-          // 🌟 1. تجهيز السعر
-          const priceVal = item.price ? parseFloat(item.price) : 0;
-          const priceText = priceVal > 0 ? ` | ${priceVal} ر.س` : '';
-          
-          // 🌟 2. تجهيز أزرار الـ Hover
-          let overlayBtns = `
-            <a href="/Templates.html" class="tc-overlay-btn" style="background: #D4A843; color: #0D1117; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 800; font-family: 'Tajawal', sans-serif; width: 85%; text-align: center;">
-              <i class="fa-solid fa-pen-nib"></i> ابدأ التصميم
-            </a>`;
-            
-          if (isPrem && item.promo_link) {
-            overlayBtns += `
-            <a href="${item.promo_link}" target="_blank" style="background: transparent; border: 1.5px solid #D4A843; color: #D4A843; padding: 8px 20px; border-radius: 8px; text-decoration: none; font-weight: 700; font-family: 'Tajawal', sans-serif; width: 85%; text-align: center; font-size: 12px; margin-top: 5px; transition: all 0.2s ease;">
-              <i class="fa-solid fa-cart-shopping"></i> شراء الكوبون
-            </a>`;
-          }
+    let overlayBtns = `
+      <a href="/Templates.html" class="tc-overlay-btn"
+         style="background:#D4A843;color:#0D1117;padding:10px 20px;border-radius:8px;
+                text-decoration:none;font-weight:800;font-family:'Tajawal',sans-serif;
+                width:85%;text-align:center;">
+        <i class="fa-solid fa-pen-nib"></i> ابدأ التصميم
+      </a>`;
 
-          return `
-      <div class="tc" style="width: 240px; flex-shrink: 0; border-radius: 16px; overflow: hidden; background: var(--color-primary); border: 1px solid var(--border); transition: transform 0.3s ease;">
-        <div class="tc-img" style="position: relative; aspect-ratio: 3/4; ${darkBg ? "background:#1a1a2e" : ""}">
-          ${
-            item.public_url
-              ? `<img src="${item.public_url}" alt="${item.name}" loading="lazy" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'"/>`
-              : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(232,224,208,.2)"><i class='fa-solid fa-image' style='font-size:2.5rem'></i></div>`
-          }
-          
-          ${
-            isPrem
-              ? `<div class="tc-tag" style="position: absolute; top: 12px; right: 12px; background:linear-gradient(135deg,#D4A843,#B8860B);color:#0d1117; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
-                 <i class="fa-solid fa-crown" style="font-size:.65rem"></i> حصري${priceText}
-               </div>`
-              : `<div class="tc-tag free" style="position: absolute; top: 12px; right: 12px; background: rgba(42,138,126,.9); color: #fff; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">مجاني</div>`
-          }
-          
-          <div class="tc-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.75); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; z-index: 10;">
-            ${overlayBtns}
+    if (isPrem && item.promo_link) {
+      overlayBtns += `
+      <a href="${item.promo_link}" target="_blank"
+         style="background:transparent;border:1.5px solid #D4A843;color:#D4A843;
+                padding:8px 20px;border-radius:8px;text-decoration:none;font-weight:700;
+                font-family:'Tajawal',sans-serif;width:85%;text-align:center;
+                font-size:12px;margin-top:5px;">
+        <i class="fa-solid fa-cart-shopping"></i> شراء الكوبون
+      </a>`;
+    }
+
+    return `
+      <div class="swiper-slide" style="width:240px;">
+        <div class="tc" style="border-radius:16px;background:var(--color-primary);
+                               border:1px solid var(--border);">
+          <div class="tc-img" style="position:relative;aspect-ratio:3/4;${darkBg ? "background:#1a1a2e" : ""}">
+            ${item.public_url
+              ? `<img src="${item.public_url}" alt="${item.name}" loading="lazy"
+                      style="width:100%;height:100%;object-fit:cover;display:block;"
+                      onerror="this.style.display='none'"/>`
+              : `<div style="width:100%;height:100%;display:flex;align-items:center;
+                             justify-content:center;color:rgba(232,224,208,.2)">
+                   <i class="fa-solid fa-image" style="font-size:2.5rem"></i>
+                 </div>`}
+            ${isPrem
+              ? `<div class="tc-tag" style="position:absolute;top:12px;right:12px;
+                    background:linear-gradient(135deg,#D4A843,#B8860B);color:#0d1117;
+                    padding:4px 10px;border-radius:20px;font-size:11px;font-weight:900;">
+                   <i class="fa-solid fa-crown" style="font-size:.65rem"></i> حصري${priceText}
+                 </div>`
+              : `<div class="tc-tag free" style="position:absolute;top:12px;right:12px;
+                    background:rgba(42,138,126,.9);color:#fff;padding:4px 10px;
+                    border-radius:20px;font-size:11px;font-weight:800;">مجاني</div>`}
+            <div class="tc-overlay" style="position:absolute;inset:0;background:rgba(0,0,0,0.75);
+                                           display:flex;flex-direction:column;align-items:center;
+                                           justify-content:center;opacity:0;transition:opacity 0.3s;
+                                           z-index:10;">
+              ${overlayBtns}
+            </div>
+          </div>
+          <div class="tc-foot" style="padding:14px;display:flex;justify-content:space-between;
+                                      align-items:center;border-top:1px solid var(--border);
+                                      background:var(--color-primary-dark);">
+            <span class="tc-name" style="font-size:13px;font-weight:bold;color:var(--dark-text-sec);
+                                         white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+                                         max-width:80%;">${item.name}</span>
+            <a href="/editor.html" class="tc-action" style="color:#D4A843;">
+              <i class="fa-solid fa-arrow-left"></i>
+            </a>
           </div>
         </div>
-        <div class="tc-foot" style="padding: 14px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); background: var(--color-primary-dark);">
-          <span class="tc-name" style="font-size: 13px; font-weight: bold; color: var(--dark-text-sec); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80%;">${item.name}</span>
-          <a href="/editor.html" class="tc-action" style="color: #D4A843;"><i class="fa-solid fa-arrow-left"></i></a>
-        </div>
       </div>`;
-        }).join("");
+  }).join("");
 
-        let trackHtml = itemsHtml;
-        if (_featItems.length < 6) trackHtml += itemsHtml + itemsHtml;
-
-        grid.style.display = "block";
-        grid.innerHTML = `
-    <div class="marquee-container" style="width: 100%; padding: 10px 0; position: relative;">
-      <div class="marquee-track" style="display: flex; gap: 20px; width: max-content;">
-        ${trackHtml}
-        ${trackHtml}
-      </div>
+  grid.style.display = "block";
+  grid.innerHTML = `
+    <div class="swiper feat-swiper" style="padding:10px 0 20px;">
+      <div class="swiper-wrapper">${itemsHtml}</div>
     </div>`;
-      }
 
+new Swiper(".feat-swiper", {
+  slidesPerView:  "auto",
+  spaceBetween:   20,
+  loop:           true,
+  loopedSlides:   _featItems.length,
+  centeredSlides: false,
+  grabCursor:     true,
+  freeMode: {
+    enabled:   true,
+    momentum:  true,
+  },
+  autoplay: {
+    delay:                0,
+    disableOnInteraction: false,
+    pauseOnMouseEnter:    true,
+  },
+  speed:      4000,
+  pagination: false,
+  navigation: false,
+  scrollbar:  false,
+});
+}
       // ── Run ──
       loadFeaturedTemplates();
       async function loadCategoriesHome() {

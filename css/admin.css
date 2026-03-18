@@ -692,6 +692,7 @@
       }
       .toggle-sw input {
         width: 39px;
+        opacity: 0;
       }
       .toggle-track {
         position: absolute;
